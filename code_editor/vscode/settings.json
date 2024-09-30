@@ -20,7 +20,7 @@
 
         "**/.idea": true,
         "**/.vscode": true,
-        "**/node_modules": true,
+        "**/node_modules": true
     },
     "files.autoSave": "afterDelay",
     "files.insertFinalNewline": false,
@@ -56,6 +56,6 @@
     "window.newWindowProfile": "Default",
     "window.openFoldersInNewWindow": "on",
 
-    "workbench.colorTheme": "GitHub Dark",
+    "workbench.colorTheme": "GitHub Dark"
 
 }
