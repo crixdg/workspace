@@ -12,7 +12,7 @@ commit:
 
 MY_MACOS_HOME := /home/baodh
 MY_LINUX_HOME := /home/baodh
-MY_WINDOWS_HOME := /mnt/c/Users/dangh
+MY_WINDOWS_HOME := /mnt/c/Users/baodh
 
 MY_SETUP_REPO := $(CURDIR)
 
@@ -39,7 +39,7 @@ pull-gitconfig: # wsl-linux & windows
 
 origin_macos_zsh := $(MY_MACOS_HOME)/.zshrc
 origin_linux_zsh := $(MY_LINUX_HOME)/.zshrc
-origin_windows_pwsh := $(MY_WINDOWS_HOME)/OneDrive/Documents/Powershell/Microsoft.Powershell_profile.ps1
+origin_windows_pwsh := $(MY_WINDOWS_HOME)/Documents/Powershell/Microsoft.Powershell_profile.ps1
 
 local_macos_zsh := $(MY_SETUP_REPO)/terminal/.zshrc
 local_linux_zsh := $(MY_SETUP_REPO)/terminal/.zshrc
