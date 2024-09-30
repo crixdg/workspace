@@ -1,0 +1,53 @@
+{
+    "workbench.colorTheme": "GitHub Dark",
+
+    "editor.fontFamily": "'Fira Code'",
+    "editor.fontLigatures": true,
+    "editor.fontSize": 12,
+    "editor.lineHeight": 15,
+
+    "editor.tabSize": 2,
+
+    "editor.cursorStyle": "line",
+    "editor.cursorBlinking": "phase",
+
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/CVS": true,
+        "**/.DS_Store": true,
+        "**/Thumbs.db": true,
+
+        "**/.idea": true,
+        "**/.vscode": true,
+        "**/node_modules": true,
+    },
+    "files.autoSave": "afterDelay",
+    "files.insertFinalNewline": false,
+    "files.trimTrailingWhitespace": true,
+
+    "explorer.autoReveal": true,
+
+    "markdown.preview.scrollEditorWithPreview": true,
+    "markdown.preview.scrollPreviewWithEditor": true,
+
+    "terminal.explorerKind": "external",
+    "terminal.external.linuxExec": "xterm",
+    "terminal.external.osxExec": "Terminal.app",
+    "terminal.external.windowsExec": "C:\\Program Files\\WSL\\wsl.exe",
+
+    "terminal.integrated.fontFamily": "Fira Code",
+    "terminal.integrated.fontSize": 12,
+
+    "terminal.integrated.profiles.windows": {
+    "WSL": {
+        "path": "C:\\Program Files\\WSL\\wsl.exe",
+        "args": []
+    },
+    "terminal.integrated.defaultProfile.windows": "WSL",
+
+    "window.newWindowProfile": "Default",
+
+}
+

@@ -1,0 +1,24 @@
+{
+    "workbench.colorTheme": "GitHub Dark",
+
+    "editor.fontFamily": "'Fira Code'",
+    "editor.fontLigatures": true,
+    "editor.fontSize": 12,
+    "editor.tabSize": 2,
+
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/CVS": true,
+        "**/.DS_Store": true,
+        "**/Thumbs.db": true,
+        
+        "**/.idea": true,
+        "**/.vscode": true,
+        "**/node_modules": true,
+    },
+    "files.autoSave": "onFocusChange",
+    
+    "window.newWindowProfile": "Default",
+}

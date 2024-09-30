@@ -28,14 +28,11 @@ local_linux_gitconfig := $(MY_SETUP_REPO)/version_control/git/.gitconfig
 local_windows_gitconfig := $(MY_SETUP_REPO)/version_control/git/.gitconfig
 
 push-gitconfig:  # wsl-linux & windows
-	#yes | cp -rf $(local_macos_gitconfig) $(origin_macos_gitconfig)
 	yes | cp -rf $(local_linux_gitconfig) $(origin_linux_gitconfig)
 	yes | cp -rf $(local_windows_gitconfig) $(origin_windows_gitconfig)
 
 pull-gitconfig: # wsl-linux & windows
-	#yes | cp -rf $(origin_macos_gitconfig) $(local_macos_gitconfig)
 	yes | cp -rf $(origin_linux_gitconfig) $(local_linux_gitconfig)
-	#yes | cp -rf $(origin_windows_gitconfig) $(local_windows_gitconfig)
 
 # -------------------------------------------------------
 # TERMINAL CONFIGURATION
@@ -49,12 +46,10 @@ local_linux_zsh := $(MY_SETUP_REPO)/terminal/.zshrc
 local_windows_pwsh := $(MY_SETUP_REPO)/terminal/Microsoft.Powershell_profile.ps1
 
 push-terminal-config:  # wsl-linux & windows
-	#yes | cp -rf $(local_macos_zsh) $(origin_macos_zsh)
 	yes | cp -rf $(local_linux_zsh) $(origin_linux_zsh)
 	yes | cp -rf $(local_windows_pwsh) $(origin_windows_pwsh)
 
 pull-terminal-config: # wsl-linux & windows
-	#yes | cp -rf $(origin_macos_zsh) $(local_macos_zsh)
 	yes | cp -rf $(origin_linux_zsh) $(local_linux_zsh)
 	yes | cp -rf $(origin_windows_pwsh) $(local_windows_pwsh)
 
@@ -70,3 +65,20 @@ linux-terminal-setup:
 	$(local_linux_terminal_setup)
 	yes | cp -rf $(local_linux_zsh) $(origin_linux_zsh)
 	/bin/zsh -c 'source $(origin_linux_zsh)'
+
+# -------------------------------------------------------
+# CODE EDITOR: VSCODE (Can be synced by Github)
+
+#origin_macos_vscode := $(MY_MACOS_HOME)/..
+#origin_linux_vscode := $(MY_LINUX_HOME)/..
+origin_windows_vscode := $(MY_WINDOWS_HOME)/AppData/Roaming/Code/User
+
+#local_macos_vscode := $(MY_SETUP_REPO)/code_editor/vscode
+#local_linux_vscode := $(MY_SETUP_REPO)/code_editor/vscode
+local_windows_vscode := $(MY_SETUP_REPO)/code_editor/vscode
+
+push-vscode-settings:  # wsl-linux & windows
+	yes | cp -rf $(local_windows_vscode) $(origin_windows_vscode)
+
+pull-vscode-settings: # wsl-linux & windows
+	yes | cp -rf $(origin_windows_vscode) $(local_windows_vscode)
