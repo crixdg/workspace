@@ -5,12 +5,7 @@
             "file:///d%3A/baodh/personal/gl-snake-ai/snake": "__default__profile__",
             "file:///d%3A/baodh/personal/game-dev-practices": "__default__profile__"
         },
-        "emptyWindows": {
-            "1727657836472": "__default__profile__",
-            "1727658045289": "5c5599be",
-            "1727658055128": "5c5599be",
-            "1727658168646": "__default__profile__"
-        }
+        "emptyWindows": {}
     },
     "profileAssociationsMigration": true,
     "telemetry.sqmId": "{EE332F65-0357-41A5-86FF-93F29216A4F4}",
@@ -23,24 +18,7 @@
                 "folderUri": "file:///d%3A/baodh/personal/game-dev-practices"
             }
         ],
-        "emptyWindows": [
-            {
-                "backupFolder": "1727657811095",
-                "remoteAuthority": "wsl+Ubuntu"
-            },
-            {
-                "backupFolder": "1727657836472"
-            },
-            {
-                "backupFolder": "1727658045289"
-            },
-            {
-                "backupFolder": "1727658055128"
-            },
-            {
-                "backupFolder": "1727658168646"
-            }
-        ]
+        "emptyWindows": []
     },
     "windowControlHeight": 35,
     "theme": "vs-dark",
@@ -63,44 +41,24 @@
             "editorPartMinWidth": 220,
             "titleBarHeight": 35,
             "activityBarWidth": 48,
-            "sideBarWidth": 0,
+            "sideBarWidth": 335,
             "statusBarHeight": 22,
             "windowBorder": false
         }
     },
     "windowsState": {
         "lastActiveWindow": {
-            "backupPath": "C:\\Users\\baodh\\AppData\\Roaming\\Code\\Backups\\1727658055128",
+            "folder": "file:///d%3A/baodh/personal/game-dev-practices",
+            "backupPath": "C:\\Users\\baodh\\AppData\\Roaming\\Code\\Backups\\4a2058ba96f0e816c69bf8d370480ab4",
             "uiState": {
-                "mode": 0,
-                "x": 448,
-                "y": 156,
+                "mode": 1,
+                "x": -1472,
+                "y": 353,
                 "width": 1024,
                 "height": 768
             }
         },
-        "openedWindows": [
-            {
-                "backupPath": "C:\\Users\\baodh\\AppData\\Roaming\\Code\\Backups\\1727658055128",
-                "uiState": {
-                    "mode": 0,
-                    "x": 448,
-                    "y": 156,
-                    "width": 1024,
-                    "height": 768
-                }
-            },
-            {
-                "backupPath": "C:\\Users\\baodh\\AppData\\Roaming\\Code\\Backups\\1727658168646",
-                "uiState": {
-                    "mode": 1,
-                    "x": 448,
-                    "y": 156,
-                    "width": 1024,
-                    "height": 768
-                }
-            }
-        ]
+        "openedWindows": []
     },
     "userDataProfiles": [
         {
@@ -114,7 +72,12 @@
         },
         {
             "location": "6e16feb",
-            "name": "Jupiter Notebook"
+            "name": "Jupyter",
+            "useDefaultFlags": {
+                "settings": true,
+                "keybindings": true,
+                "tasks": true
+            }
         }
     ]
 }
