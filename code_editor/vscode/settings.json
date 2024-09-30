@@ -56,6 +56,7 @@
     "window.newWindowProfile": "Default",
     "window.openFoldersInNewWindow": "on",
 
-    "workbench.colorTheme": "GitHub Dark"
+    "workbench.colorTheme": "GitHub Dark",
+    "makefile.configureOnOpen": false
 
 }
