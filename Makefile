@@ -53,7 +53,20 @@ pull-terminal-config: # wsl-linux & windows
 	yes | cp -rf $(origin_linux_zsh) $(local_linux_zsh)
 	yes | cp -rf $(origin_windows_pwsh) $(local_windows_pwsh)
 
+# -------------------------------------------------------
+# DIRCOLORS
 
+origin_linux_dircolors := $(MY_LINUX_HOME)/.dircolors
+
+local_linux_dircolors := $(MY_SETUP_REPO)/terminal/.dircolors
+
+push-dircolors-config:  # wsl-linux & windows
+	yes | cp -rf $(local_linux_dircolors) $(origin_linux_dircolors)
+
+pull-dircolors-config: # wsl-linux & windows
+	yes | cp -rf $(origin_linux_dircolors) $(local_linux_dircolors)
+
+# -------------------------------------------------------
 # TERMINAL SETUP
 
 # local_macos_terminal_setup := $(MY_SETUP_REPO)/terminal/macos.terminal.setup.sh
