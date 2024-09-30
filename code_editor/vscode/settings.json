@@ -1,5 +1,5 @@
 {
-    "editor.fontFamily": "'Fira Code'",
+    "editor.fontFamily": "Fira Code",
     "editor.fontLigatures": true,
     "editor.fontSize": 12,
     "editor.lineHeight": 15,
@@ -46,17 +46,9 @@
         },
     },
     "terminal.integrated.defaultProfile.windows": "WSL",
-    // "terminal.integrated.profiles.linux": {
-    // },
-    // "terminal.integrated.defaultProfile.linux": "",
-    // "terminal.integrated.profiles.osx": {
-    // },
-    // "terminal.integrated.defaultProfile.osx": "",
-
-    "git.path": "C:\\Program Files\\Git\\cmd\\git.exe",
 
     "window.newWindowProfile": "Default",
     "workbench.colorTheme": "GitHub Dark",
+    "makefile.configureOnOpen": true,
 
 }
-
