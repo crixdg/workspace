@@ -71,14 +71,14 @@ linux-terminal-setup:
 
 #origin_macos_vscode := $(MY_MACOS_HOME)/..
 #origin_linux_vscode := $(MY_LINUX_HOME)/..
-origin_windows_vscode := $(MY_WINDOWS_HOME)/AppData/Roaming/Code/User/*.json
+origin_windows_vscode := $(MY_WINDOWS_HOME)/AppData/Roaming/Code/User
 
 #local_macos_vscode := $(MY_SETUP_REPO)/code_editor/vscode
 #local_linux_vscode := $(MY_SETUP_REPO)/code_editor/vscode
 local_windows_vscode := $(MY_SETUP_REPO)/code_editor/vscode
 
 push-vscode-settings:  # wsl-linux & windows
-	yes | cp -rf $(local_windows_vscode) $(origin_windows_vscode)
+	yes | cp -rf $(local_windows_vscode)/*.json $(origin_windows_vscode)
 
 pull-vscode-settings: # wsl-linux & windows
-	yes | cp -rf $(origin_windows_vscode) $(local_windows_vscode)
+	yes | cp -rf $(origin_windows_vscode)/*.json $(local_windows_vscode)
