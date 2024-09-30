@@ -12,7 +12,7 @@ commit:
 
 MY_MACOS_HOME := /home/baodh
 MY_LINUX_HOME := /home/baodh
-MY_WINDOWS_HOME := /mnt/c/Users/baodh
+MY_WINDOWS_HOME := /mnt/c/Users/dangh
 
 MY_SETUP_REPO := $(CURDIR)
 
@@ -56,15 +56,23 @@ pull-terminal-config: # wsl-linux & windows
 
 # TERMINAL SETUP
 
-local_macos_terminal_setup := $(MY_SETUP_REPO)/terminal/macos.terminal.setup.sh
+# local_macos_terminal_setup := $(MY_SETUP_REPO)/terminal/macos.terminal.setup.sh
 local_linux_terminal_setup := $(MY_SETUP_REPO)/terminal/linux.terminal.setup.sh
-local_windows_terminal_setup := $(MY_SETUP_REPO)/terminal/linux.terminal.setup.ps1
+# local_windows_terminal_setup := $(MY_SETUP_REPO)/terminal/linux.terminal.setup.ps1
+
+# local_macos_terminal_custom := $(MY_SETUP_REPO)/terminal/macos.terminal.custom.sh
+local_linux_terminal_custom := $(MY_SETUP_REPO)/terminal/linux.terminal.custom.sh
+# local_windows_terminal_custom := $(MY_SETUP_REPO)/terminal/linux.terminal.custom.ps1
 
 linux-terminal-setup:
 	chmod +x $(local_linux_terminal_setup)
 	$(local_linux_terminal_setup)
+
+linux-terminal-custom:
+	# chmod +x $(local_linux_terminal_custom)
+	# $(local_linux_terminal_custom)
 	yes | cp -rf $(local_linux_zsh) $(origin_linux_zsh)
-	/bin/zsh -c 'source $(origin_linux_zsh)'
+	zsh
 
 # -------------------------------------------------------
 # CODE EDITOR: VSCODE (Can be synced by Github)

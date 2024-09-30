@@ -24,7 +24,7 @@ export ZSH_COMPDUMP=$ZSH/cache/.zcompdump-$HOST
 
 # CUSTOM
 ZSH_CUSTOM=$HOME/.oh-my-zsh/custom
-ZSH_THEME="baodh"
+ZSH_THEME="robbyrussell"
 
 # --------------------
 
