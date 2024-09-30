@@ -48,7 +48,10 @@
     "terminal.integrated.defaultProfile.windows": "WSL",
 
     "window.newWindowProfile": "Default",
+    "window.openFoldersInNewWindow": "on",
+
     "workbench.colorTheme": "GitHub Dark",
+
     "makefile.configureOnOpen": true,
 
 }
