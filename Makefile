@@ -71,7 +71,7 @@ linux-terminal-setup:
 
 #origin_macos_vscode := $(MY_MACOS_HOME)/..
 #origin_linux_vscode := $(MY_LINUX_HOME)/..
-origin_windows_vscode := $(MY_WINDOWS_HOME)/AppData/Roaming/Code/User
+origin_windows_vscode := $(MY_WINDOWS_HOME)/AppData/Roaming/Code/User/*.json
 
 #local_macos_vscode := $(MY_SETUP_REPO)/code_editor/vscode
 #local_linux_vscode := $(MY_SETUP_REPO)/code_editor/vscode
