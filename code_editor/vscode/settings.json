@@ -44,6 +44,12 @@
             "path": "C:\\Program Files\\WSL\\wsl.exe",
             "args": []
         },
+
+        "PowerShell (Admin)": {
+            "path": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+            "icon": "terminal-powershell",
+            "args": ["-NoExit", "-Command", "Start-Process pwsh -Verb RunAs"]
+        }
     },
     "terminal.integrated.defaultProfile.windows": "WSL",
 
@@ -51,7 +57,5 @@
     "window.openFoldersInNewWindow": "on",
 
     "workbench.colorTheme": "GitHub Dark",
-
-    "makefile.configureOnOpen": true,
 
 }
