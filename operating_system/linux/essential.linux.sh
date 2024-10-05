@@ -1,3 +1,5 @@
+sudo apt update
+
 # dev tools
 sudo apt install build-essential gdb python3-pip -y
 
