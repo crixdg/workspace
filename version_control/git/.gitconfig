@@ -1,9 +1,9 @@
 [user]
-	name = Bao. Dang
-	email = dang.hbaokody@gmail.com
+    name = Bao. Dang
+    email = dang.hbaokody@gmail.com
 [credential]
-	helper = store
+    helper = store
 [init]
-	defaultBranch = main
+    defaultBranch = main
 [core]
-  autocrlf = input
+    autocrlf = input
