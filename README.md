@@ -104,6 +104,6 @@ running make scripts.
 - In this guide, we're using Zsh shell. So, following this image,
   we'll understand how shell configurations are loaded.
 
-![Terminal Loading Process](.\terminal\terminal_load.png)
+![Terminal Loading Process](terminal/terminal_load.png)
 
 ---
