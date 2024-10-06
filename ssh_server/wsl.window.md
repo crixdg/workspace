@@ -16,3 +16,9 @@ netsh interface portproxy add v4tov4 listenport=50022 listenaddress=0.0.0.0 conn
 ```shell
 netsh advfirewall firewall add rule name="WSL OpenSSH" dir=in action=allow localport=50022 protocol=TCP
 ```
+
+- Connect
+```shell
+ssh user@window_host_ip -p 50022
+ssh user@wsl_ip
+```

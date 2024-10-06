@@ -47,6 +47,7 @@ zsh-linux-custom:
 push-terminal-config:
 	yes | cp -rf $(MY_SETUP_REPO)/terminal/zsh/.zshrc ~/.zshrc
 	yes | cp -rf $(MY_SETUP_REPO)/terminal/.dircolors ~/.dircolors
+	/usr/bin/zsh
 
 pull-terminal-config:
 	yes | cp -rf ~/.zshrc $(MY_SETUP_REPO)/terminal/zsh/.zshrc

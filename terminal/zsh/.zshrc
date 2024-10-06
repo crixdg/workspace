@@ -82,9 +82,9 @@ if [ -x /usr/bin/dircolors ]; then
     alias egrep='egrep --color=auto'
 fi
 
-# alias ll='ls -alF'
-# alias la='ls -A'
-# alias l='ls -CF'
+alias ll='ls -hlF'
+alias la='ls -A'
+alias l='ls -CF'
 
 # ============================================================
 
