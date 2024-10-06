@@ -1,5 +1,5 @@
-if [ ! -d "$HOME/.tmux/plugins/tmp" ]; then
-    git clone "https://github.com/tmux-plugins/tmp" "$HOME/.tmux/plugins/tmp"
+if [ ! -d "$HOME/.tmux/plugins/tpm" ]; then
+    git clone "https://github.com/tmux-plugins/tpm" "$HOME/.tmux/plugins/tpm"
 fi
 
 if [ ! -d "$HOME/.tmux/config" ]; then
@@ -14,4 +14,8 @@ if [ ! -e "$HOME/.tmux/config/keybindings.conf" ]; then
 fi
 if [ ! -e "$HOME/.tmux/config/theme.conf" ]; then
     touch "$HOME/.tmux/config/theme.conf"
+fi
+
+if [ ! -d "$HOME/.tmux/resurrect" ]; then
+    mkdir "$HOME/.tmux/resurrect"
 fi

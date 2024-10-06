@@ -51,6 +51,7 @@ tmux-linux-install:
 
 tmux-linux-custom:
 	$(MY_SETUP_REPO)/terminal/tmux/tmux.custom.sh
+	yes | cp -rf $(MY_SETUP_REPO)/terminal/tmux/config ~/.tmux
 	yes | cp -rf $(MY_SETUP_REPO)/terminal/tmux/.tmux.conf ~/.tmux.conf
 
 # -------------------------------------------------------
