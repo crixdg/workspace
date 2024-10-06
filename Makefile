@@ -42,16 +42,30 @@ zsh-linux-custom:
 	/usr/bin/zsh
 
 # -------------------------------------------------------
+# TMUX
+
+tmux-linux-install:
+	$(MY_SETUP_REPO)/terminal/tmux/tmux.linux.install.sh
+
+#tmux-macos-install:
+
+tmux-linux-custom:
+	$(MY_SETUP_REPO)/terminal/tmux/tmux.custom.sh
+	yes | cp -rf $(MY_SETUP_REPO)/terminal/tmux/.tmux.conf ~/.tmux.conf
+
+# -------------------------------------------------------
 # TERMINAL CONFIG
 
 push-terminal-config:
 	yes | cp -rf $(MY_SETUP_REPO)/terminal/zsh/.zshrc ~/.zshrc
 	yes | cp -rf $(MY_SETUP_REPO)/terminal/.dircolors ~/.dircolors
+	yes | cp -rf $(MY_SETUP_REPO)/terminal/tmux/.tmux.conf ~/.tmux.conf
 	/usr/bin/zsh
 
 pull-terminal-config:
 	yes | cp -rf ~/.zshrc $(MY_SETUP_REPO)/terminal/zsh/.zshrc
 	yes | cp -rf ~/.dircolors $(MY_SETUP_REPO)/terminal/.dircolors
+	yes | cp -rf ~/.tmux.conf $(MY_SETUP_REPO)/terminal/tmux/.tmux.conf
 
 # -------------------------------------------------------
 # GITCONFIG
