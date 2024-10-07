@@ -24,33 +24,33 @@ show-linux-packages:
 	python3 $(MY_SETUP_REPO)/operating_system/linux/apt/show.apt.installed.py
 
 install-essential-linux-packages:
-	$(MY_SETUP_REPO)/operating_system/linux/essential.linux.sh
+	sh $(MY_SETUP_REPO)/operating_system/linux/essential.linux.sh
 
 # -------------------------------------------------------
 # ZSH & OH MY ZSH
 
 zsh-linux-install:
-	$(MY_SETUP_REPO)/terminal/zsh/zsh.linux.install.sh
+	sh $(MY_SETUP_REPO)/terminal/zsh/zsh.linux.install.sh
 
 #zsh-macos-install:
 
 zsh-linux-custom:
-	$(MY_SETUP_REPO)/terminal/zsh/zsh.custom.sh
+	sh $(MY_SETUP_REPO)/terminal/zsh/zsh.custom.sh
 	yes | cp -rf $(MY_SETUP_REPO)/terminal/zsh/.zshrc ~/.zshrc
 	yes | cp -rf $(MY_SETUP_REPO)/terminal/.dircolors ~/.dircolors
-	$(MY_SETUP_REPO)/terminal/unnecessary.linux.sh
+	sh $(MY_SETUP_REPO)/terminal/unnecessary.linux.sh
 	/usr/bin/zsh
 
 # -------------------------------------------------------
 # TMUX
 
 tmux-linux-install:
-	$(MY_SETUP_REPO)/terminal/tmux/tmux.linux.install.sh
+	sh $(MY_SETUP_REPO)/terminal/tmux/tmux.linux.install.sh
 
 #tmux-macos-install:
 
 tmux-linux-custom:
-	$(MY_SETUP_REPO)/terminal/tmux/tmux.custom.sh
+	sh $(MY_SETUP_REPO)/terminal/tmux/tmux.custom.sh
 	yes | cp -rf $(MY_SETUP_REPO)/terminal/tmux/config ~/.tmux
 	yes | cp -rf $(MY_SETUP_REPO)/terminal/tmux/.tmux.conf ~/.tmux.conf
 

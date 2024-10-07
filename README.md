@@ -22,7 +22,7 @@ running make scripts.
 
 - Install `make` tools.
     ```shell
-        ./require.linux.sh # Linux or WSL Ubuntu (Windows)
+        sh require.linux.sh # Linux or WSL Ubuntu (Windows)
     ```
 - Show `$PATH` in a beautiful output.
     ```shell
@@ -54,7 +54,7 @@ running make scripts.
 
 - Install `make` tools.
     ```shell
-        ./require.linux.sh # Linux or WSL Ubuntu (Windows)
+        sh require.linux.sh # Linux or WSL Ubuntu (Windows)
     ```
 - Show `$PATH` in a beautiful output.
     ```shell
