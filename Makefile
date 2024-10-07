@@ -39,7 +39,7 @@ zsh-linux-custom:
 	yes | cp -rf $(MY_SETUP_REPO)/terminal/zsh/.zshrc ~/.zshrc
 	yes | cp -rf $(MY_SETUP_REPO)/terminal/.dircolors ~/.dircolors
 	sh $(MY_SETUP_REPO)/terminal/unnecessary.linux.sh
-	/usr/bin/zsh
+	echo "Need to reload shell ..."
 
 # -------------------------------------------------------
 # TMUX
@@ -61,7 +61,7 @@ push-terminal-config:
 	yes | cp -rf $(MY_SETUP_REPO)/terminal/zsh/.zshrc ~/.zshrc
 	yes | cp -rf $(MY_SETUP_REPO)/terminal/.dircolors ~/.dircolors
 	yes | cp -rf $(MY_SETUP_REPO)/terminal/tmux/.tmux.conf ~/.tmux.conf
-	/usr/bin/zsh
+	echo "Need to reload shell ..."
 
 pull-terminal-config:
 	yes | cp -rf ~/.zshrc $(MY_SETUP_REPO)/terminal/zsh/.zshrc
