@@ -81,10 +81,12 @@ running make scripts.
         make push-gitconfig
         make pull-gitconfig
     ```
+
 #### Documents
 
-- Set up SSH server for WSL Ubuntu in Windows: [wsl.windows.md](ssh_server/wsl.windows.md)
+- Set up SSH server for WSL Ubuntu in Windows: [wsl.windows.md](ssh/wsl.windows.md)
 - Analyze frequency of command in history: [analyze.history.md](terminal/analyze.history.md)
+
 #### Uncompleted yet & TODO
 
 - Push or Pull `vscode` configuration with local file.

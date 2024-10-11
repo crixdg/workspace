@@ -76,16 +76,3 @@ push-gitconfig:
 
 pull-gitconfig:
 	yes | cp -rf ~/.gitconfig $(MY_SETUP_REPO)/version_control/git/.gitconfig
-
-# -------------------------------------------------------
-# CODE EDITOR: VSCODE (Can be synced by Github)
-
-origin_windows_vscode := $(MY_WINDOWS_HOME)/AppData/Roaming/Code/User
-
-local_vscode := $(MY_SETUP_REPO)/code_editor/vscode
-
-push-vscode-settings:
-	yes | cp -rf $(local_vscode)/*.json $(origin_windows_vscode)
-
-pull-vscode-settings:
-	yes | cp -rf $(origin_windows_vscode)/*.json $(local_vscode)

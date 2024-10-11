@@ -1,9 +1,9 @@
 root = true
 
-[*]  # Applies to all files
+[*] # Applies to all files
 
 indent_style = space
-indent_size = 4
+indent_size = 2
 
 end_of_line = lf
 charset = utf-8

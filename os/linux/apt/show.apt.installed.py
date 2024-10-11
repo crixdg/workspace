@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import apt
+
 import os
 
 current_file_path = os.path.abspath(__file__)
