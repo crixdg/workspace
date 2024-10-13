@@ -10,3 +10,6 @@ sudo apt install gdb -y
 # generator
 sudo apt install make -y
 sudo apt install ninja-build -y
+
+# lint
+sudo apt install clang-tidy -y
