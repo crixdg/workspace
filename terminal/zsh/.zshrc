@@ -56,6 +56,9 @@ DISABLE_MAGIC_FUNCTIONS="true"
 # Uncomment the following line to disable auto-setting terminal title.
 DISABLE_AUTO_TITLE="true"
 
+local ip_address=$(hostname -I | awk '{print $1}')
+echo -ne "\033]0;IP: $ip_address\007"
+
 # ============================================================
 
 source $ZSH/oh-my-zsh.sh
