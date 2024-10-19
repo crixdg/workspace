@@ -84,8 +84,8 @@ running make scripts.
 
 #### Documents
 
-- Set up SSH server for WSL Ubuntu in Windows: [wsl.windows.md](ssh/wsl.windows.md)
-- Analyze frequency of command in history: [analyze.history.md](terminal/analyze.history.md)
+- Set up SSH server for WSL Ubuntu in Windows: [wsl.windows.md](scripts/ssh/wsl.windows.md)
+- Analyze frequency of command in history: [analyze.history.md](scripts/analyze.history.md)
 
 #### Uncompleted yet & TODO
 
@@ -109,6 +109,6 @@ running make scripts.
 - In this guide, we're using Zsh shell. So, following this image,
   we'll understand how shell configurations are loaded.
 
-![Terminal Loading Process](terminal/terminal_load.png)
+![Terminal Loading Process](scripts/terminal/terminal_load.png)
 
 ---
