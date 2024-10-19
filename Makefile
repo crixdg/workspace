@@ -21,10 +21,10 @@ show-path:
 
 show-linux-packages:
 	command -v python3 >/dev/null 2>&1 || { echo "python3 is not installed. Installing..."; sudo apt update && sudo apt install -y python3; }
-	python3 $(MY_SETUP_REPO)/operating_system/linux/apt/show.apt.installed.py
+	python3 $(MY_SETUP_REPO)/os/linux/apt/show.apt.installed.py
 
 install-essential-linux-packages:
-	sh $(MY_SETUP_REPO)/operating_system/linux/essential.linux.sh
+	sh $(MY_SETUP_REPO)/os/linux/essential.linux.sh
 
 # -------------------------------------------------------
 # ZSH & OH MY ZSH
@@ -72,7 +72,7 @@ pull-terminal-config:
 # GITCONFIG
 
 push-gitconfig:
-	yes | cp -rf $(MY_SETUP_REPO)/version_control/git/.gitconfig ~/.gitconfig
+	yes | cp -rf $(MY_SETUP_REPO)/git/.gitconfig ~/.gitconfig
 
 pull-gitconfig:
-	yes | cp -rf ~/.gitconfig $(MY_SETUP_REPO)/version_control/git/.gitconfig
+	yes | cp -rf ~/.gitconfig $(MY_SETUP_REPO)/git/.gitconfig
