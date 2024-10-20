@@ -1,33 +1,67 @@
+# Project .gitignore file
+
 HELP.md
+
+### Build & Test ###
+out/
+dist/
+build/
 target/
-!.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
 
-### STS ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
+test-output/
+
+### Node ###
+node_modules/
+
+### Maven ###
+.mvn/
+!.mvn/wrapper/maven-wrapper.jar
+
+### Gradle ###
+.gradle
+**/build/
+!src/**/build/
+gradle-app.setting
+!gradle-wrapper.jar
+!gradle-wrapper.properties
+.gradletasknamecache
+
+### CMake ###
+CMakeFiles/
+CMakeCache.txt
+Makefile
+cmake_install.cmake
+
+### Python ###
+venv/
+__pycache__/
+*.py[cod]
+*$py.class
 
 ### IntelliJ IDEA ###
-.idea
+.idea/
 *.iws
 *.iml
 *.ipr
 
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
+### Eclipse ###
+.settings/
+.project
+.classpath
 
 ### VS Code ###
 .vscode/
+
+### Miscelaneous ###
+tmp/
+temp/
+*.tmp
+*.swp
+*.cache
+*.cover
+*.log
+*.bak
+*.backup
+*.DS_Store

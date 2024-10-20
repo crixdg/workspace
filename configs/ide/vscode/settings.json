@@ -1,75 +1,75 @@
 {
-    "editor.fontFamily": "Fira Code",
-    "editor.fontLigatures": true,
-    "editor.fontSize": 12,
-    "editor.lineHeight": 15,
-    "editor.tabSize": 2,
-    "editor.cursorStyle": "line",
-    "editor.cursorBlinking": "phase",
-    "files.eol": "\n",
-    "files.exclude": {
-        "**/.git": true,
-        "**/.svn": true,
-        "**/.hg": true,
-        "**/CVS": true,
-        "**/.DS_Store": true,
-        "**/Thumbs.db": true,
-        "**/.idea": true,
-        "**/.vscode": true,
-        "**/node_modules": true
+  "editor.fontFamily": "Fira Code",
+  "editor.fontLigatures": true,
+  "editor.fontSize": 12,
+  "editor.lineHeight": 15,
+  "editor.tabSize": 2,
+  "editor.cursorStyle": "line",
+  "editor.cursorBlinking": "phase",
+  "files.eol": "\n",
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/.DS_Store": true,
+    "**/Thumbs.db": true,
+    "**/.idea": true,
+    "**/.vscode": true,
+    "**/node_modules": true
+  },
+  "files.autoSave": "afterDelay",
+  "files.insertFinalNewline": false,
+  "files.trimTrailingWhitespace": true,
+  "explorer.autoReveal": true,
+  "markdown.preview.scrollEditorWithPreview": true,
+  "markdown.preview.scrollPreviewWithEditor": true,
+  "terminal.explorerKind": "external",
+  "terminal.external.linuxExec": "xterm",
+  "terminal.external.osxExec": "Terminal.app",
+  "terminal.external.windowsExec": "C:\\Program Files\\WSL\\wsl.exe",
+  "terminal.integrated.fontFamily": "Fira Code",
+  "terminal.integrated.fontSize": 12,
+  "terminal.integrated.profiles.windows": {
+    "WSL": {
+      "path": "C:\\Program Files\\WSL\\wsl.exe",
+      "args": []
     },
-    "files.autoSave": "afterDelay",
-    "files.insertFinalNewline": false,
-    "files.trimTrailingWhitespace": true,
-    "explorer.autoReveal": true,
-    "markdown.preview.scrollEditorWithPreview": true,
-    "markdown.preview.scrollPreviewWithEditor": true,
-    "terminal.explorerKind": "external",
-    "terminal.external.linuxExec": "xterm",
-    "terminal.external.osxExec": "Terminal.app",
-    "terminal.external.windowsExec": "C:\\Program Files\\WSL\\wsl.exe",
-    "terminal.integrated.fontFamily": "Fira Code",
-    "terminal.integrated.fontSize": 12,
-    "terminal.integrated.profiles.windows": {
-        "WSL": {
-            "path": "C:\\Program Files\\WSL\\wsl.exe",
-            "args": []
-        },
-        "PowerShell (Admin)": {
-            "path": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
-            "icon": "terminal-powershell",
-            "args": [
-                "-NoExit",
-                "-Command",
-                "Start-Process pwsh -Verb RunAs"
-            ]
-        }
+    "PowerShell (Admin)": {
+      "path": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+      "icon": "terminal-powershell",
+      "args": [
+        "-NoExit",
+        "-Command",
+        "Start-Process pwsh -Verb RunAs"
+      ]
+    }
+  },
+  "terminal.integrated.defaultProfile.windows": "WSL",
+  "window.newWindowProfile": "Default",
+  "window.openFoldersInNewWindow": "on",
+  "workbench.colorTheme": "GitHub Dark",
+  "makefile.configureOnOpen": false,
+  "workbench.iconTheme": "material-icon-theme",
+  "explorer.confirmDragAndDrop": false,
+  "cmake.options.statusBarVisibility": "visible",
+  "cmake.options.advanced": {
+    "build": {
+      "statusBarVisibility": "inherit",
+      "inheritDefault": "visible"
     },
-    "terminal.integrated.defaultProfile.windows": "WSL",
-    "window.newWindowProfile": "Default",
-    "window.openFoldersInNewWindow": "on",
-    "workbench.colorTheme": "GitHub Dark",
-    "makefile.configureOnOpen": false,
-    "workbench.iconTheme": "material-icon-theme",
-    "explorer.confirmDragAndDrop": false,
-    "cmake.options.statusBarVisibility": "visible",
-    "cmake.options.advanced": {
-        "build": {
-            "statusBarVisibility": "inherit",
-            "inheritDefault": "visible"
-        },
-        "launch": {
-            "statusBarVisibility": "inherit",
-            "inheritDefault": "visible"
-        },
-        "debug": {
-            "statusBarVisibility": "inherit",
-            "inheritDefault": "visible"
-        }
+    "launch": {
+      "statusBarVisibility": "inherit",
+      "inheritDefault": "visible"
     },
-    "cmake.pinnedCommands": [
-        "workbench.action.tasks.configureTaskRunner",
-        "workbench.action.tasks.runTask"
-    ],
-    "cmake.showOptionsMovedNotification": false
+    "debug": {
+      "statusBarVisibility": "inherit",
+      "inheritDefault": "visible"
+    }
+  },
+  "cmake.pinnedCommands": [
+    "workbench.action.tasks.configureTaskRunner",
+    "workbench.action.tasks.runTask"
+  ],
+  "cmake.showOptionsMovedNotification": false
 }

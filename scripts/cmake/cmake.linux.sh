@@ -11,5 +11,7 @@ sudo apt install gdb -y
 sudo apt install make -y
 sudo apt install ninja-build -y
 
-# lint
+# clangd
+sudo apt install clangd -y
 sudo apt install clang-tidy -y
+sudo apt install clang-format -y

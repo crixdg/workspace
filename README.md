@@ -96,11 +96,11 @@ running make scripts.
     ```
 - Auto HotKey for opening Window Terminal (can be used to open WSL by default) in Windows OS.
 - TODO
-    - [ ] Set up containerization (podman, docker, kubernetes, etc.)
-    - [ ] Set up hardware (keyboard, mouse, etc.)
-    - [ ] Set up networking
-    - [ ] Set up operating systems
-    - [ ] Set up programming languages (jdk, sdk, related tools, etc.)
+  - [ ] Set up containerization (podman, docker, kubernetes, etc.)
+  - [ ] Set up hardware (keyboard, mouse, etc.)
+  - [ ] Set up networking
+  - [ ] Set up operating systems
+  - [ ] Set up programming languages (jdk, sdk, related tools, etc.)
 
 ---
 

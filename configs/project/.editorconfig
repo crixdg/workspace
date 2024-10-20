@@ -1,6 +1,11 @@
-root = true
+root = true # If set to true, this file will be considered the top-level configuration file, and no parent configuration files will be searched.
 
-[*] # Applies to all files
+[*] # Applies the settings to all files by default.
+# [*], [*.py], [*.{js,html}], [docs/*md], [**/test/*.js], [**/*.log]
+# *: Matches any number of characters (including none).
+# ?: Matches a single character.
+# **: Matches directories recursively.
+# {}: Matches any one of the comma-separated patterns within the braces.
 
 indent_style = space
 indent_size = 2
@@ -8,3 +13,4 @@ indent_size = 2
 end_of_line = lf
 charset = utf-8
 trim_trailing_whitespace = true
+insert_final_newline = false
