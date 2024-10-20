@@ -1,0 +1,41 @@
+### IDE Settings
+- Appearance & Behavior
+  - Appearance
+    - Theme
+      - Tick → Sync with OS
+    - UI Options
+      - Tick → Compact mode
+    - Tree Views
+      - Tick → Show indent guides
+      - Tick → Use smaller indents
+    - Tool Windows
+      - Tick → Show tool window bars
+      - Tick → Widescreen tool window layour
+      - Tick → Remember size for each tool window
+  - System Settings
+    - Untick → Confirm before existing the IDE, Terminate process
+    - Untick → Reopen projects on startup, New window
+  - Data Editor and Viewer
+    - Use custom font → Fira Code, 13pt, 1.2 line height
+    - Alternate row colors
+- Editor
+  - Font
+    - Fira Code, 13pt, 1.2 line height
+    - Enable ligatures
+  - Code Style
+    - Line separator → `\n`
+    - Hard warp at 120, Wrap on typing
+    - Enable EditorConfig support
+      - If `.clang-format` is supported, turn EditorConfig off.
+  - File and Code Templates — TODO: NEED TO UPDATE
+- Version Control
+  - Commit
+    - Commit Check
+  - Confirmation
+    - When files are created → Add silently
+  - Git
+    - Git path — `\\wsl.localhost\Ubuntu\usr\bin\git` ( WSL)
+  - GitHub
+- Tools
+  - Terminal
+    - Shell path — `C:\Program Files\WSL\wsl.exe` (WSL)
