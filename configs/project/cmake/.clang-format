@@ -31,8 +31,6 @@ AlignArrayOfStructures: Right
 #   Enabled:         false
 #   AcrossEmptyLines: false
 #   AcrossComments:  false
-# AllowShortCaseLabelsOnASingleLine: false
-# AllowShortCaseExpressionOnASingleLine: false
 # AlignConsecutiveShortCaseStatements:
 #   Enabled:         false
 #   AcrossEmptyLines: false
@@ -58,11 +56,11 @@ AlignTrailingComments:
   OverEmptyLines: 0
 AllowAllArgumentsOnNextLine: true
 AllowAllParametersOfDeclarationOnNextLine: false
-#AllowBreakBeforeNoexceptSpecifier: Never
+# AllowBreakBeforeNoexceptSpecifier: Never
 AllowShortBlocksOnASingleLine: Empty
-AllowShortCaseExpressionOnASingleLine: true
+# AllowShortCaseExpressionOnASingleLine: true
 AllowShortCaseLabelsOnASingleLine: true
-AllowShortCompoundRequirementOnASingleLine: true
+# AllowShortCompoundRequirementOnASingleLine: true
 AllowShortEnumsOnASingleLine: true
 AllowShortFunctionsOnASingleLine: Empty
 AllowShortIfStatementsOnASingleLine: AllIfsAndElse
