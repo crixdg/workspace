@@ -13,11 +13,13 @@ ZSH_CUSTOM=$ZSH/custom
 
 # THEME
 
-ZSH_THEME="robbyrussell"
+# ZSH_THEME="robbyrussell"
 
 # ------------------------------------------------------------
 
 # CUSTOM THEME
+
+ZSH_THEME="baodh"
 
 # ============================================================
 
