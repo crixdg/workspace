@@ -32,6 +32,7 @@ plugins=(
     npm
     yarn
     python
+    virtualenv
 
     z
 )
