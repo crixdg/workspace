@@ -16,7 +16,9 @@ test-output/
 node_modules/
 
 ### Maven ###
-.mvn/
+.mvn/*
+!.mvn/wrapper/
+!.mvn/wrapper/maven-wrapper.properties
 !.mvn/wrapper/maven-wrapper.jar
 
 ### Gradle ###
