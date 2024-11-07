@@ -1,22 +1,43 @@
 ---
-Checks: >-
+Checks: >
   -*,
-  cppcoreguidelines-pro-type-member-init,
-  modernize-redundant-void-arg,
-  modernize-use-bool-literals,
-  modernize-use-default-member-init,
-  modernize-use-nullptr,
-  readability-redundant-member-init,
-WarningsAsErrors: ''
-HeaderFileExtensions: [ '', h, hh, hpp, hxx, inc, glsl ]
-ImplementationFileExtensions: [ c, cc, cpp, cxx, m, mm, java ]
-# Need to update
-HeaderFilterRegex: (core|doc|drivers|editor|main|modules|platform|scene|servers|tests)/
-FormatStyle: file
+  clang-diagnostic-*,
+  llvm-*,
+  misc-*,
+
+  readability-identifier-naming,
+  readability-implicit-bool-conversion,
+  readability-function-cognitive-complexity,
+
+  -misc-const-correctness,
+  -misc-non-private-member-variables-in-classes,
+  -misc-no-recursion,
+  -misc-use-anonymous-namespace,
+  -misc-include-cleaner
+
+WarningsAsErrors: ""
+
 CheckOptions:
-  cppcoreguidelines-pro-type-member-init.IgnoreArrays: true
-  cppcoreguidelines-pro-type-member-init.UseAssignment: true
-  modernize-use-bool-literals.IgnoreMacros: false
-  modernize-use-default-member-init.IgnoreMacros: false
-  modernize-use-default-member-init.UseAssignment: true
-...
+  - { key: readability-identifier-naming.NamespaceCase,          value: lower_case }
+  - { key: readability-identifier-naming.ClassCase,              value: CamelCase  }
+  - { key: readability-identifier-naming.StructCase,             value: CamelCase  }
+  - { key: readability-identifier-naming.TemplateParameterCase,  value: CamelCase  }
+  - { key: readability-identifier-naming.FunctionCase,           value: aNy_CasE  }
+  - { key: readability-identifier-naming.VariableCase,           value: lower_case }
+  - { key: readability-identifier-naming.ClassMemberCase,        value: lower_case }
+  - { key: readability-identifier-naming.ClassMemberSuffix,      value: _          }
+  - { key: readability-identifier-naming.PrivateMemberSuffix,    value: _          }
+  - { key: readability-identifier-naming.ProtectedMemberSuffix,  value: _          }
+  - { key: readability-identifier-naming.EnumConstantCase,         value: CamelCase }
+  - { key: readability-identifier-naming.EnumConstantPrefix,       value: k         }
+  - { key: readability-identifier-naming.ConstexprVariableCase,    value: CamelCase }
+  - { key: readability-identifier-naming.ConstexprVariablePrefix,  value: k         }
+  - { key: readability-identifier-naming.GlobalConstantCase,       value: CamelCase }
+  - { key: readability-identifier-naming.GlobalConstantPrefix,     value: k         }
+  - { key: readability-identifier-naming.MemberConstantCase,       value: CamelCase }
+  - { key: readability-identifier-naming.MemberConstantPrefix,     value: k         }
+  - { key: readability-identifier-naming.StaticConstantCase,       value: CamelCase }
+  - { key: readability-identifier-naming.StaticConstantPrefix,     value: k         }
+  - { key: readability-implicit-bool-conversion.AllowIntegerConditions,  value: 1   }
+  - { key: readability-implicit-bool-conversion.AllowPointerConditions,  value: 1   }
+  - { key: readability-function-cognitive-complexity.IgnoreMacros,  value: 1   }
