@@ -1,17 +1,27 @@
 # Project .gitignore file
-
 HELP.md
 
+# ======================================================= #
 ### Build & Test ###
 out/
+!**/src/main/**/out/
+!**/src/test/**/out/
+
 dist/
-build/
+!**/src/main/**/dist/
+!**/src/test/**/dist/
+
 target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
 test-output/
 
+# ======================================================= #
 ### Node ###
 node_modules/
 
@@ -36,12 +46,17 @@ CMakeCache.txt
 Makefile
 cmake_install.cmake
 
+# ======================================================= #
+### Scala ###
+.bsp/
+
 ### Python ###
 venv/
 __pycache__/
 *.py[cod]
 *$py.class
 
+# ======================================================= #
 ### IntelliJ IDEA ###
 .idea/
 *.iws
@@ -49,13 +64,32 @@ __pycache__/
 *.ipr
 
 ### Eclipse ###
-.settings/
-.project
+.apt_generated
 .classpath
+.factorypath
+.project
+.settings/
+.springBeans
+.sts4-cache
+bin/
+!**/src/main/**/bin/
+!**/src/test/**/bin/
 
 ### VS Code ###
 .vscode/
 
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+# ======================================================= #
+### Mac OS ###
+.DS_Store
+
+# ======================================================= #
 ### Miscelaneous ###
 tmp/
 temp/
@@ -66,4 +100,3 @@ temp/
 *.log
 *.bak
 *.backup
-*.DS_Store
