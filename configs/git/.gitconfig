@@ -1,14 +1,12 @@
-# Global .gitconfig file
-
 [user]
   name = Bao. Dang
-  #email = YOUR_EMAIL
+  email = YOUR_EMAIL
 
 [core]
-  #editor = YOUR_PREFERRED_EDITOR
-  #excludesfile = ~/.gitignore  # Global
   autocrlf = input
   fileMode = false
+  #editor = YOUR_PREFERRED_EDITOR
+  #excludesfile = ~/.gitignore  # Global
   #preloadIndex = true
 
 [init]
