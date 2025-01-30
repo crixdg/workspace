@@ -1,4 +1,5 @@
 ### IDE Settings
+
 - Appearance & Behavior
   - Appearance
     - Theme
