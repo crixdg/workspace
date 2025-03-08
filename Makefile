@@ -36,9 +36,9 @@ zsh-linux-install:
 
 zsh-linux-custom:
 	sh $(MY_SETUP_REPO)/scripts/terminal/zsh.custom.sh
-	yes | cp -rf $(MY_SETUP_REPO)/configs/terminal/baodh.zsh-theme ~/.oh-my-zsh/custom/themes/baodh.zsh-theme
-	yes | cp -rf $(MY_SETUP_REPO)/configs/terminal/.zshrc ~/.zshrc
-	yes | cp -rf $(MY_SETUP_REPO)/configs/terminal/.dircolors ~/.dircolors
+	yes | cp -rf $(MY_SETUP_REPO)/configs/2_terminal/baodh.zsh-theme ~/.oh-my-zsh/custom/themes/baodh.zsh-theme
+	yes | cp -rf $(MY_SETUP_REPO)/configs/2_terminal/.zshrc ~/.zshrc
+	yes | cp -rf $(MY_SETUP_REPO)/configs/2_terminal/.dircolors ~/.dircolors
 	sh $(MY_SETUP_REPO)/scripts/terminal/unnecessary.linux.sh
 	echo "Need to reload shell ..."
 
@@ -52,8 +52,8 @@ tmux-linux-install:
 
 tmux-linux-custom:
 	sh $(MY_SETUP_REPO)/scripts/tmux/tmux.custom.sh
-	yes | cp -rf $(MY_SETUP_REPO)/configs/tmux/config ~/.tmux
-	yes | cp -rf $(MY_SETUP_REPO)/configs/tmux/.tmux.conf ~/.tmux.conf
+	yes | cp -rf $(MY_SETUP_REPO)/configs/2_terminal/tmux/config ~/.tmux
+	yes | cp -rf $(MY_SETUP_REPO)/configs/2_terminal/tmux/.tmux.conf ~/.tmux.conf
 
 # -------------------------------------------------------
 # TERMINAL CONFIG
