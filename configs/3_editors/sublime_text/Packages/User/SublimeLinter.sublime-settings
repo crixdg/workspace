@@ -1,0 +1,19 @@
+// SublimeLinter Settings - User
+{
+    "linters": {
+        "clang": {
+          "disable": false,
+          "executable": "/usr/bin/clang++",
+          "selector": "source.c, source.c++, source.objc, source.objc++",
+          "args": [
+            "-std=c++20",
+            "-Wall",
+            "-Wextra",
+            "-Werror",
+            "-Wshadow",
+            "-Wconversion"
+          ]
+        }
+    },
+    "show_panel_on_save": "view"
+}

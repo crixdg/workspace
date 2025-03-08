@@ -1,0 +1,13 @@
+{
+	"bootstrapped": true,
+	"installed_packages":
+	[
+		"Clang Format",
+		"Package Control",
+		"SublimeLinter",
+		"SublimeLinter-clang",
+	],
+	"in_process_packages":
+	[
+	],
+}

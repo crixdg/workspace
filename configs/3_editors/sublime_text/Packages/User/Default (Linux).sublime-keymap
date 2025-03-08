@@ -1,0 +1,25 @@
+[
+    { "keys": ["alt+shift+f"], "command": "clang_format",
+        "context":  
+        [
+            {"key": "selector", "operator": "equal", "operand": "source.c++"}
+        ],
+    },
+
+    { "keys": ["alt+shift+f"], "command": "clang_format",
+        "context":  
+        [
+            {"key": "selector", "operator": "equal", "operand": "source.c"}
+        ],
+    },
+    
+    { "keys": ["alt+shift+f"], "command": "clang_format",
+        "context":
+        [
+            {"key": "selector", "operator": "equal", "operand": "source.js"}
+        ]
+    },
+
+    { "keys": ["alt+j"], "command": "swap_line_down" },
+    { "keys": ["alt+k"], "command": "swap_line_up" }
+]
