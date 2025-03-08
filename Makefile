@@ -75,7 +75,7 @@ pull-terminal-config:
 # GITCONFIG
 
 push-gitconfig:
-	yes | cp -rf $(MY_SETUP_REPO)/configs/git/.gitconfig ~/.gitconfig
+	yes | cp -rf $(MY_SETUP_REPO)/configs/1_git/.gitconfig ~/.gitconfig
 
 pull-gitconfig:
-	yes | cp -rf ~/.gitconfig $(MY_SETUP_REPO)/configs/git/.gitconfig
+	yes | cp -rf ~/.gitconfig $(MY_SETUP_REPO)/configs/1_git/.gitconfig

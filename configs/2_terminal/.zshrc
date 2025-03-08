@@ -3,7 +3,7 @@
 export ZDOTDIR="${ZDOTDIR:-$HOME}"
 export ZSH="$HOME/.oh-my-zsh"
 export ZSH_CACHE_DIR="$ZDOTDIR/.cache/zsh"
-[[ -d "$ZSH_CACHE_DIR" ]] || mkdir -p "$ZSH_CACHE_DIR"
+[ -d "$ZSH_CACHE_DIR" ] || mkdir -p "$ZSH_CACHE_DIR"
 export ZSH_COMPDUMP="$ZSH_CACHE_DIR/.zcompdump"
 
 autoload -Uz compinit
@@ -30,8 +30,8 @@ plugins=(
     z
 )
 
-[[ -d "$ZSH_CUSTOM/plugins/zsh-autosuggestions" ]] && plugins+=(zsh-autosuggestions)
-[[ -d "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting" ]] && plugins+=(zsh-syntax-highlighting)
+[ -d "$ZSH_CUSTOM/plugins/zsh-autosuggestions" ] && plugins+=(zsh-autosuggestions)
+[ -d "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting" ] && plugins+=(zsh-syntax-highlighting)
 # ===============================================================================
 # CONFIG
 # Uncomment the following line if pasting URLs and other text is messed up.
@@ -44,7 +44,7 @@ if command -v hostname &>/dev/null; then
     echo -ne "\033]0;IP: $ip_address\007"
 fi
 # ===============================================================================
-[[ -f "$ZSH/oh-my-zsh.sh" ]] && source "$ZSH/oh-my-zsh.sh"
+[ -f "$ZSH/oh-my-zsh.sh" ] && source "$ZSH/oh-my-zsh.sh"
 # ===============================================================================
 # ALIAS
 
@@ -72,16 +72,16 @@ fi
 # BIND_KEY
 # ===============================================================================
 # PATH
-[[ -d "$HOME/bin" ]] && export PATH="$HOME/bin:$PATH"
-[[ -d "$HOME/.local/bin" ]] && export PATH="$HOME/.local/bin:$PATH"
+[ -d "$HOME/bin" ] && export PATH="$HOME/bin:$PATH"
+[ -d "$HOME/.local/bin" ] && export PATH="$HOME/.local/bin:$PATH"
 # ===============================================================================
 # NODE VERSION MANAGER
-if [[ -d "$HOME/.nvm" ]] ; then
+if [ -d "$HOME/.nvm" ] ; then
   export NVM_DIR="$HOME/.nvm"
-  [[ -s "$NVM_DIR/nvm.sh" ]] && source "$NVM_DIR/nvm.sh"  # This loads nvm
-  [[ -s "$NVM_DIR/bash_completion" ]] && source "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+  [ -s "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/nvm.sh"  # This loads nvm
+  [ -s "$NVM_DIR/bash_completion" ] && source "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 fi
 # ===============================================================================
 # MINICONDA
-[[ -d "$HOME/miniconda3" ]] && export PATH="$HOME/miniconda3/bin:$PATH"
+[ -d "$HOME/miniconda3" ] && export PATH="$HOME/miniconda3/bin:$PATH"
 # ===============================================================================
