@@ -1,18 +1,6 @@
 curl -O https://download.sublimetext.com/sublime-text_build-4094_amd64.deb
 printf '\x00\x00\x00' | sudo dd of=sublime_text bs=1 seek=290764 count=3 conv=notrunc
 
------ vim /etc/hosts ------
-127.0.0.1 www.sublimetext.com
-127.0.0.1 sublimetext.com
-127.0.0.1 sublimehq.com
-127.0.0.1 license.sublimehq.com
-127.0.0.1 45.55.255.55
-127.0.0.1 45.55.41.223
-0.0.0.0 license.sublimehq.com
-0.0.0.0 45.55.255.55
-0.0.0.0 45.55.41.223
-
------
 Nicolas Hennion
 Single User License
 EA7E-866075
@@ -25,3 +13,14 @@ CEFB3783 B2E1BA96 71AAF7B4 AFB61B1D
 810C0D4F E1F419A3 CDA0832B 8440565A
 35BF00F6 4CA9F869 ED10E245 469C233E
 —— END LICENSE ——
+
+----- vim /etc/hosts ------
+127.0.0.1 www.sublimetext.com
+127.0.0.1 sublimetext.com
+127.0.0.1 sublimehq.com
+127.0.0.1 license.sublimehq.com
+127.0.0.1 45.55.255.55
+127.0.0.1 45.55.41.223
+0.0.0.0 license.sublimehq.com
+0.0.0.0 45.55.255.55
+0.0.0.0 45.55.41.223
