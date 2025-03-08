@@ -30,8 +30,12 @@ plugins=(
     z
 )
 
-[ -d "$ZSH_CUSTOM/plugins/zsh-autosuggestions" ] && plugins+=(zsh-autosuggestions)
-[ -d "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting" ] && plugins+=(zsh-syntax-highlighting)
+if [ -d "$ZSH_CUSTOM/plugins/zsh-autosuggestions" ] ; then
+  plugins+=(zsh-autosuggestions)
+fi
+if [ -d "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting" ] ; then
+  plugins+=(zsh-syntax-highlighting)
+fi
 # ===============================================================================
 # CONFIG
 # Uncomment the following line if pasting URLs and other text is messed up.
@@ -58,7 +62,7 @@ alias la='ls -A'
 alias l='ls -CF'
 
 ## enable color support of ls and also add handy aliases
-if command -v dircolors &>/dev/null; then
+if [ -x /usr/bin/dircolors ]; then
     test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
     alias ls='ls --color=auto'
     alias dir='dir --color=auto'
@@ -72,16 +76,22 @@ fi
 # BIND_KEY
 # ===============================================================================
 # PATH
-[ -d "$HOME/bin" ] && export PATH="$HOME/bin:$PATH"
-[ -d "$HOME/.local/bin" ] && export PATH="$HOME/.local/bin:$PATH"
+if [ -d "$HOME/bin" ] ; then
+  export PATH="$HOME/bin:$PATH"
+fi
+if [ -d "$HOME/.local/bin" ] ; then
+  export PATH="$HOME/.local/bin:$PATH"
+fi
 # ===============================================================================
 # NODE VERSION MANAGER
 if [ -d "$HOME/.nvm" ] ; then
   export NVM_DIR="$HOME/.nvm"
-  [ -s "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/nvm.sh"  # This loads nvm
-  [ -s "$NVM_DIR/bash_completion" ] && source "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+  [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 fi
 # ===============================================================================
 # MINICONDA
-[ -d "$HOME/miniconda3" ] && export PATH="$HOME/miniconda3/bin:$PATH"
+if [ -d "$HOME/miniconda3" ] ; then
+  export PATH="$HOME/miniconda3/bin:$PATH"
+fi
 # ===============================================================================
