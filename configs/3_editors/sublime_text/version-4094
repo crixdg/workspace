@@ -1,4 +1,5 @@
 curl -O https://download.sublimetext.com/sublime-text_build-4094_amd64.deb
+sudo dpkg -i ~/Downloads/sublime-text_build-4094_amd64.deb && sudo apt-get install -f
 printf '\x00\x00\x00' | sudo dd of=sublime_text bs=1 seek=290764 count=3 conv=notrunc
 
 Nicolas Hennion
