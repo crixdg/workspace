@@ -4,9 +4,10 @@
     "clang++": {
       "disable": false,
       "executable": "/usr/bin/clang++",
-      "selector": "source.c, source.c++, source.objc, source.objc++",
       "args": [
         "-std=c++20",
+        "-fsyntax-only",
+        "-fno-caret-diagnostics",
         "-Wall",
         "-Wextra",
         "-Wshadow",
