@@ -56,26 +56,19 @@ tmux-linux-custom:
 	yes | cp -rf $(MY_SETUP_REPO)/configs/2_terminal/tmux/.tmux.conf ~/.tmux.conf
 
 # -------------------------------------------------------
-# TERMINAL CONFIG
+# CONFIG
 
-push-terminal-config:
-	yes | cp -rf $(MY_SETUP_REPO)/configs/terminal/baodh.zsh-theme ~/.oh-my-zsh/custom/themes/baodh.zsh-theme
-	yes | cp -rf $(MY_SETUP_REPO)/configs/terminal/.zshrc ~/.zshrc
-	yes | cp -rf $(MY_SETUP_REPO)/configs/terminal/.dircolors ~/.dircolors
-	yes | cp -rf $(MY_SETUP_REPO)/configs/tmux/.tmux.conf ~/.tmux.conf
+push-config:
+	yes | cp -rf $(MY_SETUP_REPO)/configs/2_terminal/baodh.zsh-theme ~/.oh-my-zsh/custom/themes/baodh.zsh-theme
+	yes | cp -rf $(MY_SETUP_REPO)/configs/2_terminal/.zshrc ~/.zshrc
+	yes | cp -rf $(MY_SETUP_REPO)/configs/1_git/.gitconfig ~/.gitconfig
 	echo "Need to reload shell ..."
 
-pull-terminal-config:
-	yes | cp -rf ~/.oh-my-zsh/custom/themes/baodh.zsh-theme $(MY_SETUP_REPO)/configs/terminal/baodh.zsh-theme
-	yes | cp -rf ~/.zshrc $(MY_SETUP_REPO)/configs/terminal/.zshrc
-	yes | cp -rf ~/.dircolors $(MY_SETUP_REPO)/configs/terminal/.dircolors
-	yes | cp -rf ~/.tmux.conf $(MY_SETUP_REPO)/configs/tmux/.tmux.conf
-
-# -------------------------------------------------------
-# GITCONFIG
-
-push-gitconfig:
-	yes | cp -rf $(MY_SETUP_REPO)/configs/1_git/.gitconfig ~/.gitconfig
-
-pull-gitconfig:
+pull-config:
 	yes | cp -rf ~/.gitconfig $(MY_SETUP_REPO)/configs/1_git/.gitconfig
+	yes | cp -rf ~/.oh-my-zsh/custom/themes/baodh.zsh-theme $(MY_SETUP_REPO)/configs/2_terminal/baodh.zsh-theme
+	yes | cp -rf ~/.zshrc $(MY_SETUP_REPO)/configs/2_terminal/.zshrc
+	yes | cp -rf ~/.clang-format $(MY_SETUP_REPO)/configs/2_terminal/.clang-format
+	yes | cp -rf ~/.gdbinit $(MY_SETUP_REPO)/configs/2_terminal/.gdbinit
+	#yes | cp -rf ~/.dircolors $(MY_SETUP_REPO)/configs/2_terminal/.dircolors
+
