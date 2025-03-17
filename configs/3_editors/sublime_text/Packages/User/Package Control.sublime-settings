@@ -1,13 +1,16 @@
 {
 	"bootstrapped": true,
+	"in_process_packages":
+	[
+	],
 	"installed_packages":
 	[
+		"AutoFoldCode",
 		"Clang Format",
+		"GitGutter",
 		"Package Control",
 		"SublimeLinter",
 		"SublimeLinter-clang",
-	],
-	"in_process_packages":
-	[
+		"SublimeLinter-shellcheck",
 	],
 }

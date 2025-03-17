@@ -1,0 +1,5 @@
+{
+  "cmd": ["shfmt", "-w", "$file"],
+  "selector": "source.shell",
+  "working_dir": "$file_path"
+}

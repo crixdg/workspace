@@ -1,19 +1,23 @@
 // SublimeLinter Settings - User
 {
-    "linters": {
-        "clang": {
-          "disable": false,
-          "executable": "/usr/bin/clang++",
-          "selector": "source.c, source.c++, source.objc, source.objc++",
-          "args": [
-            "-std=c++20",
-            "-Wall",
-            "-Wextra",
-            "-Werror",
-            "-Wshadow",
-            "-Wconversion"
-          ]
-        }
+  "linters": {
+    "clang++": {
+      "disable": false,
+      "executable": "/usr/bin/clang++",
+      "selector": "source.c, source.c++, source.objc, source.objc++",
+      "args": [
+        "-std=c++20",
+        "-Wall",
+        "-Wextra",
+        "-Wshadow",
+        "-Wno-parentheses"
+      ]
     },
-    "show_panel_on_save": "view"
+    "shellcheck": {
+      "executable": "shellcheck",
+      "args": [],
+      "selector": "source.shell"
+    }
+  },
+  "show_panel_on_save": "view"
 }
