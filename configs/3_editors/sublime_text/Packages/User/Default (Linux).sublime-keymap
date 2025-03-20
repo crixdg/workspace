@@ -21,5 +21,10 @@
     },
 
     { "keys": ["alt+j"], "command": "swap_line_down" },
-    { "keys": ["alt+k"], "command": "swap_line_up" }
+    { "keys": ["alt+k"], "command": "swap_line_up" },
+
+    { "keys": ["ctrl+k", "ctrl+k"],
+      "command": "sublime_linter_toggle_highlights",
+      "args": {"what": ["squiggles"]}
+    },
 ]

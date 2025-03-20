@@ -3,7 +3,7 @@
   "linters": {
     "clang++": {
       "disable": false,
-      "executable": "/usr/bin/clang++",
+      "executable": "clang++",
       "args": [
         "-std=c++20",
         "-fsyntax-only",
@@ -11,14 +11,24 @@
         "-Wall",
         "-Wextra",
         "-Wshadow",
-        "-Wno-parentheses"
+        "-Woverflow", 
+        // "-Wconversion",
+        // "-Wno-sign-compare",
+        // "-Wno-parentheses",
       ]
     },
     "shellcheck": {
       "executable": "shellcheck",
-      "args": [],
-      "selector": "source.shell"
+      "selector": "source.shell",
+      "args": []
     }
   },
-  "show_panel_on_save": "view"
+
+  "show_panel_on_save": "view",
+  "highlights.start_hidden": ["squiggles", "phantoms"],
+  "styles": [
+    {
+      "mark_style": "stippled_underline"
+    }
+  ]
 }
