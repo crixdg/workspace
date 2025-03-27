@@ -13,8 +13,8 @@
         "-Wshadow",
         "-Woverflow", 
         // "-Wconversion",
-        // "-Wno-sign-compare",
-        // "-Wno-parentheses",
+        "-Wno-sign-compare",
+        "-Wno-parentheses",
       ]
     },
     "shellcheck": {
@@ -25,7 +25,6 @@
   },
 
   "show_panel_on_save": "view",
-  "highlights.start_hidden": ["squiggles", "phantoms"],
   "styles": [
     {
       "mark_style": "stippled_underline"

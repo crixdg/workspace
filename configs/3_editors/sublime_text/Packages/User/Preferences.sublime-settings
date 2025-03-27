@@ -4,12 +4,15 @@
 
 	"font_face": "Fira Code",
 	"font_size": 10,
-	"tab_size": 4,
-	"translate_tabs_to_spaces": false,
-
-	"shift_tab_unindent": true,
 
 	"margin": 0,
+	"tab_size": 4,
+	"translate_tabs_to_spaces": false,
+	"word_wrap": "true",
+	"shift_tab_unindent": true,
+
+	"always_show_minimap_viewport": true,
+
 	"match_brackets_content": false,
 
 	"save_on_focus_lost": true,
@@ -22,23 +25,22 @@
 	"highlight_modified_tabs": true,
 	"enable_tab_scrolling": false,
 	"hide_new_tab_button": true,
+
 	"show_encoding": true,
 	"show_line_endings": true,
-	"scroll_past_end": true,
-	"scroll_context_lines": 5,
-	"word_wrap": "true",
 
-	"remember_layout": true,
+	"scroll_past_end": false,
+	"scroll_context_lines": 5,
+
 	"show_full_path": false,
 	"overlay_scroll_bars": "enabled",
 
-	"gpu_window_buffer": true,
-
+	"index_files": true,
 	"auto_complete": false,
 	
-	"ignored_packages": [
-	],
-	"index_files": true,
+	"close_windows_when_empty": true,
+	"close_deleted_files": true,
 
-	"vintage_start_in_command_mode": true,
+	"ignored_packages": [],
+	"vintage_start_in_command_mode": true
 }

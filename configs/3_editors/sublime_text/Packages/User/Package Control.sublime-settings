@@ -5,7 +5,6 @@
 	],
 	"installed_packages":
 	[
-		"AutoFoldCode",
 		"Clang Format",
 		"GitGutter",
 		"Package Control",
