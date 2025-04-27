@@ -4,9 +4,6 @@
 
 # Except for Windows-only / Visual Studio files
 *.bat eol=crlf
-*.sln eol=crlf
-*.csproj eol=crlf
-misc/msvs/*.template eol=crlf
 
 # The above only works properly for Git 2.10+, so for older versions
 # we need to manually list the binary files we don't want modified.

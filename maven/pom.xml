@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?> <!-- XML Declaration -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<modelVersion>4.0.0</modelVersion> <!-- Version of the POM model, not the Maven version -->
+
+	<!-- 1. BASIC COORDINATES -->
+	<groupId>vn.keiron.practices</groupId> <!-- Organization -->
+	<artifactId>templates</artifactId> <!-- Project name -->
+	<version>0.0.1</version> <!-- Current version -->
+	<packaging>jar</packaging> <!-- jar / pom -->
+
+	<name>App Name</name> <!-- Human-friendly name -->
+	<description>App Description</description> <!-- Optional -->
+	<url>https://app.com</url> <!-- Project homepage -->
+
+	<!-- 2. PARENT (optional, for inheritance)-->
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>3.4.5</version>
+		<relativePath /> <!-- lookup from repository -->
+	</parent>
+
+	<!-- 3. PROPERTIES -->
+	<properties>
+		<java.version>17</java.version> <!-- Java version -->
+		<spring.boot.version>3.4.0</spring.boot.version> <!-- Manage versions easily -->
+		<maven.compiler.source>${java.version}</maven.compiler.source> <!-- Compiler -->
+		<maven.compiler.target>${java.version}</maven.compiler.target>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
+	<!-- 4. DEPENDENCIES -->
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+			<version>${spring.boot.version}</version>
+		</dependency>
+	</dependencies>
+
+	<!-- 5. DEPENDENCY MANAGEMENT (for multi-module projects) -->
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-dependencies</artifactId>
+				<version>${spring.boot.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<!-- 6. BUILD -->
+	<build>
+		<finalName>${project.artifactId}</finalName> <!-- Final jar name -->
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+
+		<!-- Plugin Management (optional if you want to force plugin versions) -->
+		<pluginManagement>
+			<plugins>
+				<!-- Force common versions across modules -->
+			</plugins>
+		</pluginManagement>
+	</build>
+
+	<!-- 7. REPOSITORIES (Optional, when using private Nexus) -->
+	<repositories>
+		<repository>
+			<id>central</id>
+			<url>https://repo.maven.apache.org/maven2</url>
+		</repository>
+		<repository>
+			<id>my-company-nexus</id>
+			<url>https://nexus.mycompany.com/repository/maven-public/</url>
+		</repository>
+	</repositories>
+
+	<pluginRepositories>
+		<pluginRepository>
+			<id>central</id>
+			<url>https://repo.maven.apache.org/maven2</url>
+		</pluginRepository>
+	</pluginRepositories>
+
+	<!-- 8. PROFILES (Optional) -->
+	<profiles>
+		<profile>
+			<id>dev</id>
+			<properties>
+				<env>dev</env>
+			</properties>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+		</profile>
+		<profile>
+			<id>prod</id>
+			<properties>
+				<env>prod</env>
+			</properties>
+		</profile>
+	</profiles>
+
+	<!-- 9. REPORTING (Optional, like JaCoCo reports) -->
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.8.11</version>
+			</plugin>
+		</plugins>
+	</reporting>
+
+</project>
