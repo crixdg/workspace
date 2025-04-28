@@ -1,4 +1,4 @@
-### Install kubectl
+# kubectl
 
   ```shell
   curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
@@ -8,15 +8,15 @@
   rm -f kubectl kubectl.sha256
   kubectl version --client
   ```
-
-### Install minikube
+---
+# minikube
 
   ```shell
   curl -LO https://github.com/kubernetes/minikube/releases/latest/download/minikube-linux-amd64
   sudo install minikube-linux-amd64 /usr/local/bin/minikube && rm minikube-linux-amd64
   ```
-
-### Install containerd
+---
+# containerd
 
   ```shell
   curl -LO https://github.com/containerd/containerd/releases/download/v2.0.5/containerd-2.0.5-linux-amd64.tar.gz
@@ -54,6 +54,8 @@
   sudo tar Cxzvf /opt/cni/bin cni-plugins-linux-amd64-v1.7.1.tgz
   rm -rf cni-plugins-linux-amd64-v1.7.1.tgz cni-plugins-linux-amd64-v1.7.1.tgz.sha256
   ```
+---
+# Docker
 
 ### Install docker dependencies
 
@@ -79,6 +81,17 @@
   sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
   sudo usermod -aG docker $USER && newgrp docker
   ```
+---
+# Helm
+
+```shell
+curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+chmod 700 get_helm.sh
+./get_helm.sh
+rm -f get_helm.sh
+```
+---
+# Setup Minikube
 
 ### Start minikube
 
@@ -93,13 +106,4 @@ minikube addons enable metrics-server
 minikube addons enable dashboard
 minikube dashboard
 ```
-
-### Install helm
-
-```shell
-curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
-chmod 700 get_helm.sh
-./get_helm.sh
-rm -f get_helm.sh
-```
-
+---
