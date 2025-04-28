@@ -83,6 +83,16 @@ chmod 700 get_helm.sh
 ./get_helm.sh
 rm -f get_helm.sh
 ```
+
+### Add completion for helm
+```shell
+mkdir -p ~/.config/zsh/completions
+helm completion zsh > ~/.config/zsh/completions/helm.zsh
+echo '# HELM' >> ~/.zshrc
+echo 'source ~/.config/zsh/completions/helm.zsh' >> ~/.zshrc
+source ~/.zshrc
+```
+
 ---
 # Setup Minikube
 
@@ -95,6 +105,10 @@ minikube start --profile=local-k8s --container-runtime=containerd --driver=docke
 ```shell
 minikube addons enable metrics-server
 minikube addons enable dashboard
+```
+
+### Run dashboard
+```shell
 minikube dashboard
 ```
 ---
