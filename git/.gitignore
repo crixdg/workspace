@@ -2,6 +2,10 @@ HELP.md
 
 # ======================================================= #
 ### Build & Test ###
+bin/
+!**/src/main/**/bin/
+!**/src/test/**/bin/
+
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
@@ -69,9 +73,6 @@ __pycache__/
 .settings/
 .springBeans
 .sts4-cache
-bin/
-!**/src/main/**/bin/
-!**/src/test/**/bin/
 
 ### VS Code ###
 .vscode/
