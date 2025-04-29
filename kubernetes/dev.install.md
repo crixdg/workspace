@@ -98,7 +98,7 @@ source ~/.zshrc
 
 ### Start minikube
 ```shell
-minikube start --profile=local-k8s --container-runtime=containerd --driver=docker
+minikube start --container-runtime=containerd --driver=docker
 ```
 
 ### Enable dashboard
