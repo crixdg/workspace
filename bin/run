@@ -1,0 +1,246 @@
+#!/bin/bash
+
+err_echo() {
+	echo "$@" >&2
+}
+
+usage() {
+	err_echo "Usage: run [options] <source_file> [flags]"
+	err_echo ""
+	err_echo "Options:"
+	err_echo "	-t,	--time		Measure and display the runtime."
+	err_echo "	-g,	--gdb		Debug with GNU Debugger."
+	err_echo "	-i,	--info		Enable INFO macro."
+	err_echo "	-s,	--samples	Run with generated samples (*.in.txt) then comparing with expected outputs (*.out.txt))."
+	err_echo "				The prefix file name of (*.in.txt)), (*.out.txt)) is same as the executable."
+	err_echo ""
+	err_echo "Flags:"
+	err_echo "	Any additional flags will be passed directly to g++ compilation."
+	err_echo "	Example: run program -lcurl -pthread"
+	exit 1
+}
+
+compile() {
+	local _compile_options="-std=c++20"
+	local _warning_flags=("-Wall" "-Wextra" "-Wno-sign-compare" "-Wno-parentheses")
+	local _optimization_flags="-O2"
+	# local _debugging_options="-g"
+	# local _preprocessor_defines="-DDEBUG"
+	# local _include_paths=""
+	# local _libraries=""
+	local _prefix_flag_count=$3
+	local _prefix_flags=("${@:4:$_prefix_flag_count}")
+	local _source_file="$1"
+	local _binary_file="$2"
+	local _postfix_flags=("${@:4+$_prefix_flag_count}")
+
+	if [[ -z "$_source_file" ]]; then
+		err_echo "Error: No source file provided!"
+		return 1
+	fi
+
+	if [[ ! "$_source_file" =~ ^.+\.cpp$ || ! -f "$_source_file" ]]; then
+		err_echo "Error: File '$_source_file' is invalid!"
+		return 1
+	fi
+
+	if [[ -z "$_binary_file" ]]; then
+		err_echo "Error: No executable file provided!"
+		return 1
+	fi
+
+	check_todo "$_source_file"
+
+	if [[ -f "$_binary_file" && "$_source_file" -ot "$_binary_file" && " ${_prefix_flags[*]} " != *" -g "* ]]; then
+		_info_wanted=$([[ " ${_prefix_flags[*]} " == *" -DINFO "* ]] && echo 1 || echo 0)
+		_info_enabled=$({ strings "${_binary_file}" | grep -q "debug logging"; } && echo 1 || echo 0)
+		if [[ $_info_wanted -eq $_info_enabled ]]; then
+			echo "$_binary_file"
+			return 0
+		fi
+	fi
+
+	if [[ " ${_prefix_flags[*]} " == *" -g "* ]]; then
+		_optimization_flags="-O0"
+	fi
+
+	err_echo "Compiling $_source_file with C++20..."
+
+	# "$_debugging_options" $_preprocessor_defines "$_include_paths" "$_libraries"
+	if g++ "$_compile_options" "${_warning_flags[@]}" "$_optimization_flags" \
+		"${_prefix_flags[@]}" "$_source_file" -o "$_binary_file" "${_postfix_flags[@]}"; then
+		echo "$_binary_file"
+	else
+		return 1
+	fi
+}
+
+check_todo() {
+	local _source_file="$1"
+	local _todo_lines
+
+	_todo_lines=$(grep -n "TODO" "$_source_file" 2>/dev/null)
+	if [[ -n "$_todo_lines" ]]; then
+		err_echo -e "\e[38;5;214mWarning:\e[0m TODOs found in '$_source_file'!"
+		err_echo "$_todo_lines"
+		err_echo ""
+	fi
+}
+
+run() {
+	local _binary_file="$1"
+	shift
+	local _commands=("$@")
+
+	if [[ -z "$_binary_file" ]]; then
+		err_echo "Error: No executable file provided!"
+		return 1
+	fi
+
+	err_echo "Running $_binary_file with C++20..."
+
+	_commands+=("./$_binary_file")
+	eval "${_commands[*]}"
+}
+
+run_with_sample() {
+	local _binary_file="$1"
+	local _index="$2"
+	local _input_file="$3"
+
+	if [[ -z "$_input_file" ]]; then
+		err_echo "Error: No input sample ($_index) provided!"
+		return 1
+	fi
+	if [[ ! "$_input_file" =~ ^.+\.in.txt$ || ! -f "$_input_file" ]]; then
+		err_echo "Error: File '$_input_file' is invalid!"
+		return 1
+	fi
+
+	local _output_file="${_input_file%.in.txt}.out.txt"
+	if [[ -z "$_output_file" ]]; then
+		err_echo "Error: No output sample ($_index) provided!"
+		return 1
+	fi
+	if [[ ! "$_output_file" =~ ^.+\.out.txt$ || ! -f "$_output_file" ]]; then
+		err_echo "Error: File '$_output_file' is invalid!"
+		return 1
+	fi
+
+	err_echo "Running $_binary_file on the '$_index' sample with C++20..."
+
+	local _expected_output
+	local _actual_output
+	local _diff_output
+
+	_expected_output=$(cat "$_output_file")
+	_actual_output=$(./"$_binary_file" <"$_input_file" 2> >(cat >&2))
+	_diff_output=$(diff -y <(echo "$_expected_output") <(echo "$_actual_output"))
+
+	if [[ "$_expected_output" != "$_actual_output" ]]; then
+		local _failed_output_file="${_output_file%.out.txt}.failed.out.txt"
+		echo "$_actual_output" >"$_failed_output_file"
+		local _diff_hint="\e[1m\e[3mvimdiff $_output_file $_failed_output_file\e[0m"
+		sample_failed_diffs+=("\t$_index: $_diff_hint\n")
+
+		err_echo "--------------------------------------"
+		err_echo "Test failed for $_input_file!"
+		err_echo -e "Check with '$_diff_hint'"
+		err_echo "----------------"
+		err_echo "Expected vs Got:"
+		err_echo "$_diff_output"
+		err_echo "--------------------------------------"
+
+		return 1
+	fi
+
+	return 0
+}
+
+modes=()
+commands=()
+prefix_flags=()
+prefix_count=0
+
+test_samples=0
+
+while [[ $# -gt 0 && $1 == -* ]]; do
+	case "$1" in
+	-t | --time)
+		commands+=("time")
+		shift
+		;;
+	-g | --gdb)
+		modes+=("\e[1m[GDB]\e[0m")
+		prefix_flags+=("-g")
+		((prefix_count++))
+		commands+=("gdb -q")
+		shift
+		;;
+	-i | --info)
+		modes+=("\e[1m[INFO]\e[0m")
+		prefix_flags+=("-DINFO")
+		((prefix_count++))
+		shift
+		;;
+	-s | --samples)
+		modes+=("\e[1m[SAMPLES TESTING]\e[0m")
+		test_samples=1
+		shift
+		;;
+	*)
+		err_echo "Error: Unknown option '$1'!"
+		usage
+		;;
+	esac
+done
+
+if [[ $# -lt 1 ]]; then
+	usage
+fi
+
+source_file="$1"
+binary_file="${source_file%.cpp}.out"
+shift
+
+if [[ ${#modes[@]} -ne 0 ]]; then
+	err_echo -e "${modes[@]}"
+fi
+
+if ! compiled_file=$(compile "$source_file" "$binary_file" $prefix_count "${prefix_flags[@]}" "$@"); then
+	err_echo "Error: Compilation failed!"
+	exit 1
+fi
+
+if [[ $test_samples -ne 0 ]]; then
+	sample_total=0
+	sample_failed=0
+	sample_failed_diffs=()
+
+	for input_file in "${compiled_file%.out}-"*.in.txt; do
+		if [[ -f "$input_file" ]]; then
+			((sample_total++))
+			sample_index="${input_file#"${compiled_file%.out}-"}"
+			sample_index="${sample_index%%.*}"
+			run_with_sample "$compiled_file" "$sample_index" "$input_file" || ((sample_failed++))
+		fi
+	done
+
+	err_echo ""
+	if [[ sample_failed -ne 0 ]]; then
+		err_echo -e "\e[1m\e[31m$((sample_total - sample_failed)) / $sample_total tests passed.\e[0m"
+	else
+		err_echo -e "\e[1m\e[32m$((sample_total - sample_failed)) / $sample_total tests passed.\e[0m"
+	fi
+
+	if [[ ${#sample_failed_diffs[@]} -ne 0 ]]; then
+		err_echo -e "${sample_failed_diffs[@]}"
+	fi
+else
+	if ! run "$compiled_file" "${commands[@]}"; then
+		err_echo "-- Run failed."
+		exit 1
+	fi
+fi
+
+err_echo "-- Done."

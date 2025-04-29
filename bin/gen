@@ -1,0 +1,58 @@
+#!/bin/bash
+
+err_echo() {
+	echo "$@" >&2
+}
+
+usage() {
+	err_echo "Usage: gen <source_file> <postfix>"
+	exit 1
+}
+
+if [[ $# -lt 2 ]]; then
+	usage
+fi
+
+source_file="$1"
+postfix="$2"
+
+if [[ -z "$source_file" ]]; then
+	err_echo "Error: No source file provided!"
+	usage
+fi
+
+if [[ ! "$source_file" =~ ^.+\.cpp$ || ! -f "$source_file" ]]; then
+	err_echo "Error: File '$source_file' is invalid!"
+	usage
+fi
+
+if [[ -z "$postfix" ]]; then
+	err_echo "Error: No postfix provided!"
+	usage
+fi
+
+input_file="${source_file%.cpp}-$postfix.in.txt"
+output_file="${source_file%.cpp}-$postfix.out.txt"
+
+if [[ -f "$input_file" || -f "$output_file" ]]; then
+	read -r -p "$input_file or $output_file already exists. Do you want to overwrite them? (y/n): " choice
+	case "$choice" in
+	y | Y)
+		err_echo "Overwriting $input_file and $output_file"
+		rm -f "$input_file" "$output_file"
+		touch "$input_file" "$output_file"
+		subl "$input_file" "$output_file"
+		;;
+	n | N)
+		err_echo "Keeping existing $input_file and $output_file"
+		subl "$input_file" "$output_file"
+		;;
+	*)
+		err_echo "Invalid option. Exiting."
+		exit 1
+		;;
+	esac
+else
+	touch "$input_file" "$output_file"
+	subl "$input_file" "$output_file"
+fi

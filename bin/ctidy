@@ -1,0 +1,45 @@
+#!/bin/bash
+
+err_echo() {
+	echo "$@" >&2
+}
+
+usage() {
+	err_echo "Usage: ctidy <source_file> [flags]"
+	err_echo ""
+	err_echo "Flags:"
+	err_echo "  Any additional flags will be passed directly to g++ compilation."
+	err_echo "  Example: run program -lcurl -pthread"
+	exit 1
+}
+
+if [[ $# -lt 1 ]]; then
+	usage
+fi
+
+source_file="$1"
+shift
+
+if [[ -z "$source_file" ]]; then
+	err_echo "Error: No source file provided!"
+	return 1
+fi
+
+if [[ ! "$source_file" =~ ^.+\.cpp$ || ! -f "$source_file" ]]; then
+	err_echo "Error: File '$source_file' is invalid!"
+	return 1
+fi
+
+todo_lines=$(grep "TODO" "$source_file" 2>/dev/null)
+if [[ -n "$todo_lines" ]]; then
+	err_echo -e "\e[38;5;214mWarning:\e[0m TODOs found in '$source_file':"
+	err_echo "$todo_lines"
+	err_echo ""
+fi
+
+err_echo "Checking $source_file syntax with C++14."
+
+flags=("$@")
+clang++ -std=c++14 -fsyntax-only -Wall -Wextra -Wno-sign-compare -Wno-parentheses "$source_file" "${flags[@]}"
+
+err_echo "-- Done."
