@@ -1,5 +1,4 @@
-<code_scheme name="Keirond - Java" version="173">
-  <option name="LINE_SEPARATOR" />
+<code_scheme name="keiron_java" version="173">
   <option name="SOFT_MARGINS" value="100" />
   <JavaCodeStyleSettings version="1">
     <option name="ANNOTATION_PARAMETER_WRAP" value="1" />
@@ -14,6 +13,9 @@
     <option name="JD_ADD_BLANK_AFTER_RETURN" value="true" />
     <option name="JD_USE_THROWS_NOT_EXCEPTION" value="false" />
   </JavaCodeStyleSettings>
+  <editorconfig>
+    <option name="ENABLED" value="false" />
+  </editorconfig>
   <codeStyleSettings language="JAVA">
     <option name="RIGHT_MARGIN" value="100" />
     <option name="KEEP_LINE_BREAKS" value="false" />

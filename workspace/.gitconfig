@@ -1,0 +1,19 @@
+[user]
+  #name = Bao Dang
+  #email = @gmail.com
+
+[core]
+  autocrlf = input
+  fileMode = false
+
+[init]
+  defaultBranch = main
+
+[credential]
+  helper = store
+
+[alias]
+  st = status
+  ci = commit
+  co = checkout
+  br = branch

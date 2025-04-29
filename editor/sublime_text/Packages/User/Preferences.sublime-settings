@@ -20,6 +20,7 @@
 
 	"caret_extra_top": 0,
 	"caret_extra_bottom": 0,
+	"hardware_acceleration": "opengl",
 
 	"show_tab_close_buttons": false,
 	"highlight_modified_tabs": true,
@@ -29,7 +30,7 @@
 	"show_encoding": true,
 	"show_line_endings": true,
 
-	"scroll_past_end": false,
+	"scroll_past_end": true,
 	"scroll_context_lines": 5,
 
 	"show_full_path": false,
@@ -41,6 +42,7 @@
 	"close_windows_when_empty": true,
 	"close_deleted_files": true,
 
-	"ignored_packages": [],
-	"vintage_start_in_command_mode": true
+	"ignored_packages": [
+	],
+	"vintage_start_in_command_mode": true,
 }
