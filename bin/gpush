@@ -1,8 +1,8 @@
 #!/bin/bash
 
-git add $(git rev-parse --show-toplevel)
+git add "$(git rev-parse --show-toplevel)"
 echo "-- file changed -----------------"
 git diff --name-only --cached | cat
 echo "---------------------------------"
-git commit -m "up"
+git commit -m "up $(date -u)"
 git push
