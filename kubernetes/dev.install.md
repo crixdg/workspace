@@ -71,7 +71,7 @@ sudo apt-get update
 
 ### Install docker
 ```shell
-sudo apt-get install docker-ce docker-ce-cli docker-buildx-plugin docker-compose-plugin
+sudo apt install docker-ce docker-ce-cli docker-buildx-plugin docker-compose-plugin
 sudo usermod -aG docker $USER && newgrp docker
 ```
 ---
