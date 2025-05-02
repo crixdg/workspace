@@ -1,6 +1,3 @@
 .idea
-*.iws
-*.iml
-*.ipr
-
 .vscode/
+.project
