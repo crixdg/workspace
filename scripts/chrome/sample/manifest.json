@@ -1,0 +1,17 @@
+{
+  "name": "Academy Link Extractor",
+  "version": "1.0",
+  "manifest_version": 3,
+  "description": "Extract Codeforces problem links on key press",
+  "permissions": ["scripting"],
+  "host_permissions": ["https://youkn0wwho.academy/*"],
+  "content_scripts": [
+    {
+      "matches": ["https://youkn0wwho.academy/*"],
+      "js": ["content.js"]
+    }
+  ],
+  "action": {
+    "default_title": "Link Extractor"
+  }
+}
