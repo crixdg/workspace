@@ -29,6 +29,7 @@
     <option name="RIGHT_MARGIN" value="100" />
     <option name="KEEP_LINE_BREAKS" value="false" />
     <option name="KEEP_FIRST_COLUMN_COMMENT" value="false" />
+    <option name="KEEP_CONTROL_STATEMENT_IN_ONE_LINE" value="false" />
     <option name="KEEP_BLANK_LINES_IN_DECLARATIONS" value="1" />
     <option name="KEEP_BLANK_LINES_IN_CODE" value="1" />
     <option name="KEEP_BLANK_LINES_BETWEEN_PACKAGE_DECLARATION_AND_HEADER" value="1" />
@@ -39,6 +40,7 @@
     <option name="BLANK_LINES_BEFORE_CLASS_END" value="1" />
     <option name="CASE_STATEMENT_ON_NEW_LINE" value="false" />
     <option name="ALIGN_MULTILINE_PARAMETERS" value="false" />
+    <option name="ALIGN_MULTILINE_RESOURCES" value="false" />
     <option name="ALIGN_MULTILINE_FOR" value="false" />
     <option name="ALIGN_MULTILINE_ASSIGNMENT" value="true" />
     <option name="ALIGN_MULTILINE_TERNARY_OPERATION" value="true" />
@@ -63,9 +65,11 @@
     <option name="VARIABLE_ANNOTATION_WRAP" value="2" />
     <option name="ENUM_CONSTANTS_WRAP" value="2" />
     <option name="WRAP_ON_TYPING" value="0" />
-    <option name="SOFT_MARGINS" value="140" />
+    <option name="SOFT_MARGINS" value="120" />
     <indentOptions>
-      <option name="CONTINUATION_INDENT_SIZE" value="1" />
+      <option name="INDENT_SIZE" value="2" />
+      <option name="CONTINUATION_INDENT_SIZE" value="4" />
+      <option name="TAB_SIZE" value="2" />
       <option name="USE_RELATIVE_INDENTS" value="true" />
     </indentOptions>
   </codeStyleSettings>
