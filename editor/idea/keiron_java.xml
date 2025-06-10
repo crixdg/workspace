@@ -1,4 +1,4 @@
-<code_scheme name="keiron_java" version="173">
+<code_scheme name="keiron-java" version="173">
   <option name="SOFT_MARGINS" value="100" />
   <JavaCodeStyleSettings version="1">
     <option name="ANNOTATION_PARAMETER_WRAP" value="1" />
@@ -13,9 +13,18 @@
     <option name="JD_ADD_BLANK_AFTER_RETURN" value="true" />
     <option name="JD_USE_THROWS_NOT_EXCEPTION" value="false" />
   </JavaCodeStyleSettings>
+  <Properties>
+    <option name="KEEP_BLANK_LINES" value="true" />
+  </Properties>
+  <ScalaCodeStyleSettings>
+    <option name="MULTILINE_STRING_CLOSING_QUOTES_ON_NEW_LINE" value="true" />
+  </ScalaCodeStyleSettings>
   <editorconfig>
     <option name="ENABLED" value="false" />
   </editorconfig>
+  <yaml>
+    <option name="AUTOINSERT_SEQUENCE_MARKER" value="false" />
+  </yaml>
   <codeStyleSettings language="JAVA">
     <option name="RIGHT_MARGIN" value="100" />
     <option name="KEEP_LINE_BREAKS" value="false" />
@@ -24,6 +33,7 @@
     <option name="KEEP_BLANK_LINES_IN_CODE" value="1" />
     <option name="KEEP_BLANK_LINES_BETWEEN_PACKAGE_DECLARATION_AND_HEADER" value="1" />
     <option name="KEEP_BLANK_LINES_BEFORE_RBRACE" value="1" />
+    <option name="BLANK_LINES_AROUND_FIELD" value="1" />
     <option name="BLANK_LINES_BEFORE_METHOD_BODY" value="1" />
     <option name="BLANK_LINES_AFTER_CLASS_HEADER" value="1" />
     <option name="BLANK_LINES_BEFORE_CLASS_END" value="1" />
@@ -42,7 +52,6 @@
     <option name="METHOD_CALL_CHAIN_WRAP" value="1" />
     <option name="BINARY_OPERATION_WRAP" value="1" />
     <option name="TERNARY_OPERATION_WRAP" value="1" />
-    <option name="TERNARY_OPERATION_SIGNS_ON_NEXT_LINE" value="true" />
     <option name="KEEP_SIMPLE_BLOCKS_IN_ONE_LINE" value="true" />
     <option name="KEEP_SIMPLE_METHODS_IN_ONE_LINE" value="true" />
     <option name="KEEP_SIMPLE_LAMBDAS_IN_ONE_LINE" value="true" />
@@ -54,9 +63,13 @@
     <option name="VARIABLE_ANNOTATION_WRAP" value="2" />
     <option name="ENUM_CONSTANTS_WRAP" value="2" />
     <option name="WRAP_ON_TYPING" value="0" />
-    <option name="SOFT_MARGINS" value="120" />
+    <option name="SOFT_MARGINS" value="140" />
     <indentOptions>
+      <option name="CONTINUATION_INDENT_SIZE" value="1" />
       <option name="USE_RELATIVE_INDENTS" value="true" />
     </indentOptions>
+  </codeStyleSettings>
+  <codeStyleSettings language="yaml">
+    <option name="SOFT_MARGINS" value="120" />
   </codeStyleSettings>
 </code_scheme>
