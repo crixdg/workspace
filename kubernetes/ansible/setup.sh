@@ -4,12 +4,10 @@ INVENTORY_FILE="inventory/hosts"
 SSH_KEY_PATH="$HOME/.ssh/id_rsa.pub"
 
 while IFS= read -r line || [[ -n "$line" ]]; do
-	# Skip blank lines or section headers like [masters]
 	if [[ "$line" =~ ^\s*$ || "$line" =~ ^\s*\[.*\]\s*$ ]]; then
 		continue
 	fi
 
-	echo "$line"
 	ip=$(echo "$line" | sed -n 's/.*ansible_host=\([0-9.]*\).*/\1/p')
 	user=$(echo "$line" | sed -n 's/.*ansible_user=\([a-zA-Z0-9_-]*\).*/\1/p')
 
