@@ -62,7 +62,7 @@ alias ll='ls -hlF'
 alias la='ls -A'
 alias l='ls -CF'
 
-if [ -x /usr/bin/dircolors && -s $HOME/.dircolors ]; then
+if [ -x /usr/bin/dircolors ] && [ -s "$HOME/.dircolors" ]; then
 	test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
 	alias ls='ls --color=auto'
 	alias dir='dir --color=auto'
