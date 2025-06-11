@@ -1,6 +1,6 @@
-[user]
+#[user]
   #name = Your Name
-  #email = your.email@gmail.com
+  #email = you@example.com
 
 [core]
   autocrlf = input

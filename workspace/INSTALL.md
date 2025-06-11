@@ -1,11 +1,11 @@
-### zsh
+### Install Zsh
 ```shell
 sudo apt update
 sudo apt install zsh -y
 [ ! -d "$HOME/.oh-my-zsh" ] && sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 ```
 
-### Custom zsh
+### Custom Zsh
 ```shell
 sudo apt install git neovim -y
 if [ ! -d "$HOME/.oh-my-zsh/custom/plugins/zsh-autosuggestions" ]; then
@@ -16,7 +16,7 @@ if [ ! -d "$HOME/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting" ]; then
 fi
 ```
 
-### Zsh Config
+### Config Zsh 
 ```shell
 cp -rf "workspace/keiron.zsh-theme" "$HOME/.oh-my-zsh/custom/themes/keiron.zsh-theme"
 cp -rf "workspace/.zshrc" "$HOME/.zshrc"
@@ -29,15 +29,21 @@ source "$HOME/.zshrc"
 
 ### Git Config
 ```shell
-cp -rf "workspace/.gitconfig" "$HOME/.gitconfig"
+cp -f "workspace/.gitconfig" "$HOME/.gitconfig"
 ```
 
 ### Clang-Format
 ```shell
-cp -rf "workspace/.clang-format" "$HOME/.clang-format"
+cp -f "workspace/.clang-format" "$HOME/.clang-format"
 ```
 
 ### GDB Config
 ```shell
-cp -rf "workspace/.gdbinit" "$HOME/.gdbinit"
+cp -f "workspace/.gdbinit" "$HOME/.gdbinit"
+```
+
+### C++ Scripts
+```shell
+mkdir -p "$HOME/.local/bin/"
+cp -f workspace/bin/* "$HOME/.local/bin/"
 ```
