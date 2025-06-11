@@ -1,6 +1,6 @@
 #!/bin/bash
 
-INVENTORY_FILE="inventory/hosts"
+INVENTORY_FILE="../inventory/hosts"
 SSH_KEY_PATH="$HOME/.ssh/id_rsa.pub"
 
 exec 3<"$INVENTORY_FILE"
