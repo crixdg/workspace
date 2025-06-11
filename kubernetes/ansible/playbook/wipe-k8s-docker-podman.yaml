@@ -59,11 +59,9 @@
 
     # As /var/lib/docker is mounted, so I can add it in above list. I added a patch here.
     - name: Remove all contents under /var/lib/docker
-      file:
-        path: "/var/lib/docker/{{ item }}"
-        state: absent
-      with_fileglob:
-        - "/var/lib/docker/*"
+      shell: rm -rf /var/lib/docker/*
+      args:
+        warn: false
       ignore_errors: true
 
     - name: Reload systemd daemon
