@@ -1,0 +1,128 @@
+- name: Wipe Kubernetes, Docker, and Podman
+  hosts: all
+  become: true
+  tasks:
+
+    - name: Stop all Docker containers
+      shell: docker ps -q | xargs -r docker stop
+      ignore_errors: true
+
+    - name: Remove all Docker containers
+      shell: docker ps -aq | xargs -r docker rm -f
+      ignore_errors: true
+
+    - name: Stop all Podman containers
+      shell: podman ps -q | xargs -r podman stop
+      ignore_errors: true
+
+    - name: Remove all Podman containers
+      shell: podman ps -aq | xargs -r podman rm -f
+      ignore_errors: true
+
+    - name: Reset kubeadm cluster (if applicable)
+      shell: kubeadm reset -f
+      ignore_errors: true
+
+    - name: Stop all relevant services
+      systemd:
+        name: "{{ item }}"
+        state: stopped
+      loop:
+        - kubelet
+        - docker
+        - podman
+      ignore_errors: true
+
+    - name: Disable all relevant services
+      systemd:
+        name: "{{ item }}"
+        enabled: false
+      loop:
+        - kubelet
+        - docker
+        - podman
+      ignore_errors: true
+
+    - name: Remove Kubernetes-related packages
+      package:
+        name:
+          - kubeadm
+          - kubelet
+          - kubectl
+          - kubernetes-cni
+        state: absent
+      ignore_errors: true
+
+    - name: Remove Docker-related packages
+      package:
+        name:
+          - docker
+          - docker-ce
+          - docker-ce-cli
+          - docker-engine
+          - containerd
+          - docker-compose-plugin
+        state: absent
+      ignore_errors: true
+
+    - name: Remove Podman-related packages
+      package:
+        name:
+          - podman
+          - buildah
+        state: absent
+      ignore_errors: true
+
+    - name: Remove container and Kubernetes files
+      file:
+        path: "{{ item }}"
+        state: absent
+      with_items:
+        - /export/longhorn
+        - /etc/docker
+        - /var/lib/docker
+        - /var/lib/containerd
+        - /var/lib/kubelet
+        - /etc/systemd/system/kubelet.service.d
+        - /etc/systemd/system/docker.service.d
+        - /etc/cni
+        - /opt/cni
+        - /var/lib/etcd
+        - /root/.kube
+        - /home/*/.kube
+        - /var/lib/podman
+        - /run/podman
+
+    - name: Reload systemd daemon
+      command: systemctl daemon-reload
+
+    - name: Remove leftover container runtime socket files
+      file:
+        path: "{{ item }}"
+        state: absent
+      with_items:
+        - /run/docker.sock
+        - /run/containerd/containerd.sock
+        - /run/podman/podman.sock
+
+    - name: Remove leftover users
+      user:
+        name: "{{ item }}"
+        state: absent
+        remove: yes
+      loop:
+        - docker
+        - containerd
+        - kube
+
+    - name: Remove leftover groups
+      group:
+        name: "{{ item }}"
+        state: absent
+      loop:
+        - docker
+        - containerd
+        - kube
+
+    - name: Clean package manager cache
+      command: dnf clean all
