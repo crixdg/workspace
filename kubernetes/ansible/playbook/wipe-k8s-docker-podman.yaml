@@ -20,7 +20,7 @@
       ignore_errors: true
 
     - name: Reset kubeadm cluster (if applicable)
-      shell: kubeadm reset -f
+      shell: kubeadm reset -f --cri-socket=unix://var/run/cri-dockerd.sock
       ignore_errors: true
 
     - name: Stop all relevant services
