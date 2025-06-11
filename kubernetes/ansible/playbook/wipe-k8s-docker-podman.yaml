@@ -136,6 +136,3 @@
         - docker
         - containerd
         - kube
-
-    - name: Clean package manager cache
-      command: dnf clean all
