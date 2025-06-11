@@ -3,46 +3,6 @@
   become: true
   tasks:
 
-    - name: Stop all Docker containers
-      shell: docker ps -q | xargs -r docker stop
-      ignore_errors: true
-
-    - name: Remove all Docker containers
-      shell: docker ps -aq | xargs -r docker rm -f
-      ignore_errors: true
-
-    - name: Stop all Podman containers
-      shell: podman ps -q | xargs -r podman stop
-      ignore_errors: true
-
-    - name: Remove all Podman containers
-      shell: podman ps -aq | xargs -r podman rm -f
-      ignore_errors: true
-
-    - name: Reset kubeadm cluster (if applicable)
-      shell: kubeadm reset -f --cri-socket=unix://var/run/cri-dockerd.sock
-      ignore_errors: true
-
-    - name: Stop all relevant services
-      systemd:
-        name: "{{ item }}"
-        state: stopped
-      loop:
-        - kubelet
-        - docker
-        - podman
-      ignore_errors: true
-
-    - name: Disable all relevant services
-      systemd:
-        name: "{{ item }}"
-        enabled: false
-      loop:
-        - kubelet
-        - docker
-        - podman
-      ignore_errors: true
-
     - name: Remove Kubernetes-related packages
       package:
         name:
