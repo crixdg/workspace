@@ -1,13 +1,11 @@
-# Shell
-
-### Zsh
+### zsh
 ```shell
 sudo apt update
 sudo apt install zsh -y
 [ ! -d "$HOME/.oh-my-zsh" ] && sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 ```
 
-### Custom Zsh
+### Custom zsh
 ```shell
 sudo apt install git neovim -y
 if [ ! -d "$HOME/.oh-my-zsh/custom/plugins/zsh-autosuggestions" ]; then
@@ -17,9 +15,6 @@ if [ ! -d "$HOME/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting" ]; then
   git clone https://github.com/zsh-users/zsh-syntax-highlighting ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
 fi
 ```
-
----
-# Config
 
 ### Zsh Config
 ```shell
