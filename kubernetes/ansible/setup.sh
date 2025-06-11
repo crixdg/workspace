@@ -3,7 +3,8 @@
 INVENTORY_FILE="inventory/hosts"
 SSH_KEY_PATH="$HOME/.ssh/id_rsa.pub"
 
-while IFS= read -r line || [[ -n "$line" ]]; do
+exec 3< "$INVENTORY_FILE"
+while IFS= read -r line <&3 || [[ -n "$line" ]]; do
 	if [[ "$line" =~ ^\s*$ || "$line" =~ ^\s*\[.*\]\s*$ ]]; then
 		continue
 	fi
@@ -24,4 +25,5 @@ while IFS= read -r line || [[ -n "$line" ]]; do
 			fi
 		fi
 	fi
-done <"$INVENTORY_FILE"
+done
+exec 3<&-
