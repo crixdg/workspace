@@ -3,6 +3,16 @@
   become: true
   tasks:
 
+    - name: Install required packages
+      dnf:
+        name:
+          - kubelet
+          - kubeadm
+          - kubectl
+          - containerd
+        state: present
+        update_cache: yes
+
     - name: Stop all Docker containers
       shell: docker ps -q | xargs -r docker stop
       ignore_errors: true
