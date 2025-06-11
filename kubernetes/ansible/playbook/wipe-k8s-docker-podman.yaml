@@ -78,13 +78,18 @@
         path: "{{ item }}"
         state: absent
       with_items:
+        - /var/lib/longhorn
         - /export/longhorn
+        - /mnt/longhorn
         - /etc/docker
         - /var/lib/docker
         - /var/lib/containerd
         - /var/lib/kubelet
         - /etc/systemd/system/kubelet.service.d
         - /etc/systemd/system/docker.service.d
+        - /usr/local/bin/cri-dockerd
+        - /etc/systemd/system/cri-docker.service
+        - /etc/systemd/system/cri-docker.socket
         - /etc/cni
         - /opt/cni
         - /var/lib/etcd
