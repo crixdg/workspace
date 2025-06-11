@@ -76,6 +76,7 @@
       with_items:
         - /run/docker.sock
         - /run/containerd/containerd.sock
+        - /run/cri-dockerd.sock
         - /run/podman/podman.sock
 
     - name: Remove leftover users
