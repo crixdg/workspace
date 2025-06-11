@@ -4,7 +4,7 @@ INVENTORY_FILE="inventory/hosts"
 SSH_KEY_PATH="$HOME/.ssh/id_rsa.pub"
 
 exec 3< "$INVENTORY_FILE"
-while read -r line <&3; do
+while IFS= read -r line || [[ -n "$line" ]]; do
     ip=$(echo "$line" | sed -n 's/.*ansible_host=\([0-9.]*\).*/\1/p')
     user=$(echo "$line" | sed -n 's/.*ansible_user=\([a-zA-Z0-9_-]*\).*/\1/p')
 
@@ -21,5 +21,5 @@ while read -r line <&3; do
             fi
         fi
     fi
-done
+done <&3
 exec 3<&-
