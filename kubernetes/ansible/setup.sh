@@ -4,13 +4,18 @@ INVENTORY_FILE="inventory/hosts"
 SSH_KEY_PATH="$HOME/.ssh/id_rsa.pub"
 
 while IFS= read -r line || [[ -n "$line" ]]; do
+	# Skip blank lines or section headers like [masters]
+	if [[ "$line" =~ ^\s*$ || "$line" =~ ^\s*\[.*\]\s*$ ]]; then
+		continue
+	fi
+
 	echo "$line"
 	ip=$(echo "$line" | sed -n 's/.*ansible_host=\([0-9.]*\).*/\1/p')
 	user=$(echo "$line" | sed -n 's/.*ansible_user=\([a-zA-Z0-9_-]*\).*/\1/p')
 
 	if [[ -n "$ip" && -n "$user" ]]; then
 		echo -n "Checking $user@$ip... "
-		if ssh -o PasswordAuthentication=no "$user@$ip" "exit" 2>/dev/null; then
+		if ssh -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new -o PasswordAuthentication=no "$user@$ip" "exit" 2>/dev/null; then
 			echo "already configured."
 		else
 			echo "copying SSH key."
@@ -21,4 +26,4 @@ while IFS= read -r line || [[ -n "$line" ]]; do
 			fi
 		fi
 	fi
-done < "$INVENTORY_FILE"
+done <"$INVENTORY_FILE"
