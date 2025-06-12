@@ -1,0 +1,32 @@
+- name: Stop Kubernetes, Docker, and Podman
+  hosts: all
+  become: true
+  tasks:
+
+    - name: Check if Kubernetes repo already exists
+      stat:
+        path: /etc/yum.repos.d/kubernetes.repo
+      register: kubernetes_repo
+
+    - name: Add Kubernetes repo
+      copy:
+        dest: /etc/yum.repos.d/kubernetes.repo
+        content: |
+          [kubernetes]
+          name=Kubernetes
+          baseurl=https://pkgs.k8s.io/core:/stable:/v1.32/rpm/
+          enabled=1
+          gpgcheck=1
+          gpgkey=https://pkgs.k8s.io/core:/stable:/v1.32/rpm/repodata/repomd.xml.key
+          exclude=kubelet kubeadm kubectl
+      when: not kubernetes_repo.exists
+
+    - name: Install required packages
+      dnf:
+        name:
+          - kubelet
+          - kubeadm
+          - kubectl
+          - containerd
+        state: present
+        update_cache: yes
