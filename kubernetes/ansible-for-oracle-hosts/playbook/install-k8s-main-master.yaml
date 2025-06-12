@@ -1,4 +1,4 @@
-- name: Install Kubernetes main master
+- name: Install Kubernetes main master for cluster
   hosts: master1
   become: true
   vars:
@@ -17,9 +17,9 @@
       file:
         path: {{ admin_home }}/.kube
         state: directory
-        mode: 0755
         owner: "{{ admin_user }}"
         group: "{{ admin_group }}"
+        mode: 0755
 
     - name: Copy admin kubeconfig to admin user
       copy:
@@ -28,11 +28,4 @@
         remote_src: yes
         owner: "{{ ansible_user }}"
         group: "{{ ansible_user }}"
-        mode: '0775'
-
-    # Cilium for CNI
-
-# CoreDNS: For DNS resolution inside the cluster.
-# Metrics Server: For resource usage metrics.
-# Ingress Controller: For routing external traffic (e.g., NGINX Ingress).
-# Dashboard: Web UI for managing the cluster.
+        mode: 0755
