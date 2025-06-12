@@ -77,7 +77,7 @@
     - name: Generate default containerd config
       command: containerd config default > /etc/containerd/config.toml
 
-    - name: Comment out disable_plugins line to enable CRI plugin
+    - name: Comment out disabled_plugins line to enable CRI plugin
       replace:
         path: /etc/containerd/config.toml
         regexp: '^\s*disabled_plugins\s*=\s*\["cri"\]'
