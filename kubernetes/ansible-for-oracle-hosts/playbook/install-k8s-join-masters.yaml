@@ -17,21 +17,21 @@
 
     - name: Set join command for other plays
       add_host:
-        name: kube_join_data
+        name: kube_master_join
         kubeadm_join_command: "{{ kubeadm_join_command }}"
 
 - name: Join additional master nodes to cluster
   hosts: masters:!master1
   become: true
   vars:
-    kubeadm_join_command: "{{ hostvars['kube_join_data']['kubeadm_join_command'] }}"
+    kubeadm_join_command: "{{ hostvars['kube_master_join']['kubeadm_join_command'] }}"
     admin_user: "virtuora"
     admin_group: "virtuora"
     admin_home: "/export/home/virtuora"
   tasks:
 
     - name: Join the node to the Kubernetes cluster as a control plane
-      command: "{{ kubeadm_join_cmd }}"
+      command: "{{ kubeadm_join_command }}"
       args:
         creates: /etc/kubernetes/kubelet.conf
 
