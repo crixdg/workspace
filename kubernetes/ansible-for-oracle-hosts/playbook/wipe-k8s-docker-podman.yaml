@@ -20,7 +20,7 @@
           - docker-ce
           - docker-ce-cli
           - docker-engine
-          - containerd
+          - containerd.io
           - docker-compose-plugin
         state: absent
       ignore_errors: true
