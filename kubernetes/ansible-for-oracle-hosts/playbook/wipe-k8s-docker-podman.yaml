@@ -59,11 +59,11 @@
         - /etc/systemd/system/cri-docker.service
         - /etc/systemd/system/cri-docker.socket
         - /etc/systemd/system/containerd.service
-        - /usr/local/bin/systemd/system/kubelet.service.d
-        - /usr/local/bin/systemd/system/docker.service.d
-        - /usr/local/bin/systemd/system/cri-docker.service
-        - /usr/local/bin/systemd/system/cri-docker.socket
-        - /usr/local/bin/systemd/system/containerd.service
+        - /usr/local/lib/systemd/system/kubelet.service.d
+        - /usr/local/lib/systemd/system/docker.service.d
+        - /usr/local/lib/systemd/system/cri-docker.service
+        - /usr/local/lib/systemd/system/cri-docker.socket
+        - /usr/local/lib/systemd/system/containerd.service
 
     # As /var/lib/docker is mounted, so I can add it in above list. I added a patch here.
     - name: Remove all contents under /var/lib/docker
