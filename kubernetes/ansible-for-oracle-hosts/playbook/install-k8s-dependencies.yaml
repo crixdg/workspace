@@ -80,7 +80,7 @@
     - name: Comment out disable_plugins line to enable CRI plugin
       replace:
         path: /etc/containerd/config.toml
-        regexp: '^(?<!#)(\s*disable_plugins\s*=\s*\["cri"\])'
+        regexp: '^\s*disabled_plugins\s*=\s*\["cri"\]'
         replace: '# \1'
 
     - name: Enable SystemdCgroup in containerd
