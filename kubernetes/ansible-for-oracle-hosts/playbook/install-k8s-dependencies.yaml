@@ -1,9 +1,6 @@
 - name: Install Kubernetes dependencies
   hosts: all
   become: true
-  vars:
-    containerd_version: "1.7.0"
-    kubernetes_version: "1.32.0"
   tasks:
 
     - name: Disable swap (temporary)
@@ -64,6 +61,8 @@
 
     - name: Add Docker CE repository using config-manager
       command: dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+      args:
+        creates: /etc/yum.repos.d/docker-ce.repo
 
     - name: Install Kubernetes required packages
       dnf:
@@ -95,6 +94,22 @@
         name: kubelet
         enabled: true
         state: stopped
+
+    - name: Download Helm install script
+      get_url:
+        url: https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+        dest: /tmp/get_helm.sh
+        mode: '0755'
+
+    - name: Run Helm install script
+      command: /tmp/get_helm.sh
+      args:
+        creates: /usr/local/bin/helm
+
+    - name: Verify Helm is installed
+      command: helm version
+      register: helm_version
+      changed_when: false
 
 - name: Install special Kubernetes dependencies for master hosts
   hosts: masters

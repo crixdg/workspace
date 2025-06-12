@@ -1,4 +1,36 @@
-# Cilium for CNI
+- name: Install Kubernetes main master
+  hosts: master1
+  become: true
+  vars:
+    pod_network_cidr: "10.0.0.0/16"
+    admin_user: "virtuora"
+    admin_group: "virtuora"
+    admin_home: "/export/home/virtuora"
+  tasks:
+
+    - name: Initialize control plane with kubeadm
+      command: kubeadm init --pod-network-cidr={{ pod_network_cidr }}
+      args:
+        creates: /etc/kubernetes/admin.conf
+
+    - name: Create .kube directory for admin user
+      file:
+        path: {{ admin_home }}/.kube
+        state: directory
+        mode: 0755
+        owner: "{{ admin_user }}"
+        group: "{{ admin_group }}"
+
+    - name: Copy admin kubeconfig to admin user
+      copy:
+        src: /etc/kubernetes/admin.conf
+        dest: {{ admin_home }}/.kube/config
+        remote_src: yes
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: '0775'
+
+    # Cilium for CNI
 
 
 # CoreDNS: For DNS resolution inside the cluster.
