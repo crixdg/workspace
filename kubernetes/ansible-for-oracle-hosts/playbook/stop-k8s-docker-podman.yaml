@@ -23,22 +23,14 @@
       shell: kubeadm reset -f
       ignore_errors: true
 
-    - name: Stop all relevant services
+    - name: Stop & Disable all relevant services
       systemd:
         name: "{{ item }}"
         state: stopped
-      loop:
-        - kubelet
-        - docker
-        - podman
-      ignore_errors: true
-
-    - name: Disable all relevant services
-      systemd:
-        name: "{{ item }}"
         enabled: false
       loop:
         - kubelet
         - docker
         - podman
+        - containerd
       ignore_errors: true
