@@ -57,6 +57,7 @@
         - /export/home/*/.kube
         - /var/lib/podman
         - /run/podman
+        - /run/containerd
 
     # As /var/lib/docker is mounted, so I can add it in above list. I added a patch here.
     - name: Remove all contents under /var/lib/docker
