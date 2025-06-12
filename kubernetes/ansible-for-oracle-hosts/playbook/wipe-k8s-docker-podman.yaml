@@ -41,17 +41,18 @@
         - /var/lib/longhorn
         - /export/longhorn
         - /mnt/longhorn
+        - /opt/cni
+        - /etc/cni
         - /etc/docker
+        - /etc/containerd
+        - /var/lib/etcd
         - /var/lib/containerd
         - /var/lib/kubelet
+        - /var/lib/podman
         - /usr/local/bin/cri-dockerd
-        - /etc/cni
-        - /opt/cni
-        - /var/lib/etcd
         - /root/.kube
         - /home/*/.kube
         - /export/home/*/.kube
-        - /var/lib/podman
         - /run/podman
         - /run/containerd
         - /etc/systemd/system/kubelet.service.d
