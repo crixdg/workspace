@@ -74,6 +74,21 @@
         state: present
         update_cache: yes
 
+    - name: Generate default containerd config
+      command: containerd config default > /etc/containerd/config.toml
+
+    - name: Enable SystemdCgroup in containerd
+      replace:
+        path: /etc/containerd/config.toml
+        regexp: '^(\s*SystemdCgroup\s*=\s*)false'
+        replace: '\1true'
+
+    - name: Ensure CRI plugin is enabled in containerd config
+      lineinfile:
+        path: /etc/containerd/config.toml
+        regexp: '^disable_plugins\s*=\s*\["cri"\]'
+        state: absent
+
     - name: Restart and enable containerd
       systemd:
         name: containerd
