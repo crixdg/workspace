@@ -77,11 +77,11 @@
     - name: Generate default containerd config
       command: containerd config default > /etc/containerd/config.toml
 
-    - name: Remove line that disables CRI plugin
+    - name: Comment out disable_plugins line to enable CRI plugin
       replace:
         path: /etc/containerd/config.toml
-        regexp: '^\s*disable_plugins\s*=\s*\["cri"\]\s*$'
-        replace: ''
+        regexp: '^(?<!#)(\s*disable_plugins\s*=\s*\["cri"\])'
+        replace: '# \1'
 
     - name: Enable SystemdCgroup in containerd
       replace:
