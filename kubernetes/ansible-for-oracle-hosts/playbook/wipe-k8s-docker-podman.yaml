@@ -54,6 +54,7 @@
         - /var/lib/etcd
         - /root/.kube
         - /home/*/.kube
+        - /export/home/*/.kube
         - /var/lib/podman
         - /run/podman
 
@@ -73,8 +74,8 @@
         state: absent
       with_items:
         - /run/docker.sock
-        - /run/containerd/containerd.sock
         - /run/cri-dockerd.sock
+        - /run/containerd/containerd.sock
         - /run/podman/podman.sock
 
     - name: Remove leftover users
