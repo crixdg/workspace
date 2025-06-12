@@ -1,0 +1,12 @@
+- name: Install Kubernetes dependencies
+  hosts: all
+  become: true
+  tasks:
+
+    - name: Ensure dnf-plugins-core is installed
+      dnf:
+        name: dnf-plugins-core
+        state: present
+
+    - name: Add Docker CE repository using config-manager
+      command: dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
