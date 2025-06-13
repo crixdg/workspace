@@ -1,0 +1,87 @@
+- name: Verify Kubernetes, Docker, and Podman are wiped
+  hosts: all
+  become: true
+  gather_facts: false
+
+  tasks:
+
+    - name: Check if Kubernetes packages are removed
+      shell: rpm -q kubeadm kubelet kubectl kubernetes-cni
+      register: kubernetes_pkgs
+      failed_when: kubernetes_pkgs.rc == 0
+      changed_when: false
+      ignore_errors: true
+
+    - name: Check if Docker packages are removed
+      shell: rpm -q docker docker-ce docker-ce-cli docker-engine containerd.io docker-compose-plugin
+      register: docker_pkgs
+      failed_when: docker_pkgs.rc == 0
+      changed_when: false
+      ignore_errors: true
+
+    - name: Check if Podman packages are removed
+      shell: rpm -q podman buildah
+      register: podman_pkgs
+      failed_when: podman_pkgs.rc == 0
+      changed_when: false
+      ignore_errors: true
+
+    - name: Check for existence of service files
+      find:
+        paths:
+          - /etc/systemd/system
+          - /usr/local/lib/systemd/system
+        patterns:
+          - "*kubelet*"
+          - "*docker*"
+          - "*containerd*"
+          - "*cri-docker*"
+        recurse: yes
+      register: service_files
+      failed_when: service_files.matched > 0
+      changed_when: false
+
+    - name: Check for existence of key directories
+      stat:
+        path: "{{ item }}"
+      loop:
+        - /var/lib/kubelet
+        - /var/lib/docker
+        - /var/lib/podman
+        - /etc/kubernetes
+        - /etc/containerd
+        - /run/containerd
+        - /run/docker.sock
+      register: paths_to_check
+
+    - name: Fail if any directory still exists
+      fail:
+        msg: "Found leftover path: {{ item.stat.path }}"
+      when: item.stat.exists
+      loop: "{{ paths_to_check.results }}"
+
+    - name: Check for leftover users
+      shell: id -u {{ item }}
+      register: check_users
+      ignore_errors: true
+      failed_when: check_users.rc == 0
+      changed_when: false
+      loop:
+        - docker
+        - containerd
+        - kube
+
+    - name: Check for leftover groups
+      shell: getent group {{ item }}
+      register: check_groups
+      ignore_errors: true
+      failed_when: check_groups.rc == 0
+      changed_when: false
+      loop:
+        - docker
+        - containerd
+        - kube
+
+    - name: Final message
+      debug:
+        msg: "All checks passed. Host is clean."
