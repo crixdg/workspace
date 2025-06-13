@@ -46,7 +46,7 @@
         path: "{{ item }}"
       loop:
         - /var/lib/kubelet
-        - /var/lib/docker
+        #- /var/lib/docker
         - /var/lib/podman
         - /etc/kubernetes
         - /etc/containerd
