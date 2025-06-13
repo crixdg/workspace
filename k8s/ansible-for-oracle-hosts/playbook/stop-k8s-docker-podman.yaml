@@ -56,6 +56,13 @@
         - rancher
       ignore_errors: true
 
+    - name: Kill any remaining cri-dockerd processes
+      shell: |
+        pkill -f cri-dockerd || true
+      args:
+        warn: false
+      ignore_errors: true
+
     - name: Flush all iptables rules (use with caution)
       shell: |
         iptables -F
