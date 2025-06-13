@@ -38,31 +38,84 @@
         path: "{{ item }}"
         state: absent
       loop:
-        - /var/lib/longhorn
-        - /export/longhorn
-        - /mnt/longhorn
-        - /opt/cni
-        - /etc/cni
+        - /opt/docker
         - /etc/docker
-        - /etc/containerd
-        - /var/lib/etcd
-        - /var/lib/containerd
-        - /var/lib/kubelet
-        - /var/lib/podman
-        - /usr/local/bin/cri-dockerd
-        - /root/.kube
-        - /run/podman
-        - /run/containerd
-        - /etc/systemd/system/kubelet.service.d
+        - /var/log/docker.log
+        - /run/docker.sock
         - /etc/systemd/system/docker.service.d
+        - /usr/local/lib/systemd/system/docker.service.d
+        - /etc/systemd/system/multi-user.target.wants/docker.service
+
+        - /var/lib/podman
+        - /run/podman
+        - /run/podman/podman.sock
+        - /var/log/podman.log
+
+        - /etc/containerd
+        - /var/lib/containerd
+        - /run/containerd
+        - /run/containerd/containerd.sock
+        - /opt/containerd
+        - /etc/systemd/system/containerd.service
+        - /usr/local/lib/systemd/system/containerd.service
+        - /usr/local/bin/containerd*
+        - /usr/local/bin/nerdctl
+
+        - /var/lib/cri-dockerd
+        - /opt/cri-dockerd
+        - /usr/local/bin/cri-dockerd
+        - /run/cri-dockerd.sock
         - /etc/systemd/system/cri-docker.service
         - /etc/systemd/system/cri-docker.socket
-        - /etc/systemd/system/containerd.service
-        - /usr/local/lib/systemd/system/kubelet.service.d
-        - /usr/local/lib/systemd/system/docker.service.d
         - /usr/local/lib/systemd/system/cri-docker.service
         - /usr/local/lib/systemd/system/cri-docker.socket
-        - /usr/local/lib/systemd/system/containerd.service
+
+        - /etc/rancher
+        - /var/lib/rancher
+        - /var/log/rancher
+        - /usr/local/bin/rancher
+        - /usr/lib/systemd/system/rancher.service
+        - /etc/rancher/k3s
+        - /usr/local/bin/k3s
+
+        - /etc/kubernetes
+        - /etc/kubelet
+        - /etc/sysconfig/kubelet
+        - /var/lib/kubelet
+        - /var/lib/etcd
+        - /etc/systemd/system/kubelet.service.d
+        - /usr/local/lib/systemd/system/kubelet.service.d
+        - /etc/systemd/system/multi-user.target.wants/kubelet.service
+        - /home/*/.kube
+        - /root/.kube
+        - /export/home/*/.kube
+        - /usr/bin/kube*
+        - /var/log/pods
+        - /var/log/containers
+        - /var/log/kubelet.log
+
+        - /var/lib/longhorn
+        - /mnt/longhorn
+        - /export/longhorn
+
+        - /opt/cni
+        - /etc/cni
+        - /var/lib/cni
+
+        - /etc/calico
+        - /var/lib/calico
+        - /var/run/calico
+        - /var/log/calico
+
+        - /mnt/k8sMount
+        - /var/log/etcd.log
+      ignore_errors: true
+
+    # As /var/lib/docker is mounted
+    - name: Remove contents of /var/lib/docker (mounted directory)
+      shell: rm -rf /var/lib/docker/*
+      args:
+        warn: false
       ignore_errors: true
 
     - name: Remove user .kube directories from all home paths
@@ -74,28 +127,15 @@
         executable: /bin/bash
       ignore_errors: true
 
-    - name: Remove contents of /var/lib/docker (mounted directory)
-      shell: rm -rf /var/lib/docker/*
-      args:
-        warn: false
-      ignore_errors: true
-
-    - name: Remove leftover container runtime socket files
-      file:
-        path: "{{ item }}"
-        state: absent
-      loop:
-        - /run/docker.sock
-        - /run/cri-dockerd.sock
-        - /run/containerd/containerd.sock
-        - /run/podman/podman.sock
+    - name: Reload systemd daemon
+      command: systemctl daemon-reexec
       ignore_errors: true
 
     - name: Reload systemd daemon
       command: systemctl daemon-reload
       ignore_errors: true
 
-    - name: Remove leftover system users
+    - name: Remove leftover users
       user:
         name: "{{ item }}"
         state: absent
@@ -104,9 +144,10 @@
         - docker
         - containerd
         - kube
+        - rancher
       ignore_errors: true
 
-    - name: Remove leftover system groups
+    - name: Remove leftover groups
       group:
         name: "{{ item }}"
         state: absent
@@ -114,4 +155,5 @@
         - docker
         - containerd
         - kube
+        - rancher
       ignore_errors: true
