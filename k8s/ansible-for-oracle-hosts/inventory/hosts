@@ -6,5 +6,4 @@ worker1 ansible_host=167.254.190.3  ansible_user=root
 worker2 ansible_host=167.254.190.4  ansible_user=root
 worker3 ansible_host=167.254.190.5  ansible_user=root
 worker4 ansible_host=167.254.190.6  ansible_user=root
-worker5 ansible_host=167.254.190.7  ansible_user=root
 worker6 ansible_host=167.254.190.8  ansible_user=root
