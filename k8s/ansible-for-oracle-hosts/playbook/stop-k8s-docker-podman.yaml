@@ -42,7 +42,7 @@
         name: "{{ item }}"
         state: stopped
         enabled: false
-        masked: true
+        masked: false
       loop:
         - kubelet
         - docker
