@@ -29,7 +29,7 @@
         enabled: true
         state: started
 
-    - name: Add current user to the docker group
+    - name: Add user to the docker group
       user:
         name: "{{ admin_user }}"
         groups: docker
