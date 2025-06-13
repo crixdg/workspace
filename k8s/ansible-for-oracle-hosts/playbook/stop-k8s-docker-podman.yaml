@@ -1,36 +1,80 @@
-- name: Stop Kubernetes, Docker, and Podman
+- name: Stop Kubernetes, Docker, Podman, and related container runtimes
   hosts: all
   become: true
   tasks:
 
-    - name: Stop all Docker containers
+    - name: Stop all running Docker containers
       shell: docker ps -q | xargs -r docker stop
+      args:
+        warn: false
       ignore_errors: true
 
     - name: Remove all Docker containers
       shell: docker ps -aq | xargs -r docker rm -f
+      args:
+        warn: false
       ignore_errors: true
 
-    - name: Stop all Podman containers
+    - name: Stop all running Podman containers
       shell: podman ps -q | xargs -r podman stop
+      args:
+        warn: false
       ignore_errors: true
 
     - name: Remove all Podman containers
       shell: podman ps -aq | xargs -r podman rm -f
+      args:
+        warn: false
+      ignore_errors: true
+
+    - name: Stop all containerd containers (if nerdctl available)
+      shell: |
+        if command -v nerdctl >/dev/null 2>&1; then
+          nerdctl ps -q | xargs -r nerdctl stop
+          nerdctl ps -aq | xargs -r nerdctl rm -f
+        fi
+      args:
+        executable: /bin/bash
       ignore_errors: true
 
     - name: Reset kubeadm cluster (if applicable)
       shell: kubeadm reset -f
       ignore_errors: true
 
-    - name: Stop & Disable all relevant services
+    - name: Stop & disable Kubernetes and container runtime services
       systemd:
         name: "{{ item }}"
         state: stopped
         enabled: false
+        masked: true
       loop:
         - kubelet
         - docker
         - podman
         - containerd
+        - cri-o
+        - cri-dockerd
+      when: ansible_service_mgr == 'systemd'
+      ignore_errors: true
+
+    - name: Remove CNI config and pod networking (if present)
+      file:
+        path: "{{ item }}"
+        state: absent
+      loop:
+        - /etc/cni/net.d
+        - /var/lib/cni
+        - /var/lib/kubelet
+        - /etc/kubernetes
+        - /var/lib/etcd
+      ignore_errors: true
+
+    - name: Flush iptables rules (optional, use with caution)
+      shell: |
+        iptables -F
+        iptables -t nat -F
+        iptables -t mangle -F
+        iptables -X
+      args:
+        warn: false
       ignore_errors: true
