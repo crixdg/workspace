@@ -1,5 +1,5 @@
 - name: Install Kubernetes main master for cluster
-  hosts: master1
+  hosts: host2
   become: true
   vars:
     pod_network_cidr: "10.0.0.0/16"

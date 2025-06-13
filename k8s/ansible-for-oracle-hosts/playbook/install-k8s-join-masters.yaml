@@ -1,5 +1,5 @@
 - name: Get Kubeadm join command for control plane
-  hosts: master1
+  hosts: host2
   become: true
   tasks:
 
@@ -21,7 +21,7 @@
         kubeadm_join_command: "{{ kubeadm_join_command }}"
 
 - name: Join additional master nodes to cluster
-  hosts: masters:!master1
+  hosts: masters:!host2
   become: true
   vars:
     kubeadm_join_command: "{{ hostvars['kube_master_join']['kubeadm_join_command'] }}"

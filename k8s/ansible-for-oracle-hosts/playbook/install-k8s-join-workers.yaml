@@ -1,5 +1,5 @@
 - name: Get Kubeadm join command for worker nodes
-  hosts: master1
+  hosts: host2
   become: true
   tasks:
 
