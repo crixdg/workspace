@@ -57,10 +57,25 @@
       ignore_errors: true
 
     - name: Kill any remaining cri-dockerd processes
+      shell: pkill -f cri-dockerd || true
+      args: { warn: false }
+      ignore_errors: true
+
+    - name: Kill any remaining containerd-shim processes
+      shell: pkill -f containerd-shim || true
+      args: { warn: false }
+      ignore_errors: true
+
+    - name: Kill any remaining containerd-shim-runc-v2 processes
+      shell: pkill -f containerd-shim-runc-v2 || true
+      args: { warn: false }
+      ignore_errors: true
+
+    - name: Kill any remaining runc or runc-v2 processes
       shell: |
-        pkill -f cri-dockerd || true
-      args:
-        warn: false
+        pkill -f runc || true
+        pkill -f runc-v2 || true
+      args: { warn: false }
       ignore_errors: true
 
     - name: Flush all iptables rules (use with caution)
