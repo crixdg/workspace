@@ -74,6 +74,14 @@
         state: present
         update_cache: yes
 
+    - name: Reload systemd daemon
+      command: systemctl daemon-reexec
+      ignore_errors: true
+
+    - name: Reload systemd daemon
+      command: systemctl daemon-reload
+      ignore_errors: true
+
     - name: Generate default containerd config
       command: containerd config default > /etc/containerd/config.toml
 
