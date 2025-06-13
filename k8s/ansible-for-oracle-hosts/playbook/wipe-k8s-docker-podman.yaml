@@ -1,4 +1,4 @@
-- name: Wipe Kubernetes, Docker, and Podman
+- name: Wipe Kubernetes, Docker, Podman, and all related data
   hosts: all
   become: true
   tasks:
@@ -33,11 +33,11 @@
         state: absent
       ignore_errors: true
 
-    - name: Remove container and Kubernetes files
+    - name: Remove container and Kubernetes-related files and directories
       file:
         path: "{{ item }}"
         state: absent
-      with_items:
+      loop:
         - /var/lib/longhorn
         - /export/longhorn
         - /mnt/longhorn
@@ -51,8 +51,6 @@
         - /var/lib/podman
         - /usr/local/bin/cri-dockerd
         - /root/.kube
-        - /home/*/.kube
-        - /export/home/*/.kube
         - /run/podman
         - /run/containerd
         - /etc/systemd/system/kubelet.service.d
@@ -65,28 +63,39 @@
         - /usr/local/lib/systemd/system/cri-docker.service
         - /usr/local/lib/systemd/system/cri-docker.socket
         - /usr/local/lib/systemd/system/containerd.service
+      ignore_errors: true
 
-    # As /var/lib/docker is mounted, so I can add it in above list. I added a patch here.
-    - name: Remove all contents under /var/lib/docker
+    - name: Remove user .kube directories from all home paths
+      shell: |
+        for d in /home/* /export/home/*; do
+          [ -d "$d/.kube" ] && rm -rf "$d/.kube"
+        done
+      args:
+        executable: /bin/bash
+      ignore_errors: true
+
+    - name: Remove contents of /var/lib/docker (mounted directory)
       shell: rm -rf /var/lib/docker/*
       args:
         warn: false
       ignore_errors: true
 
-    - name: Reload systemd daemon
-      command: systemctl daemon-reload
-
     - name: Remove leftover container runtime socket files
       file:
         path: "{{ item }}"
         state: absent
-      with_items:
+      loop:
         - /run/docker.sock
         - /run/cri-dockerd.sock
         - /run/containerd/containerd.sock
         - /run/podman/podman.sock
+      ignore_errors: true
 
-    - name: Remove leftover users
+    - name: Reload systemd daemon
+      command: systemctl daemon-reload
+      ignore_errors: true
+
+    - name: Remove leftover system users
       user:
         name: "{{ item }}"
         state: absent
@@ -95,8 +104,9 @@
         - docker
         - containerd
         - kube
+      ignore_errors: true
 
-    - name: Remove leftover groups
+    - name: Remove leftover system groups
       group:
         name: "{{ item }}"
         state: absent
@@ -104,3 +114,4 @@
         - docker
         - containerd
         - kube
+      ignore_errors: true
