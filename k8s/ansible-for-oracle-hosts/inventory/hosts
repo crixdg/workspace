@@ -1,9 +1,12 @@
 [masters]
-master1 ansible_host=167.254.190.2  ansible_user=root
+host2 ansible_host=167.254.190.2  ansible_user=root
 
 [workers]
-worker1 ansible_host=167.254.190.3  ansible_user=root
-worker2 ansible_host=167.254.190.4  ansible_user=root
-worker3 ansible_host=167.254.190.5  ansible_user=root
-worker4 ansible_host=167.254.190.6  ansible_user=root
-worker6 ansible_host=167.254.190.8  ansible_user=root
+host3 ansible_host=167.254.190.3  ansible_user=root
+host4 ansible_host=167.254.190.4  ansible_user=root
+host5 ansible_host=167.254.190.5  ansible_user=root
+host6 ansible_host=167.254.190.6  ansible_user=root
+host7 ansible_host=167.254.190.7  ansible_user=root
+host8 ansible_host=167.254.190.8  ansible_user=root
+host10 ansible_host=167.254.190.10  ansible_user=root
+host12 ansible_host=167.254.190.12  ansible_user=root
