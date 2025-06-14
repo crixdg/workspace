@@ -54,6 +54,7 @@
         - calico-felix
         - calico-bird
         - rancher
+        - k3s
       ignore_errors: true
 
     - name: Kill all cri-dockerd processes if any are running
