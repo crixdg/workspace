@@ -1,69 +1,58 @@
-- name: Check Kubernetes stack binary paths and versions
+---
+- name: Check Kubernetes binary versions and paths across hosts
   hosts: all
-  gather_facts: no
-
+  gather_facts: false
   vars:
     binaries:
       - name: kubelet
         version_cmd: "kubelet --version"
-        version_regex: 'Kubernetes v(\\S+)'
+        path_candidates:
+          - /usr/bin/kubelet
+          - /usr/local/bin/kubelet
       - name: kubeadm
         version_cmd: "kubeadm version -o short"
-        version_regex: 'v(\\S+)'
+        path_candidates:
+          - /usr/bin/kubeadm
+          - /usr/local/bin/kubeadm
       - name: kubectl
         version_cmd: "kubectl version --client -o json | jq -r .clientVersion.gitVersion"
-        version_regex: 'v(\\S+)'
-      - name: containerd
-        version_cmd: "containerd --version"
-        version_regex: 'containerd\\s+(\\S+)'
-      - name: runc
-        version_cmd: "runc --version"
-        version_regex: 'runc\\s+version\\s+(\\S+)'
-      - name: crictl
-        version_cmd: "crictl --version"
-        version_regex: 'crictl version (\\S+)'
-      - name: kube-proxy
-        version_cmd: "kube-proxy --version"
-        version_regex: 'Kubernetes v(\\S+)'
+        path_candidates:
+          - /usr/bin/kubectl
+          - /usr/local/bin/kubectl
 
   tasks:
-
-    - name: Find binary with `which`
-      shell: "which {{ item.name }} || true"
-      register: binary_paths
-      loop: "{{ binaries }}"
-      changed_when: false
-
-    - name: Resolve symlink to get real binary path
-      shell: "readlink -f {{ item.stdout }}"
+    - name: Find binary actual paths
+      shell: |
+        for p in {{ item.path_candidates | join(' ') }}; do
+          if [ -x "$p" ]; then
+            echo "$p"
+            exit 0
+          fi
+        done
+        exit 1
       register: resolved_paths
-      loop: "{{ binary_paths.results }}"
-      when: item.stdout != ""
-      changed_when: false
-
-    - name: Run version command
-      shell: "{{ binaries[loop.index0].version_cmd }}"
-      register: version_output
-      loop: "{{ resolved_paths.results }}"
-      when: item.stdout != ""
+      loop: "{{ binaries }}"
+      loop_control:
+        label: "{{ item.name }}"
       changed_when: false
       failed_when: false
 
-    - name: Build final results with name, path, and version
-      set_fact:
-        k8s_binaries: >-
-          {{
-            k8s_binaries | default({}) | combine({
-              item.item.item.name: {
-                "path": item.item.stdout,
-                "real_path": item.stdout,
-                "version": (version_output.results[loop.index0].stdout | regex_search(item.item.item.version_regex, '\\1') | default("N/A"))
-              }
-            })
-          }}
-      loop: "{{ resolved_paths.results }}"
-      when: item.stdout != ""
+    - name: Run version command for each resolved binary
+      shell: "{{ item.version_cmd }}"
+      register: version_output
+      loop: "{{ binaries }}"
+      when: resolved_paths.results[loop.index0].rc == 0
+      loop_control:
+        label: "{{ item.name }}"
+      changed_when: false
+      failed_when: false
 
-    - name: Show per-host binary details
+    - name: Print summary
       debug:
-        var: k8s_binaries
+        msg: |
+          {{ item.name }}:
+            Path: {{ resolved_paths.results[loop.index0].stdout | default('Not found') }}
+            Version: {{ version_output.results[loop.index0].stdout | default('Unknown') }}
+      loop: "{{ binaries }}"
+      loop_control:
+        label: "{{ item.name }}"
