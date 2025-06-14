@@ -21,7 +21,8 @@
           - /usr/local/bin/kubectl
 
   tasks:
-    - name: Find binary actual paths
+
+    - name: Find binary path
       shell: |
         for p in {{ item.path_candidates | join(' ') }}; do
           if [ -x "$p" ]; then
@@ -30,20 +31,29 @@
           fi
         done
         exit 1
-      register: resolved_paths
       loop: "{{ binaries }}"
-      loop_control:
-        label: "{{ item.name }}"
+      register: resolved_paths
       changed_when: false
       failed_when: false
 
-    - name: Run version command for each resolved binary
+    - name: Merge binaries with resolved paths
+      set_fact:
+        binary_info: >-
+          {{
+            binary_info | default([]) + [{
+              "name": binaries[loop.index0].name,
+              "version_cmd": binaries[loop.index0].version_cmd,
+              "path": item.stdout,
+              "found": item.rc == 0
+            }]
+          }}
+      loop: "{{ resolved_paths.results }}"
+
+    - name: Run version command if binary was found
       shell: "{{ item.version_cmd }}"
       register: version_output
-      loop: "{{ binaries }}"
-      when: resolved_paths.results[loop.index0].rc == 0
-      loop_control:
-        label: "{{ item.name }}"
+      loop: "{{ binary_info }}"
+      when: item.found
       changed_when: false
       failed_when: false
 
@@ -51,8 +61,6 @@
       debug:
         msg: |
           {{ item.name }}:
-            Path: {{ resolved_paths.results[loop.index0].stdout | default('Not found') }}
+            Path: {{ item.path }}
             Version: {{ version_output.results[loop.index0].stdout | default('Unknown') }}
-      loop: "{{ binaries }}"
-      loop_control:
-        label: "{{ item.name }}"
+      loop: "{{ binary_info }}"
