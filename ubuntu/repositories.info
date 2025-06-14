@@ -1,0 +1,19 @@
+ ➜  ~ ls /etc/apt/sources.list.d/
+bamboo-engine-ubuntu-ibus-bamboo-noble.sources       obsproject-ubuntu-obs-studio-noble.sources
+bamboo-engine-ubuntu-ibus-bamboo-noble.sources.save  obsproject-ubuntu-obs-studio-noble.sources.save
+cloudflare-client.list                               teamviewer.list
+cloudflare-client.list.save                          teamviewer.list.save
+docker.list                                          ubuntu.sources
+docker.list.save                                     ubuntu.sources.curtin.orig
+google-chrome.list                                   ubuntu.sources.save
+google-chrome.list.save
+
+ ➜  ~ grep -r ^deb /etc/apt/sources.list /etc/apt/sources.list.d/
+/etc/apt/sources.list.d/google-chrome.list:deb [arch=amd64] https://dl.google.com/linux/chrome/deb/ stable main
+/etc/apt/sources.list.d/teamviewer.list:deb [signed-by=/usr/share/keyrings/teamviewer-keyring.gpg] https://linux.teamviewer.com/deb stable main
+/etc/apt/sources.list.d/docker.list.save:deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu   noble stable
+/etc/apt/sources.list.d/teamviewer.list.save:deb [signed-by=/usr/share/keyrings/teamviewer-keyring.gpg] https://linux.teamviewer.com/deb stable main
+/etc/apt/sources.list.d/cloudflare-client.list.save:deb [arch=amd64 signed-by=/usr/share/keyrings/cloudflare-warp-archive-keyring.gpg] https://pkg.cloudflareclient.com/ noble main
+/etc/apt/sources.list.d/google-chrome.list.save:deb [arch=amd64] https://dl.google.com/linux/chrome/deb/ stable main
+/etc/apt/sources.list.d/cloudflare-client.list:deb [arch=amd64 signed-by=/usr/share/keyrings/cloudflare-warp-archive-keyring.gpg] https://pkg.cloudflareclient.com/ noble main
+/etc/apt/sources.list.d/docker.list:deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu   noble stable
