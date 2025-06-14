@@ -1,65 +1,69 @@
-- name: Check Kubernetes stack versions across hosts
+- name: Check Kubernetes stack binary paths and versions
   hosts: all
   gather_facts: no
+
   vars:
-    kubernetes_binaries:
+    binaries:
       - name: kubelet
-        path: /usr/bin/kubelet
-        version_command: "kubelet --version"
+        version_cmd: "kubelet --version"
         version_regex: 'Kubernetes v(\\S+)'
-
       - name: kubeadm
-        path: /usr/bin/kubeadm
-        version_command: "kubeadm version -o short"
+        version_cmd: "kubeadm version -o short"
         version_regex: 'v(\\S+)'
-
       - name: kubectl
-        path: /usr/bin/kubectl
-        version_command: "kubectl version --client -o json | jq -r .clientVersion.gitVersion"
+        version_cmd: "kubectl version --client -o json | jq -r .clientVersion.gitVersion"
         version_regex: 'v(\\S+)'
-
       - name: containerd
-        path: /usr/bin/containerd
-        version_command: "containerd --version"
+        version_cmd: "containerd --version"
         version_regex: 'containerd\\s+(\\S+)'
-
       - name: runc
-        path: /usr/bin/runc
-        version_command: "runc --version"
+        version_cmd: "runc --version"
         version_regex: 'runc\\s+version\\s+(\\S+)'
-
       - name: crictl
-        path: /usr/bin/crictl
-        version_command: "crictl --version"
+        version_cmd: "crictl --version"
         version_regex: 'crictl version (\\S+)'
-
       - name: kube-proxy
-        path: /usr/bin/kube-proxy
-        version_command: "kube-proxy --version"
+        version_cmd: "kube-proxy --version"
         version_regex: 'Kubernetes v(\\S+)'
 
   tasks:
 
-    - name: Check if binary exists
-      stat:
-        path: "{{ item.path }}"
-      loop: "{{ kubernetes_binaries }}"
-      register: binary_stats
+    - name: Find binary with `which`
+      shell: "which {{ item.name }} || true"
+      register: binary_paths
+      loop: "{{ binaries }}"
+      changed_when: false
 
-    - name: Run version command if binary exists
-      shell: "{{ item.item.version_command }}"
-      register: version_outputs
-      loop: "{{ binary_stats.results }}"
-      when: item.stat.exists
+    - name: Resolve symlink to get real binary path
+      shell: "readlink -f {{ item.stdout }}"
+      register: resolved_paths
+      loop: "{{ binary_paths.results }}"
+      when: item.stdout != ""
+      changed_when: false
+
+    - name: Run version command
+      shell: "{{ item.item.version_cmd }}"
+      register: version_output
+      loop: "{{ resolved_paths.results }}"
+      when: item.stdout != ""
       changed_when: false
       failed_when: false
 
-    - name: Extract version using regex
+    - name: Build final results with name, path, and version
       set_fact:
-        k8s_versions: "{{ k8s_versions | default({}) | combine({ item.item.item.name: (item.stdout | regex_search(item.item.item.version_regex, '\\1') | default('N/A')) }) }}"
-      loop: "{{ version_outputs.results }}"
-      when: item.stdout is defined
+        k8s_binaries: >-
+          {{
+            k8s_binaries | default({}) | combine({
+              item.item.item.name: {
+                "path": item.item.stdout,
+                "real_path": item.stdout,
+                "version": (version_output.results[loop.index0].stdout | regex_search(item.item.item.version_regex, '\\1') | default("N/A"))
+              }
+            })
+          }}
+      loop: "{{ resolved_paths.results }}"
+      when: item.stdout != ""
 
-    - name: Print gathered Kubernetes stack versions
+    - name: Show per-host binary details
       debug:
-        var: k8s_versions
+        var: k8s_binaries
