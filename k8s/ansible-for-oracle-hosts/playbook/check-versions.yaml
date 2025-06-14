@@ -22,7 +22,7 @@
 
   tasks:
 
-    - name: Find binary path
+    - name: Find binary paths
       shell: |
         for p in {{ item.path_candidates | join(' ') }}; do
           if [ -x "$p" ]; then
@@ -36,20 +36,17 @@
       changed_when: false
       failed_when: false
 
-    - name: Merge binaries with resolved paths
+    - name: Combine binary info and resolved paths
       set_fact:
-        binary_info: >-
-          {{
-            binary_info | default([]) + [{
-              "name": binaries[loop.index0].name,
-              "version_cmd": binaries[loop.index0].version_cmd,
-              "path": item.stdout,
-              "found": item.rc == 0
-            }]
-          }}
-      loop: "{{ resolved_paths.results }}"
+        binary_info: "{{ binary_info | default([]) + [ {
+          'name': binaries[item.0].name,
+          'version_cmd': binaries[item.0].version_cmd,
+          'path': item.1.stdout,
+          'found': item.1.rc == 0
+        } ] }}"
+      loop: "{{ query('zip', range(binaries | length), resolved_paths.results) }}"
 
-    - name: Run version command if binary was found
+    - name: Run version command for found binaries
       shell: "{{ item.version_cmd }}"
       register: version_output
       loop: "{{ binary_info }}"
@@ -57,10 +54,11 @@
       changed_when: false
       failed_when: false
 
-    - name: Print summary
+    - name: Display version and path info
       debug:
         msg: |
           {{ item.name }}:
             Path: {{ item.path }}
-            Version: {{ version_output.results[loop.index0].stdout | default('Unknown') }}
+            Version: {{ version_output.results[loop.index0].stdout | default('unknown') }}
       loop: "{{ binary_info }}"
+      when: item.found
