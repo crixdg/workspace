@@ -1,0 +1,65 @@
+- name: Check Kubernetes stack versions across hosts
+  hosts: all
+  gather_facts: no
+  vars:
+    kubernetes_binaries:
+      - name: kubelet
+        path: /usr/bin/kubelet
+        version_command: "kubelet --version"
+        version_regex: 'Kubernetes v(\\S+)'
+
+      - name: kubeadm
+        path: /usr/bin/kubeadm
+        version_command: "kubeadm version -o short"
+        version_regex: 'v(\\S+)'
+
+      - name: kubectl
+        path: /usr/bin/kubectl
+        version_command: "kubectl version --client -o json | jq -r .clientVersion.gitVersion"
+        version_regex: 'v(\\S+)'
+
+      - name: containerd
+        path: /usr/bin/containerd
+        version_command: "containerd --version"
+        version_regex: 'containerd\\s+(\\S+)'
+
+      - name: runc
+        path: /usr/bin/runc
+        version_command: "runc --version"
+        version_regex: 'runc\\s+version\\s+(\\S+)'
+
+      - name: crictl
+        path: /usr/bin/crictl
+        version_command: "crictl --version"
+        version_regex: 'crictl version (\\S+)'
+
+      - name: kube-proxy
+        path: /usr/bin/kube-proxy
+        version_command: "kube-proxy --version"
+        version_regex: 'Kubernetes v(\\S+)'
+
+  tasks:
+
+    - name: Check if binary exists
+      stat:
+        path: "{{ item.path }}"
+      loop: "{{ kubernetes_binaries }}"
+      register: binary_stats
+
+    - name: Run version command if binary exists
+      shell: "{{ item.item.version_command }}"
+      register: version_outputs
+      loop: "{{ binary_stats.results }}"
+      when: item.stat.exists
+      changed_when: false
+      failed_when: false
+
+    - name: Extract version using regex
+      set_fact:
+        k8s_versions: "{{ k8s_versions | default({}) | combine({ item.item.item.name: (item.stdout | regex_search(item.item.item.version_regex, '\\1') | default('N/A')) }) }}"
+      loop: "{{ version_outputs.results }}"
+      when: item.stdout is defined
+
+    - name: Print gathered Kubernetes stack versions
+      debug:
+        var: k8s_versions
