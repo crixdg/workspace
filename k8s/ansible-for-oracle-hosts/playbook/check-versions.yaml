@@ -36,15 +36,19 @@
       changed_when: false
       failed_when: false
 
-    - name: Combine binary info and resolved paths
+    - name: Combine binary info and resolved paths by index
       set_fact:
-        binary_info: "{{ binary_info | default([]) + [ {
-          'name': binaries[item.0].name,
-          'version_cmd': binaries[item.0].version_cmd,
-          'path': item.1.stdout,
-          'found': item.1.rc == 0
-        } ] }}"
-      loop: "{{ query('zip', range(binaries | length), resolved_paths.results) }}"
+        binary_info: >-
+          {{
+            range(0, binaries | length) | map('int') | map('extract',
+              {
+                'name': binaries[item].name,
+                'version_cmd': binaries[item].version_cmd,
+                'path': resolved_paths.results[item].stdout,
+                'found': resolved_paths.results[item].rc == 0
+              }
+            ) | list
+          }}
 
     - name: Run version command for found binaries
       shell: "{{ item.version_cmd }}"
