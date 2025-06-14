@@ -42,7 +42,7 @@
       changed_when: false
 
     - name: Run version command
-      shell: "{{ item.item.version_cmd }}"
+      shell: "{{ binaries[loop.index0].version_cmd }}"
       register: version_output
       loop: "{{ resolved_paths.results }}"
       when: item.stdout != ""
