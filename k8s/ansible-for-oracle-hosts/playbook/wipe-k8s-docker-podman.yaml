@@ -52,6 +52,8 @@
         - /var/log/podman.log
 
         - /run/k3s
+        - /etc/rancher/k3s
+        - /usr/bin/k3s
         - /usr/local/bin/k3s
         - /etc/systemd/system/k3s.service
         - /etc/systemd/system/k3s-agent.service
@@ -66,9 +68,11 @@
         - /usr/local/lib/systemd/system/containerd.service
         - /usr/local/bin/containerd*
         - /usr/local/bin/nerdctl
+        - /usr/bin/containerd*
 
         - /var/lib/cri-dockerd
         - /opt/cri-dockerd
+        - /usr/bin/cri-dockerd
         - /usr/local/bin/cri-dockerd
         - /run/cri-dockerd.sock
         - /etc/systemd/system/cri-docker.service
@@ -79,10 +83,9 @@
         - /etc/rancher
         - /var/lib/rancher
         - /var/log/rancher
+        - /usr/bin/rancher
         - /usr/local/bin/rancher
         - /usr/lib/systemd/system/rancher.service
-        - /etc/rancher/k3s
-        - /usr/local/bin/k3s
 
         - /etc/kubernetes
         - /etc/kubelet
