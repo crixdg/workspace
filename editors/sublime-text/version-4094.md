@@ -1,7 +1,7 @@
 ### Install SublimeText 4094
 ```shell
 curl -o ~/Downloads/sublime-text.deb https://download.sublimetext.com/sublime-text_build-4094_amd64.deb
-sudo dpkg -i ~/Downloads/sublime-text.deb && sudo apt-get install -f
+sudo dpkg -i ~/Downloads/sublime-text.deb
 printf '\x00\x00\x00' | sudo dd of=/opt/sublime_text/sublime_text bs=1 seek=290764 count=3 conv=notrunc
 ```
 
@@ -34,4 +34,9 @@ CEFB3783 B2E1BA96 71AAF7B4 AFB61B1D
 0.0.0.0 license.sublimehq.com
 0.0.0.0 45.55.255.55
 0.0.0.0 45.55.41.223
+```
+
+### Sync Settings
+```shell
+cp -r editors/sublime-text/Packages ~/.config/sublime-text/
 ```
