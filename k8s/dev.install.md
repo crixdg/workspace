@@ -16,42 +16,7 @@ curl -LO https://github.com/kubernetes/minikube/releases/latest/download/minikub
 sudo install minikube-linux-amd64 /usr/local/bin/minikube && rm minikube-linux-amd64
 ```
 ---
-# containerd
 
-```shell
-curl -LO https://github.com/containerd/containerd/releases/download/v2.0.5/containerd-2.0.5-linux-amd64.tar.gz
-curl -LO https://github.com/containerd/containerd/releases/download/v2.0.5/containerd-2.0.5-linux-amd64.tar.gz.sha256sum
-sha256sum -c containerd-2.0.5-linux-amd64.tar.gz.sha256sum
-sudo tar Cxzvf /usr/local containerd-2.0.5-linux-amd64.tar.gz
-rm -rf containerd-2.0.5-linux-amd64.tar.gz containerd-2.0.5-linux-amd64.tar.gz.sha256sum
-```
-
-### Start containerd via systemd
-```shell
-curl -LO https://raw.githubusercontent.com/containerd/containerd/main/containerd.service
-sudo mkdir -p /usr/local/lib/systemd/system/
-sudo mv containerd.service /usr/local/lib/systemd/system/
-systemctl daemon-reload
-systemctl enable --now containerd
-```
-
-### Install runc
-```shell
-curl -LO https://github.com/opencontainers/runc/releases/download/v1.2.6/runc.amd64
-sudo install -m 755 runc.amd64 /usr/local/sbin/runc
-rm -f runc.amd64
-```
-
-### Install CNI plugins
-```shell
-sudo mkdir -p /opt/cni/bin
-curl -LO https://github.com/containernetworking/plugins/releases/download/v1.7.1/cni-plugins-linux-amd64-v1.7.1.tgz
-curl -LO https://github.com/containernetworking/plugins/releases/download/v1.7.1/cni-plugins-linux-amd64-v1.7.1.tgz.sha256
-sha256sum -c cni-plugins-linux-amd64-v1.7.1.tgz.sha256
-sudo tar Cxzvf /opt/cni/bin cni-plugins-linux-amd64-v1.7.1.tgz
-rm -rf cni-plugins-linux-amd64-v1.7.1.tgz cni-plugins-linux-amd64-v1.7.1.tgz.sha256
-```
----
 # Docker
 
 ### Install docker dependencies
@@ -74,6 +39,7 @@ sudo apt-get update
 sudo apt install docker-ce docker-ce-cli docker-buildx-plugin docker-compose-plugin
 sudo usermod -aG docker $USER && newgrp docker
 ```
+
 ---
 # Helm
 
