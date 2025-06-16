@@ -1,5 +1,5 @@
 - name: Install Kubernetes dependencies
-  hosts: host2
+  hosts: all
   become: true
   vars:
     admin_user: "virtuora"
