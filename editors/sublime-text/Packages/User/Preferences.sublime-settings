@@ -20,7 +20,6 @@
 
 	"caret_extra_top": 0,
 	"caret_extra_bottom": 0,
-	"hardware_acceleration": "opengl",
 
 	"show_tab_close_buttons": false,
 	"highlight_modified_tabs": true,
@@ -30,7 +29,7 @@
 	"show_encoding": true,
 	"show_line_endings": true,
 
-	"scroll_past_end": true,
+	"scroll_past_end": false,
 	"scroll_context_lines": 5,
 
 	"show_full_path": false,
