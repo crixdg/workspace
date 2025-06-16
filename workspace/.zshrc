@@ -86,6 +86,7 @@ if [ -d "$HOME/.local/bin" ]; then
 fi
 
 # ===============================================================================
+# GO
 export GO_DIR="$HOME/.local/go"
 if [ -d "$GO_DIR" ]; then
 	export PATH="$GO_DIR/bin:$PATH"
