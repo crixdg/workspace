@@ -2,8 +2,7 @@
   // ====================
   // 🔧 Editor Essentials
   // ====================
-  "editor.tabSize": 2,
-  "editor.fontFamily": "Fira Code",
+  "editor.fontFamily": "Fira Code, Barlow, monospace",
   "editor.fontLigatures": true,
   "editor.fontSize": 13,
   "editor.lineHeight": 15,
@@ -40,6 +39,7 @@
     "<C-Z>": false,
     "<C-s>": false,
     "<C-f>": false,
+    "<C-w>": false,
   },
   // =======================
   // 🧭 Explorer Experience
