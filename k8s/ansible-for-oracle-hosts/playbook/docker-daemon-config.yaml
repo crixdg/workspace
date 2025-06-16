@@ -26,3 +26,9 @@
         name: docker
         state: restarted
         enabled: true
+
+    - name: Restart Kubelet
+      systemd:
+        name: kubelet
+        state: restarted
+        enabled: true
