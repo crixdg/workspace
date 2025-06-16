@@ -1,0 +1,28 @@
+- name: Configure Docker insecure registry
+  hosts: all
+  become: yes
+  vars:
+    registry_host: "nexus.167.254.190.2.nip.io"
+
+  tasks:
+
+    - name: Create Docker config directory if it doesn't exist
+      file:
+        path: /etc/docker
+        state: directory
+        mode: '0755'
+
+    - name: Set insecure registry in daemon.json
+      copy:
+        dest: /etc/docker/daemon.json
+        content: |
+          {
+            "insecure-registries": ["{{ registry_host }}"]
+          }
+        mode: '0644'
+
+    - name: Restart Docker
+      systemd:
+        name: docker
+        state: restarted
+        enabled: true
