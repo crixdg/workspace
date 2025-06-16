@@ -91,6 +91,11 @@ if [ -d "$GO_DIR" ]; then
 	export PATH="$GO_DIR/bin:$PATH"
 fi
 
+export GO_PATH="$HOME/go"
+if [ -d "$GO_PATH" ]; then
+	export PATH="$GO_PATH/bin:$PATH"
+fi
+
 # ===============================================================================
 # NODE VERSION MANAGER
 export NVM_DIR="$HOME/.nvm"
