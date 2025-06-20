@@ -98,11 +98,18 @@ if [ -d "$GO_PATH" ]; then
 fi
 
 # ===============================================================================
+# SCALA
+export COURSIER_DIR="$HOME/.local/share/coursier"
+if [ -d "$COURSIER_DIR" ]; then
+	export PATH="$COURSIER_DIR/bin:$PATH"
+fi
+
+# ===============================================================================
 # NODE VERSION MANAGER
 export NVM_DIR="$HOME/.nvm"
 if [ -d "$NVM_DIR" ]; then
-	[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"                   # This loads nvm
-	[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion" # This loads nvm bash_completion
+	[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+	[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
 fi
 
 # ===============================================================================
