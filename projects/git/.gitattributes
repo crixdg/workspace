@@ -1,14 +1,9 @@
-* text=auto eol=lf
-* cmd=auto eol=crlf
-
-*.bat eol=crlf
-
-# The above only works properly for Git 2.10+, so for older versions
-# we need to manually list the binary files we don't want modified.
+* text=auto
+*.sh text eol=lf
+*.cmd text eol=crlf
 
 *.ico binary
 *.jar binary
 *.jpg binary
 *.png binary
 *.ttf binary
-*.tza binary
