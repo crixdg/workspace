@@ -1,0 +1,1 @@
+Explains how others can contribute to the project.

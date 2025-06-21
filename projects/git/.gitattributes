@@ -1,9 +1,5 @@
-# Normalize EOL for all files that Git considers text files
-
 * text=auto eol=lf
 * cmd=auto eol=crlf
-
-# Except for Windows-only / Visual Studio files
 
 *.bat eol=crlf
 
