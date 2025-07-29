@@ -8,9 +8,9 @@ export ZSH_CUSTOM="$ZSH/custom"
 autoload -Uz compinit
 [ -d "$ZSH_CACHE_DIR" ] || mkdir -p "$ZSH_CACHE_DIR"
 if [[ ! -s "$ZSH_COMPDUMP" || "$ZSH_COMPDUMP" -ot ~/.zshrc ]]; then
-  compinit -i -d "$ZSH_COMPDUMP"
+	compinit -i -d "$ZSH_COMPDUMP"
 else
-  compinit -d "$ZSH_COMPDUMP"
+	compinit -d "$ZSH_COMPDUMP"
 fi
 
 # ===============================================================================
@@ -20,7 +20,7 @@ ZSH_THEME="keiron"
 # ===============================================================================
 # PLUGIN
 plugins=(
-    man
+	man
 	git
 	mvn
 	npm
@@ -121,15 +121,15 @@ fi
 
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('$MINICONDA_HOME/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+__conda_setup="$('$MINICONDA_HOME/bin/conda' 'shell.zsh' 'hook' 2>/dev/null)"
 if [ $? -eq 0 ]; then
-    eval "$__conda_setup"
+	eval "$__conda_setup"
 else
-    if [ -f "$MINICONDA_HOME/etc/profile.d/conda.sh" ]; then
-        . "$MINICONDA_HOME/etc/profile.d/conda.sh"
-    else
-        export PATH="$MINICONDA_HOME/bin:$PATH"
-    fi
+	if [ -f "$MINICONDA_HOME/etc/profile.d/conda.sh" ]; then
+		. "$MINICONDA_HOME/etc/profile.d/conda.sh"
+	else
+		export PATH="$MINICONDA_HOME/bin:$PATH"
+	fi
 fi
 unset __conda_setup
 # <<< conda initialize <<<
@@ -138,7 +138,7 @@ unset __conda_setup
 # HELM
 export HELM_COMPLETION="$HOME/.config/zsh/completions/helm.zsh"
 if [ -f "$HELM_COMPLETION" ]; then
-    source "$HELM_COMPLETION"
+	source "$HELM_COMPLETION"
 fi
 
 # ===============================================================================

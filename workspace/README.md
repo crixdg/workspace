@@ -30,7 +30,7 @@ source "$HOME/.zshrc"
 ### Other Configs
 ```shell
 cp -f "workspace/.gitconfig" "$HOME/.gitconfig"
-cp -f "workspace/.vimrc" "$HOME/.vimrc"
+mkdir -p "$HOME/.config/nvim" && cp -f "workspace/.vimrc" "$HOME/.config/nvim/init.vim"
 cp -f "workspace/.clang-format" "$HOME/.clang-format"
 cp -f "workspace/.gdbinit" "$HOME/.gdbinit"
 ```
