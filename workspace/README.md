@@ -27,18 +27,11 @@ rm -rf ~/.shell.pre-oh-my-zsh
 source "$HOME/.zshrc"
 ```
 
-### Git Config
+### Other Configs
 ```shell
 cp -f "workspace/.gitconfig" "$HOME/.gitconfig"
-```
-
-### Clang-Format
-```shell
+cp -f "workspace/.vimrc" "$HOME/.vimrc"
 cp -f "workspace/.clang-format" "$HOME/.clang-format"
-```
-
-### GDB Config
-```shell
 cp -f "workspace/.gdbinit" "$HOME/.gdbinit"
 ```
 
