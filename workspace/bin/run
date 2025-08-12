@@ -61,7 +61,7 @@ compile() {
 	fi
 
   if [[ " ${_prefix_flags[*]} " == *" -DINFO "* ]]; then
-    _optimization_flags=("-O0")
+    _optimization_flags=("-O1")
   fi
 	if [[ " ${_prefix_flags[*]} " == *" -g "* ]]; then
 		_optimization_flags=("-O0")
