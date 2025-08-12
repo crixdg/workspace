@@ -21,9 +21,9 @@ usage() {
 }
 
 compile() {
-	local _compile_options="-std=c++20 -fsanitize=address"
+	local _compile_options=("-std=c++20" "-fsanitize=address")
 	local _warning_flags=("-Wall" "-Wextra" "-Wno-sign-compare" "-Wno-parentheses")
-	local _optimization_flags="-O2"
+	local _optimization_flags=("-O2")
 	# local _debugging_options="-g"
 	# local _preprocessor_defines="-DDEBUG"
 	# local _include_paths=""
@@ -61,13 +61,13 @@ compile() {
 	fi
 
 	if [[ " ${_prefix_flags[*]} " == *" -g "* ]]; then
-		_optimization_flags="-O0"
+		_optimization_flags=("-O0")
 	fi
 
 	err_echo "Compiling $_source_file with C++20..."
 
 	# "$_debugging_options" $_preprocessor_defines "$_include_paths" "$_libraries"
-	if g++ "$_compile_options" "${_warning_flags[@]}" "$_optimization_flags" \
+	if g++ "${_compile_options[@]}" "${_warning_flags[@]}" "${_optimization_flags[@]}" \
 		"${_prefix_flags[@]}" "$_source_file" -o "$_binary_file" "${_postfix_flags[@]}"; then
 		echo "$_binary_file"
 	else
