@@ -104,6 +104,7 @@ run() {
 	err_echo "Running $_binary_file with C++20..."
 
 	_commands+=("./$_binary_file")
+	err_echo "${_commands[*]}"
 	eval "${_commands[*]}"
 }
 
