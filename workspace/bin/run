@@ -68,6 +68,8 @@ compile() {
 	fi
 
 	err_echo "Compiling $_source_file with C++20..."
+	err_echo "g++ ${_compile_options[*]} ${_warning_flags[*]} ${_optimization_flags[*]} \
+    ${_prefix_flags[*]} $_source_file -o $_binary_file ${_postfix_flags[*]}"
 
 	# "$_debugging_options" $_preprocessor_defines "$_include_paths" "$_libraries"
 	if g++ "${_compile_options[@]}" "${_warning_flags[@]}" "${_optimization_flags[@]}" \
