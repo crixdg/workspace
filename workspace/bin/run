@@ -179,7 +179,7 @@ while [[ $# -gt 0 && $1 == -* ]]; do
 		modes+=("\e[1m[GDB]\e[0m")
 		prefix_flags+=("-g")
 		((prefix_count++))
-		commands+=("gdb -q")
+		commands+=("LSAN_OPTIONS=detect_leaks=0 gdb -q")
 		shift
 		;;
 	-i | --info)
