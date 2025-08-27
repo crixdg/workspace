@@ -1,80 +1,186 @@
 {
-  // ====================
-  // 🔧 Editor Essentials
-  // ====================
-  "editor.fontFamily": "Fira Code, Barlow, monospace",
+  //================================================================================== Editor
+  "editor.fontFamily": "Fira Code, monospace",
   "editor.fontLigatures": true,
-  "editor.fontSize": 13,
-  "editor.lineHeight": 15,
+  "editor.fontSize": 12,
+  "editor.lineHeight": 16,
   "editor.cursorStyle": "line",
   "editor.cursorBlinking": "solid",
-  "editor.minimap.autohide": true,
-  // ================
-  // 💾 File Handling
-  // ================
+  "editor.cursorSurroundingLines": 5,
+  // "editor.wordWrap": "on",
+  "editor.wordWrapColumn": 120,
+  "editor.minimap.autohide": "mouseover",
+  "editor.guides.indentation": true,
+  //================================================================================== File
   "files.eol": "\n",
   "files.autoSave": "afterDelay",
-  "files.insertFinalNewline": false,
+  "files.insertFinalNewline": true,
   "files.trimTrailingWhitespace": true,
   "files.exclude": {
-    "**/.git": true,
-    "**/.idea": true,
-    "**/.vscode": true,
-    "**/node_modules": true,
+    "**/.DS_Store": false,
+    "**/.git": false,
+    "**/.hg": false,
+    "**/.svn": false,
+    "**/Thumbs.db": false
   },
-  // =====================
-  // 🧩 Workbench Settings
-  // =====================
-  "workbench.colorTheme": "Visual Studio Dark - C++",
-  "workbench.iconTheme": "vscode-icons",
-  // ========
-  // Vim Mode
-  // ========
-  "vim.handleKeys": {
-    "<C-a>": false,
-    "<C-c>": false,
-    "<C-v>": false,
-    "<C-x>": false,
-    "<C-z>": false,
-    "<C-Z>": false,
-    "<C-s>": false,
-    "<C-f>": false,
-    "<C-w>": false,
-  },
-  // =======================
-  // 🧭 Explorer Experience
-  // =======================
-  // =======================
-  // ✍️ Language Formatters
-  // =======================
-  // =======================
-  // 🧠 IntelliSense / LSP
-  // =======================
-  // =======================
-  // ▶️ Code Runner
-  // =======================
-  // ==================
-  // 🏗️ CMake / Makefile
-  // ==================
-  // ===================
-  // 🧪 Git Integration
-  // ===================
-  // ========================
-  // 🧵 Markdown Enhancements
-  // ========================
-  // ====================
-  // 🖥️ Terminal Settings
-  // ====================
-  // =============
-  // Settings Sync
-  // =============
-  // ===============
-  // Window Settings
-  // ===============
-  "window.newWindowProfile": "Default",
-  // ======================
-  // Miscellaneous Settings
-  // ======================
-  "redhat.telemetry.enabled": false,
+  //================================================================================== Icon
   "vsicons.dontShowNewVersionMessage": true,
+  // "vsicons.presets.foldersAllDefaultIcon": true,
+  //================================================================================== Window
+  "window.newWindowProfile": "Default",
+  "window.openFoldersInNewWindow": "on",
+  //================================================================================== Explorer
+  "explorer.sortOrder": "type",
+  //================================================================================== Workbench
+  "workbench.colorTheme": "Default Dark Modern",
+  "workbench.iconTheme": "vscode-icons",
+  "workbench.activityBar.location": "top",
+  "workbench.panel.showLabels": false,
+  "workbench.layoutControl.enabled": false,
+  "workbench.experimental.share.enabled": true,
+  "workbench.startupEditor": "none",
+  "workbench.tree.indent": 16,
+  //================================================================================== Vim
+  "vim.useSystemClipboard": false,
+  "vim.handleKeys": {
+    "<C-a>": false, // Select all
+    "<C-b>": false, // Expand & Collapse left bar
+    "<C-c>": false, // Copy
+    "<C-v>": false, // Paste
+    "<C-x>": false, // Cut
+    "<C-z>": false, // Undo
+    "<C-Z>": false, // Redo
+    "<C-s>": false, // Save
+    "<C-f>": false, // Find in current file
+    "<C-w>": false, // Close current tab
+    "<C-l>": false,
+    "<C-i>": false,
+  },
+  //================================================================================== Git
+  "git.openRepositoryInParentFolders": "always",
+  // Gitlens
+  "gitlens.plusFeatures.enabled": false,
+  "gitlens.launchpad.indicator.enabled": false,
+  // Git Diff View
+  "diffEditor.ignoreTrimWhitespace": false,
+  "diffEditor.hideUnchangedRegions.enabled": true,
+  //================================================================================== Github
+  //================================================================================== LaTeX
+  "latex-workshop.latex.outDir": "%WORKSPACE_FOLDER%/.build",
+  "latex-workshop.formatting.latex": "latexindent",
+  "latex-workshop.formatting.latexindent.path": "latexindent",
+  "latex-workshop.latex.autoBuild.interval": 5000,
+  "latex-workshop.message.warning.show": false,
+  "latex-workshop.message.error.show": false,
+  "latex-workshop.latex.recipe.default": "lastUsed",
+  "latex-workshop.latex.tools": [
+    {
+      "name": "latexmk",
+      "command": "latexmk",
+      "args": [
+        "-pdf",
+        "-synctex=1",
+        "-file-line-error",
+        "-interaction=nonstopmode",
+        "-outdir=%OUTDIR%",
+        "%DOC%"
+      ],
+      "env": {}
+    },
+    {
+      "name": "xelatexmk",
+      "command": "latexmk",
+      "args": [
+        "-xelatex",
+        "-synctex=1",
+        "-file-line-error",
+        "-interaction=nonstopmode",
+        "-outdir=%OUTDIR%",
+        "%DOC%"
+      ],
+      "env": {}
+    }
+  ],
+  "latex-workshop.latex.recipes": [
+    {
+      "name": "latexmk",
+      "tools": [
+        "latexmk"
+      ]
+    },
+    {
+      "name": "latexmk (latexmkrc)",
+      "tools": [
+        "latexmk_rconly"
+      ]
+    },
+    {
+      "name": "latexmk (lualatex)",
+      "tools": [
+        "lualatexmk"
+      ]
+    },
+    {
+      "name": "latexmk (xelatex)",
+      "tools": [
+        "xelatexmk"
+      ]
+    }
+  ],
+  "latex-utilities.message.update.show": false,
+  //================================================================================== C/C++
+  "[cpp]": {
+    "editor.defaultFormatter": "llvm-vs-code-extensions.vscode-clangd"
+  },
+  // C++ Intellisense
+  "C_Cpp.intelliSenseEngine": "disabled",
+  "C_Cpp.formatting": "disabled",
+  // Clangd
+  //  - clang-format as formatter
+  //  - clang-tidy as linter
+  //  - clang++ as compiler
+  "clangd.path": "/usr/bin/clangd",
+  "clangd.arguments": [
+    "--background-index",
+    "--query-driver=/usr/bin/clang++",
+    "--compile-commands-dir=."
+  ],
+  // Competitive Programming Helper
+  "cph.general.autoShowJudge": false,
+  "cph.general.defaultLanguage": "cpp",
+  "cph.language.cpp.Command": "g++ -std=c++20 -fsanitize=address -fno-omit-frame-pointer -Wall -Wextra -Wno-sign-compare -Wno-parentheses",
+  "cph.language.cpp.SubmissionCompiler": "GNU G++20 13.2 (64 bit, winlibs)",
+  //================================================================================== C#
+  //================================================================================== Python
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.black-formatter",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "explicit"
+    }
+  },
+  // isort
+  "isort.args": [
+    "--profile",
+    "black"
+  ],
+  //================================================================================== Java
+  //================================================================================== Javascript & Typescript
+  //================================================================================== Error Lens
+  "errorLens.delay": 500,
+  "errorLens.delayMode": "debounce",
+  //================================================================================== Code Spell Checker
+  "cSpell.language": "en,vi",
+  //================================================================================== Indent Rainbow
+  "indentRainbow.indicatorStyle": "light",
+  "indentRainbow.ignoreErrorLanguages": [
+    "cpp",
+  ],
+  //==================================================================================
+  //==================================================================================
+  "cSpell.userWords": [
+    "Codestral",
+    "rerank"
+  ],
+  "redhat.telemetry.enabled": false,
 }
