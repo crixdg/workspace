@@ -11,6 +11,7 @@
   "editor.wordWrapColumn": 120,
   "editor.minimap.autohide": "mouseover",
   "editor.guides.indentation": true,
+  "editor.inlayHints.enabled": "offUnlessPressed",
   //================================================================================== File
   "files.eol": "\n",
   "files.autoSave": "afterDelay",
@@ -34,7 +35,6 @@
   //================================================================================== Workbench
   "workbench.colorTheme": "Default Dark Modern",
   "workbench.iconTheme": "vscode-icons",
-  "workbench.activityBar.location": "top",
   "workbench.panel.showLabels": false,
   "workbench.layoutControl.enabled": false,
   "workbench.experimental.share.enabled": true,
@@ -64,7 +64,6 @@
   // Git Diff View
   "diffEditor.ignoreTrimWhitespace": false,
   "diffEditor.hideUnchangedRegions.enabled": true,
-  //================================================================================== Github
   //================================================================================== LaTeX
   "latex-workshop.latex.outDir": "%WORKSPACE_FOLDER%/.build",
   "latex-workshop.formatting.latex": "latexindent",
@@ -178,9 +177,12 @@
   ],
   //==================================================================================
   //==================================================================================
+  //==================================================================================
+  //================================================================================== Misc
   "cSpell.userWords": [
     "Codestral",
     "rerank"
   ],
   "redhat.telemetry.enabled": false,
+  "editor.guides.bracketPairs": true,
 }
