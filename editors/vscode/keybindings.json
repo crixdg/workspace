@@ -1,31 +1,35 @@
 [
-  // Move line up
+  // https://code.visualstudio.com/api/references/when-clause-contexts
+  //================================================================================== Move line up
+  // Alt + K
   {
     "key": "alt+k",
     "command": "editor.action.moveLinesUpAction",
     "when": "editorTextFocus && !editorReadonly"
   },
   {
-    "key": "alt+up",
-    "command": "-editor.action.moveLinesUpAction",
-    "when": "editorTextFocus && !editorReadonly"
+    "key": "alt+k",
+    "command": "notebook.cell.moveUp",
+    "when": "notebookEditorFocused && !inputFocus"
   },
-  // Move line down
+  //================================================================================== Move line down
+  // Alt + J
   {
     "key": "alt+j",
     "command": "editor.action.moveLinesDownAction",
     "when": "editorTextFocus && !editorReadonly"
   },
   {
-    "key": "alt+down",
-    "command": "-editor.action.moveLinesDownAction",
-    "when": "editorTextFocus && !editorReadonly"
+    "key": "alt+j",
+    "command": "notebook.cell.moveDown",
+    "when": "notebookEditorFocused && !inputFocus"
   },
-  // Format Document
+  //================================================================================== Format document
+  // Ctrl + Alt + L
   {
     "key": "ctrl+alt+l",
     "command": "editor.action.formatDocument",
-    "when": "editorHasDocumentFormattingProvider && editorTextFocus && !editorReadonly && !inCompositeEditor"
+    "when": "editorHasDocumentFormattingProvider && editorTextFocus && !editorReadonly && !inCompositeEditor && !editorHasSelection"
   },
   {
     "key": "ctrl+shift+i",
@@ -35,7 +39,7 @@
   {
     "key": "ctrl+alt+l",
     "command": "editor.action.formatDocument.none",
-    "when": "editorTextFocus && !editorHasDocumentFormattingProvider && !editorReadonly"
+    "when": "editorTextFocus && !editorHasDocumentFormattingProvider && !editorReadonly && !editorHasSelection"
   },
   {
     "key": "ctrl+shift+i",
@@ -43,20 +47,29 @@
     "when": "editorTextFocus && !editorHasDocumentFormattingProvider && !editorReadonly"
   },
   {
-    "key": "ctrl+shift+alt+l",
-    "command": "-workbench.action.quickchat.toggle",
-    "when": "chatIsEnabled"
+    "key": "ctrl+alt+l",
+    "command": "notebook.formatCell",
+    "when": "editorHasDocumentFormattingProvider && editorTextFocus && inCompositeEditor && notebookEditable && !editorReadonly && activeEditor == 'workbench.editor.notebook' && !editorHasSelection"
   },
   {
-    "key": "ctrl+shift+alt+l",
+    "key": "ctrl+shift+i",
+    "command": "-notebook.formatCell",
+    "when": "editorHasDocumentFormattingProvider && editorTextFocus && inCompositeEditor && notebookEditable && !editorReadonly && activeEditor == 'workbench.editor.notebook'"
+  },
+  //================================================================================== Format selection
+  // Ctrl + Alt + L
+  {
+    "key": "ctrl+alt+l",
     "command": "editor.action.formatSelection",
-    "when": "editorHasDocumentSelectionFormattingProvider && editorTextFocus && !editorReadonly"
+    "when": "editorHasDocumentSelectionFormattingProvider && editorTextFocus && !editorReadonly && editorHasSelection"
   },
   {
     "key": "ctrl+k ctrl+f",
     "command": "-editor.action.formatSelection",
     "when": "editorHasDocumentSelectionFormattingProvider && editorTextFocus && !editorReadonly"
   },
+  //================================================================================== Navigate back
+  // Shift + Alt + Left
   {
     "key": "shift+alt+left",
     "command": "workbench.action.navigateBack",
@@ -67,6 +80,8 @@
     "command": "-workbench.action.navigateBack",
     "when": "canNavigateBack"
   },
+  //================================================================================== Navigate forward
+  // Shift + Alt + Right
   {
     "key": "shift+alt+right",
     "command": "workbench.action.navigateForward",
@@ -76,5 +91,37 @@
     "key": "ctrl+shift+-",
     "command": "-workbench.action.navigateForward",
     "when": "canNavigateForward"
+  },
+  //================================================================================== Colonize
+  // Ctrl + Shift + Enter
+  {
+    "key": "ctrl+shift+enter",
+    "command": "colonize.endline",
+    "when": "editorTextFocus"
+  },
+  {
+    "key": "shift+enter",
+    "command": "-colonize.endline",
+    "when": "editorTextFocus"
+  },
+  {
+    "key": "ctrl+alt+enter",
+    "command": "-colonize.hold",
+    "when": "editorTextFocus"
+  },
+  {
+    "key": "alt+enter",
+    "command": "-colonize.newline",
+    "when": "editorTextFocus"
+  },
+  //================================================================================== Conflicted
+  {
+    "key": "ctrl+alt+b",
+    "command": "-cph.runTestCases"
+  },
+  {
+    "key": "ctrl+alt+l",
+    "command": "-bookmarks.jumpToNext",
+    "when": "editorTextFocus"
   },
 ]
