@@ -1,4 +1,6 @@
 ---
+# https://clang.llvm.org/docs/ClangFormat.html
+
 BasedOnStyle: LLVM
 
 IndentWidth: 4
