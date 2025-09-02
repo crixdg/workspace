@@ -5,10 +5,7 @@
       "label": "Format Shell Script with shfmt",
       "type": "shell",
       "command": "shfmt",
-      "args": [
-        "-w",
-        "${file}"
-      ],
+      "args": ["-w", "${file}"],
       "group": {
         "kind": "build",
         "isDefault": true
