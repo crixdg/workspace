@@ -58,7 +58,8 @@
     "<C-f>": false, // Find in current file
     "<C-w>": false, // Close current tab
     "<C-l>": false,
-    "<C-i>": false
+    "<C-i>": false,
+    "<C-j>": false
   },
   //================================================================================== Git
   "git.autofetch": true,
