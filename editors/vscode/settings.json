@@ -41,6 +41,9 @@
   "workbench.activityBar.location": "top",
   "workbench.iconTheme": "material-icon-theme",
   "workbench.colorTheme": "Monokai Pro",
+  "workbench.colorCustomizations": {
+    "editorInfo.foreground": "#808080"
+  },
   //================================================================================== Vim
   "vim.useSystemClipboard": false,
   "vim.handleKeys": {
