@@ -16,10 +16,15 @@ fi
 ```
 
 ```shell
-cp -rf "workspace/keiron.zsh-theme" "$HOME/.oh-my-zsh/custom/themes/keiron.zsh-theme"
-cp -rf "workspace/.zshrc" "$HOME/.zshrc"
+cp -f "workspace/keiron.zsh-theme" "$HOME/.oh-my-zsh/custom/themes/keiron.zsh-theme"
+cp -f "workspace/.zshrc" "$HOME/.zshrc"
 rm -rf ~/.bash* ~/.profile ~/.zcomp* ~/.shell.pre-oh-my-zsh
 source "$HOME/.zshrc"
+```
+
+```shell
+cp -f "$HOME/.oh-my-zsh/custom/themes/keiron.zsh-theme" "workspace/keiron.zsh-theme"
+cp -f "$HOME/.zshrc" "workspace/.zshrc"
 ```
 
 ### Git
