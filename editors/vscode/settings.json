@@ -172,6 +172,11 @@
   // isort
   "isort.args": ["--profile", "black"],
   //================================================================================== Java
+  //================================================================================== Javascript & Typescript
+  //================================================================================== Markdown
+  "[markdown]": {
+    "editor.defaultFormatter": "yzhang.markdown-all-in-one"
+  },
   //================================================================================== Prettier
   "prettier.requireConfig": false,
   "prettier.useEditorConfig": true,
@@ -180,7 +185,6 @@
   "[jsonc]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
-  //================================================================================== Javascript & Typescript
   //================================================================================== Error Lens
   "errorLens.delay": 500,
   "errorLens.delayMode": "debounce",
