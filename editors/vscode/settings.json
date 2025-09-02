@@ -7,10 +7,10 @@
   "editor.cursorStyle": "line",
   "editor.cursorBlinking": "solid",
   "editor.cursorSurroundingLines": 5,
-  // "editor.wordWrap": "on",
   "editor.wordWrapColumn": 120,
   "editor.minimap.autohide": "mouseover",
   "editor.inlayHints.enabled": "offUnlessPressed",
+  // "editor.wordWrap": "on",
   //================================================================================== File
   "files.eol": "\n",
   "files.autoSave": "afterDelay",
@@ -60,7 +60,7 @@
   //================================================================================== Git
   "git.autofetch": true,
   "git.openRepositoryInParentFolders": "always",
-  // Gitlens
+  //================================================================================== Gitlens
   "gitlens.plusFeatures.enabled": false,
   "gitlens.launchpad.indicator.enabled": false,
   "gitlens.views.scm.grouped.views": {
@@ -76,7 +76,7 @@
     "searchAndCompare": true,
     "launchpad": true
   },
-  // Git Diff View
+  //================================================================================== Git Diff View
   "diffEditor.ignoreTrimWhitespace": false,
   "diffEditor.hideUnchangedRegions.enabled": true,
   //================================================================================== LaTeX
@@ -118,27 +118,19 @@
   "latex-workshop.latex.recipes": [
     {
       "name": "latexmk",
-      "tools": [
-        "latexmk"
-      ]
+      "tools": ["latexmk"]
     },
     {
       "name": "latexmk (latexmkrc)",
-      "tools": [
-        "latexmk_rconly"
-      ]
+      "tools": ["latexmk_rconly"]
     },
     {
       "name": "latexmk (lualatex)",
-      "tools": [
-        "lualatexmk"
-      ]
+      "tools": ["lualatexmk"]
     },
     {
       "name": "latexmk (xelatex)",
-      "tools": [
-        "xelatexmk"
-      ]
+      "tools": ["xelatexmk"]
     }
   ],
   "latex-utilities.message.update.show": false,
@@ -174,21 +166,23 @@
     }
   },
   // isort
-  "isort.args": [
-    "--profile",
-    "black"
-  ],
+  "isort.args": ["--profile", "black"],
   //================================================================================== Java
+  //================================================================================== Prettier
+  "prettier.requireConfig": false,
+  "prettier.useEditorConfig": true,
+  "prettier.enableDebugLogs": false,
+  "prettier.documentSelectors": ["jsonc"],
+  "[jsonc]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
   //================================================================================== Javascript & Typescript
   //================================================================================== Error Lens
   "errorLens.delay": 500,
   "errorLens.delayMode": "debounce",
   "errorLens.gutterIconsEnabled": true,
   "errorLens.followCursor": "allLinesExceptActive",
-  "errorLens.enabledDiagnosticLevels": [
-    "error",
-    "warning"
-  ],
+  "errorLens.enabledDiagnosticLevels": ["error", "warning"],
   //================================================================================== Code Spell Checker
   "cSpell.language": "en,vi",
   "cSpell.userWords": [
