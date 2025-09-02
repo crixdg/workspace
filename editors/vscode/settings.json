@@ -41,9 +41,7 @@
   "workbench.activityBar.location": "top",
   "workbench.iconTheme": "material-icon-theme",
   "workbench.colorTheme": "Monokai Pro",
-  "workbench.colorCustomizations": {
-    "editorInfo.foreground": "#808080"
-  },
+  "workbench.colorCustomizations": {},
   //================================================================================== Vim
   "vim.useSystemClipboard": false,
   "vim.handleKeys": {
@@ -192,6 +190,7 @@
   "errorLens.followCursor": "allLinesExceptActive",
   "errorLens.enabledDiagnosticLevels": ["error", "warning"],
   //================================================================================== Code Spell Checker
+  "cSpell.diagnosticLevel": "Hint",
   "cSpell.language": "en,vi",
   "cSpell.userWords": [
     "Codestral",
