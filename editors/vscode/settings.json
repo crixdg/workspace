@@ -23,6 +23,9 @@
     "**/.svn": false,
     "**/Thumbs.db": false
   },
+  "files.associations": {
+    "commit-msg": "jsonc"
+  },
   //================================================================================== Icon
   "vsicons.dontShowNewVersionMessage": true,
   //================================================================================== Window

@@ -1,0 +1,53 @@
+#!/bin/sh
+
+# Conventional Commit
+# https://www.conventionalcommits.org/en/v1.0.0/
+
+# <commit type>[optional scope][!]: <description>
+# [optional body]
+# [optional footer(s)]
+
+commit_msg=$(cat "$1")
+
+# Valid Commit Types
+
+# ==== User-facing changes ====
+# - feat:     a new feature for the user (not build scripts or tooling)
+# - fix:      a bug fix for the user (not build scripts or tooling)
+
+# ==== No production code changes ====
+# - docs:     documentation changes (README, guides, comments, contributing docs)
+# - style:    code style changes only (formatting, spaces, semicolons); no logic changes
+# - test:     adding, fixing, or refactoring tests; no production code changes
+
+# ==== Production code changes ====
+# - revert:   revert a previous commit
+# - refactor: code changes that neither fix a bug nor add a feature (e.g., renaming, restructuring)
+# - chore:    maintenance tasks (e.g., updating build scripts, dependencies, configs)
+# - build:    changes to the build system or external dependencies
+# - ci:       changes to CI/CD configuration files and scripts
+# - perf:     performance improvements
+
+# ==== Miscellaneous ====
+# - wip:      work in progress (temporary; usually squashed before merge)
+
+types="feat|fix|docs|style|test|revert|refactor|chore|build|ci|perf|wip"
+
+# Regex checks
+regex_type="^($types)"
+regex_scope="^($types)(\([a-z0-9_-]+\))?!?: "
+regex_full="^($types)(\([a-z0-9_-]+\))?!?: [a-z].+"
+
+# Validate commit message format
+if ! echo "$commit_msg" | grep -Eq "$regex_full"; then
+	if ! echo "$commit_msg" | grep -Eq "$regex_type"; then
+		echo >&2 "Error: Commit type is missing or invalid. Allowed types: $types"
+	elif ! echo "$commit_msg" | grep -Eq "$regex_scope"; then
+		echo >&2 "Error: Commit message must start with <type>[optional scope][!]: "
+	elif ! echo "$commit_msg" | grep -Eq "$regex_full"; then
+		echo >&2 "Error: Commit message description must start with a lowercase letter."
+	else
+		echo >&2 "Error: Commit message does not follow conventional commit format."
+	fi
+	exit 1
+fi
