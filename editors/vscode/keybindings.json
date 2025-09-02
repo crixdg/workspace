@@ -68,6 +68,14 @@
     "command": "-editor.action.formatSelection",
     "when": "editorHasDocumentSelectionFormattingProvider && editorTextFocus && !editorReadonly"
   },
+  //================================================================================== Format shellscript by tasks
+  // Ctrl + Alt + L
+  {
+    "key": "ctrl+alt+l",
+    "command": "workbench.action.tasks.runTask",
+    "args": "Format Shell Script with shfmt",
+    "when": "editorLangId == shellscript"
+  },
   //================================================================================== Navigate back
   // Shift + Alt + Left
   {
@@ -114,7 +122,13 @@
     "command": "-colonize.newline",
     "when": "editorTextFocus"
   },
-  //================================================================================== Conflicted
+  //================================================================================== Integrated Terminal
+  {
+    "key": "alt+f12",
+    "command": "workbench.action.terminal.toggleTerminal",
+    "when": "terminal.active"
+  },
+  //================================================================================== Conflicted Keys
   {
     "key": "ctrl+alt+b",
     "command": "-cph.runTestCases"
@@ -123,5 +137,5 @@
     "key": "ctrl+alt+l",
     "command": "-bookmarks.jumpToNext",
     "when": "editorTextFocus"
-  },
+  }
 ]
