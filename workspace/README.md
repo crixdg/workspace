@@ -32,6 +32,10 @@ cp -f "$HOME/.zshrc" "workspace/.zshrc"
 cp -f "workspace/.gitconfig" "$HOME/.gitconfig"
 ```
 
+```shell
+cp -f "$HOME/.gitconfig" "workspace/.gitconfig"
+```
+
 ### Vim
 ```shell
 cp -f "$HOME/.config/nvim/init.vim" "workspace/.vimrc"
