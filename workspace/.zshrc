@@ -142,3 +142,12 @@ if [ -f "$HELM_COMPLETION" ]; then
 fi
 
 # ===============================================================================
+# BUN
+# bun completions
+
+# bun
+export BUN_HOME="$HOME/.bun"
+if [ -d "$BUN_HOME" ]; then
+	export PATH="$BUN_HOME/bin:$PATH"
+	[ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
+fi
