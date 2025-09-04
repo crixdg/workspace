@@ -41,6 +41,7 @@ fi
 # CONFIG
 # Uncomment the following line if pasting URLs and other text is messed up.
 DISABLE_MAGIC_FUNCTIONS="true"
+
 # Uncomment the following line to disable auto-setting terminal title.
 DISABLE_AUTO_TITLE="true"
 
@@ -81,6 +82,7 @@ fi
 if [ -d "$HOME/bin" ]; then
 	export PATH="$HOME/bin:$PATH"
 fi
+
 if [ -d "$HOME/.local/bin" ]; then
 	export PATH="$HOME/.local/bin:$PATH"
 fi
@@ -113,6 +115,13 @@ if [ -d "$NVM_DIR" ]; then
 fi
 
 # ===============================================================================
+# BUN completions
+export BUN_HOME="$HOME/.bun" && mkdir -p "$BUN_HOME"
+
+# bun completions zsh > "$BUN_HOME/_bun"
+[ -s "$BUN_HOME/_bun" ] && source "$BUN_HOME/_bun"
+
+# ===============================================================================
 # MINICONDA
 export MINICONDA_HOME="$HOME/miniconda3"
 if [ -d "$MINICONDA_HOME" ]; then
@@ -139,15 +148,4 @@ unset __conda_setup
 export HELM_COMPLETION="$HOME/.config/zsh/completions/helm.zsh"
 if [ -f "$HELM_COMPLETION" ]; then
 	source "$HELM_COMPLETION"
-fi
-
-# ===============================================================================
-# BUN
-# bun completions
-
-# bun
-export BUN_HOME="$HOME/.bun"
-if [ -d "$BUN_HOME" ]; then
-	export PATH="$BUN_HOME/bin:$PATH"
-	[ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
 fi
