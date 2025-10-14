@@ -1,35 +1,33 @@
 ---
-- name: Copy SSH public key to remote hosts
+- name: Copy SSH public key to remote hosts (handle immutable)
   hosts: all
   become: true
-  vars:
-    target_user: root
-    target_home: "{{ '/root' if target_user == 'root' else '/home/' + target_user }}"
-    pubkey: "ssh-rsa AAAA.... user@example.com"
-  tasks:
-    - name: Fail if pubkey not provided
-      fail:
-        msg: "You must provide the public key (pubkey) either via -e or in the playbook."
-      when: pubkey is not defined
+  become_user: root
 
-    - name: Ensure target user's .ssh directory exists
+  vars:
+    pubkey: "ssh-rsa your_public_key_here"
+
+  tasks:
+    - name: Ensure /root/.ssh directory exists
       file:
-        path: "{{ target_home }}/.ssh"
+        path: /root/.ssh
         state: directory
-        owner: "{{ target_user }}"
-        group: "{{ target_user }}"
         mode: "0700"
 
-    - name: Add public key to user's authorized_keys (idempotent)
+    - name: Remove immutable flag from authorized_keys (if exists)
+      ansible.builtin.command: chattr -i /root/.ssh/authorized_keys
+      register: remove_chattr
+      ignore_errors: true
+      changed_when: remove_chattr.rc == 0
+
+    - name: Add public key to root's authorized_keys (idempotent)
       authorized_key:
-        user: "{{ target_user }}"
+        user: root
         key: "{{ pubkey }}"
         state: present
-        manage_dir: false   # we already created .ssh above
 
-    - name: Ensure authorized_keys permissions are correct
-      file:
-        path: "{{ target_home }}/.ssh/authorized_keys"
-        owner: "{{ target_user }}"
-        group: "{{ target_user }}"
-        mode: "0600"
+    - name: Restore immutable flag on authorized_keys
+      ansible.builtin.command: chattr +i /root/.ssh/authorized_keys
+      register: restore_chattr
+      ignore_errors: true
+      changed_when: restore_chattr.rc == 0
