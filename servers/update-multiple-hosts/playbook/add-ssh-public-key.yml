@@ -5,7 +5,7 @@
   become_user: root
 
   vars:
-    pubkey: "ssh-rsa your_public_key_here"
+    pubkey: "<your_ssh_public_key_here>"
 
   tasks:
     - name: Ensure /root/.ssh directory exists
