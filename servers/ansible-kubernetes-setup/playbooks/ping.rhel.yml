@@ -1,7 +1,20 @@
 ---
-- name: Ping all hosts to check connectivity
+- name: Ping and show current user and hostname on each host
   hosts: all
   gather_facts: no
+
   tasks:
     - name: Ping each host
       ansible.builtin.ping:
+
+    - name: Show current SSH user
+      ansible.builtin.command: whoami
+      register: user_result
+
+    - name: Show the real hostname
+      ansible.builtin.command: hostname
+      register: host_result
+
+    - name: Print results
+      ansible.builtin.debug:
+        msg: "Connected to {{ host_result.stdout }} as {{ user_result.stdout }}"
