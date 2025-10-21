@@ -1,5 +1,5 @@
 ---
-- name: Ping and collect system information (rounded RAM)
+- name: Ping and collect system information
   hosts: all
   gather_facts: no
 
