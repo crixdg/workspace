@@ -1,0 +1,136 @@
+---
+- name: Install Kubernetes Dependencies
+  hosts: all
+  become: true
+  vars:
+    kubernetes_repo_version: "v1.34"
+    centos_version: "7"
+  tasks:
+    # Install required packages
+
+    - name: Install required packages
+      dnf:
+        name:
+          - jq
+          - vim
+          - curl
+          - net-tools
+          - yum-utils
+          - iptables
+          - iproute
+        state: present
+        update_cache: yes
+
+    # Setup Docker CE Repo & Container Runtime (CRI)
+
+    - name: Add Docker CE repo
+      yum_repository:
+        name: docker-ce
+        description: Docker CE YUM Repository
+        baseurl: https://download.docker.com/linux/centos/${centos_version}/x86_64/stable/
+        enabled: 1
+        gpgcheck: 1
+        gpgkey: https://download.docker.com/linux/centos/gpg
+        exclude: docker-ce docker-ce-cli containerd.io
+
+    - name: Install Docker CE packages
+      yum:
+        name:
+          - containerd.io
+        state: present
+        disable_exclude: docker-ce
+        update_cache: yes
+        exclude: "*kubernetes*"
+
+    - name: Configure containerd
+      command: |
+        mkdir -p /etc/containerd
+        containerd config default > /etc/containerd/config.toml
+
+    - name: Comment out any line containing disabled_plugins
+      lineinfile:
+        path: /etc/containerd/config.toml
+        regexp: '^\s*disabled_plugins.*'
+        line: '# \g<0>'
+        backrefs: yes
+
+    - name: Enable SystemdCgroup in containerd
+      replace:
+        path: /etc/containerd/config.toml
+        regexp: '^(\s*SystemdCgroup\s*=\s*)false'
+        replace: '\1true'
+
+    - name: Restart and enable containerd service
+      systemd:
+        name: containerd
+        state: restarted
+        enabled: true
+
+    # Setup Kubernetes Repo and Install Packages
+
+    - name: Add Kubernetes repo
+      yum_repository:
+        name: kubernetes
+        description: Kubernetes YUM Repository
+        baseurl: https://pkgs.k8s.io/core:/stable:/${kubernetes_repo_version}/rpm/
+        enabled: 1
+        gpgcheck: 1
+        gpgkey: https://pkgs.k8s.io/core:/stable:/${kubernetes_repo_version}/rpm/repodata/repomd.xml.key
+        exclude: kubelet kubeadm kubectl cri-tools kubernetes-cni
+
+    - name: Install Kubernetes packages
+      yum:
+        name:
+          - kubelet
+          - kubeadm
+          - cri-tools
+          - kubernetes-cni
+        state: present
+        disable_exclude: kubernetes
+        update_cache: yes
+        exclude: "*docker*"
+
+    - name: Reload systemd daemon
+      command: systemctl daemon-reexec
+      ignore_errors: true
+
+    - name: Reload systemd daemon
+      command: systemctl daemon-reload
+      ignore_errors: true
+
+    - name: Enable kubelet
+      systemd:
+        name: kubelet
+        enabled: true
+        state: stopped
+
+    # Helm Installation
+    - name: Download Helm installation script
+      get_url:
+        url: https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+        dest: /tmp/get_helm.sh
+        mode: "0755"
+
+    - name: Run Helm installation script
+      command: /tmp/get_helm.sh
+      args:
+        creates: /usr/local/bin/helm
+
+    - name: Verify Helm installation
+      command: helm version --short
+      register: helm_version
+      changed_when: false
+
+---
+- name: Install special Kubernetes dependencies for control planes
+  hosts: master
+  become: true
+  tasks:
+    - name: Install kubectl for control planes
+      dnf:
+        name:
+          - kubectl
+        state: present
+        disable_exclude: kubernetes
+        update_cache: yes
+        exclude: "*docker*"
