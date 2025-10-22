@@ -3,8 +3,10 @@
   hosts: all
   become: true
   vars:
-    kubernetes_repo_version: "v1.34"
+    kubernetes_repo: "https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64"
     centos_version: "7"
+    kubernetes_version: "1.22.17-0"
+    containerd_version: "1.6.21-3.1.el7"
   tasks:
     # Install required packages
 
@@ -36,7 +38,7 @@
     - name: Install Docker CE packages
       yum:
         name:
-          - containerd.io
+          - containerd.io-{{ containerd_version }}
         state: present
         update_cache: yes
         exclude: "*kubernetes*"
@@ -80,16 +82,18 @@
       yum_repository:
         name: kubernetes
         description: Kubernetes YUM Repository
-        baseurl: https://pkgs.k8s.io/core:/stable:/{{kubernetes_repo_version}}/rpm/
+        baseurl: "{{ kubernetes_repo }}"
         enabled: 1
         gpgcheck: 1
-        gpgkey: https://pkgs.k8s.io/core:/stable:/{{kubernetes_repo_version}}/rpm/repodata/repomd.xml.key
+        repo_gpgcheck: 1
+        gpgkey: https://packages.cloud.google.com/yum/doc/yum-key.gpg
+          https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
 
     - name: Install Kubernetes packages
       yum:
         name:
-          - kubelet
-          - kubeadm
+          - kubelet-{{ kubernetes_version }}
+          - kubeadm-{{ kubernetes_version }}
           - cri-tools
           - kubernetes-cni
         state: present
@@ -134,7 +138,7 @@
     - name: Install kubectl for control planes
       yum:
         name:
-          - kubectl
+          - kubectl-{{ kubernetes_version }}
         state: present
         update_cache: yes
         exclude: "*docker*"

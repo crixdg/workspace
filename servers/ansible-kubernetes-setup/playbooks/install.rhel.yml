@@ -4,7 +4,7 @@
   become: true
   vars:
     pod_network_cidr: "10.244.0.0/16"
-    kubeconfig_path: $HOME/.kube/config
+    kubeconfig_path: /root/.kube/config
 
   tasks:
     - name: Initialize Kubernetes Control Plane
