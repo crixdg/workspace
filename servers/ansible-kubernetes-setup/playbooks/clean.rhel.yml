@@ -1,0 +1,14 @@
+---
+- name: Clean Up Kubernetes Resources
+  hosts: all
+  become: true
+  tasks:
+
+    - name: Reset kubeadm
+      command: kubeadm reset -f
+      ignore_errors: true
+
+    - name: Remove CNI configurations
+      file:
+        path: /etc/cni/net.d
+        state: absent

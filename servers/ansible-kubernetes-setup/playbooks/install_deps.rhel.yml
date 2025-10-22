@@ -66,6 +66,12 @@
         state: restarted
         enabled: true
 
+    - name: Ensure containerd is running
+      systemd:
+        name: containerd
+        state: started
+        enabled: true
+
     # Setup Kubernetes Repo and Install Packages
 
     - name: Add Kubernetes repo
