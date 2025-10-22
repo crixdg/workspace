@@ -9,10 +9,11 @@
     # Install required packages
 
     - name: Install required packages
-      dnf:
+      yum:
         name:
           - jq
           - vim
+          - htop
           - curl
           - net-tools
           - yum-utils
@@ -25,27 +26,28 @@
 
     - name: Add Docker CE repo
       yum_repository:
-        name: docker-ce
+        name: docker-ce-stable
         description: Docker CE YUM Repository
-        baseurl: https://download.docker.com/linux/centos/${centos_version}/x86_64/stable/
+        baseurl: https://download.docker.com/linux/centos/{{centos_version}}/x86_64/stable/
         enabled: 1
         gpgcheck: 1
         gpgkey: https://download.docker.com/linux/centos/gpg
-        exclude: docker-ce docker-ce-cli containerd.io
 
     - name: Install Docker CE packages
       yum:
         name:
           - containerd.io
         state: present
-        disable_exclude: docker-ce
         update_cache: yes
         exclude: "*kubernetes*"
 
-    - name: Configure containerd
-      command: |
-        mkdir -p /etc/containerd
-        containerd config default > /etc/containerd/config.toml
+    - name: Create containerd configuration directory
+      file:
+        path: /etc/containerd
+        state: directory
+
+    - name: Generate default containerd config
+      command: containerd config default > /etc/containerd/config.toml
 
     - name: Comment out any line containing disabled_plugins
       lineinfile:
@@ -78,11 +80,10 @@
       yum_repository:
         name: kubernetes
         description: Kubernetes YUM Repository
-        baseurl: https://pkgs.k8s.io/core:/stable:/${kubernetes_repo_version}/rpm/
+        baseurl: https://pkgs.k8s.io/core:/stable:/{{kubernetes_repo_version}}/rpm/
         enabled: 1
         gpgcheck: 1
-        gpgkey: https://pkgs.k8s.io/core:/stable:/${kubernetes_repo_version}/rpm/repodata/repomd.xml.key
-        exclude: kubelet kubeadm kubectl cri-tools kubernetes-cni
+        gpgkey: https://pkgs.k8s.io/core:/stable:/{{kubernetes_repo_version}}/rpm/repodata/repomd.xml.key
 
     - name: Install Kubernetes packages
       yum:
@@ -92,7 +93,6 @@
           - cri-tools
           - kubernetes-cni
         state: present
-        disable_exclude: kubernetes
         update_cache: yes
         exclude: "*docker*"
 
@@ -132,10 +132,9 @@
   become: true
   tasks:
     - name: Install kubectl for control planes
-      dnf:
+      yum:
         name:
           - kubectl
         state: present
-        disable_exclude: kubernetes
         update_cache: yes
         exclude: "*docker*"
