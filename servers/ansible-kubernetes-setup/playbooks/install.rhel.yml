@@ -36,7 +36,6 @@
         group: "{{ ansible_user }}"
         mode: 0755
 
----
 - name: Deploy Pod Network to the Cluster
   hosts: master[0]
   become: true
@@ -68,7 +67,6 @@
       register: flannel_wait
       ignore_errors: true
 
----
 - name: Generate Join Commands and Join Worker Nodes
   hosts: master[0]
   become: true
@@ -93,7 +91,6 @@
       args:
         creates: /etc/kubernetes/kubelet.conf
 
----
 - name: Generate Join Commands and Join Additional Master Nodes
   hosts: master[0]
   become: true
@@ -143,7 +140,6 @@
         group: "{{ ansible_user }}"
         mode: 0755
 
----
 - name: Verify Cluster Nodes
   hosts: master[0]
   become: true

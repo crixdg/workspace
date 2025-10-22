@@ -127,7 +127,6 @@
       register: helm_version
       changed_when: false
 
----
 - name: Install special Kubernetes dependencies for control planes
   hosts: master
   become: true
