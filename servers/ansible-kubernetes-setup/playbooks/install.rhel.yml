@@ -94,6 +94,56 @@
         creates: /etc/kubernetes/kubelet.conf
 
 ---
+- name: Generate Join Commands and Join Additional Master Nodes
+  hosts: master[0]
+  become: true
+  tasks:
+    - name: Create join token
+      shell: kubeadm token create --print-join-command
+      register: join_command_raw
+
+    - name: Upload control plane certificates
+      shell: kubeadm init phase upload-certs --upload-certs
+      register: cert_key_raw
+
+    - name: Save certificate key
+      set_fact:
+        kubeadm_join_command: "{{ join_command_raw.stdout }} --control-plane --certificate-key {{ cert_key_raw.stdout_lines[-1] }}"
+
+    - name: Set join command for other plays
+      add_host:
+        name: kube_master_join
+        kubeadm_join_command: "{{ kubeadm_join_command }}"
+
+- name: Join Additional Master Nodes to Kubernetes Cluster
+  hosts: master:!master[0]
+  become: true
+  vars:
+    kubeadm_join_command: "{{ hostvars['kube_master_join']['kubeadm_join_command'] }}"
+  tasks:
+    - name: Join the node to the Kubernetes cluster as a control plane
+      command: "{{ kubeadm_join_command }}"
+      args:
+        creates: /etc/kubernetes/kubelet.conf
+
+    - name: Create .kube directory for admin user
+      file:
+        path: "$HOME/.kube"
+        state: directory
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: 0755
+
+    - name: Copy kubeconfig for admin user
+      copy:
+        src: /etc/kubernetes/admin.conf
+        dest: "{{ kubeconfig_path }}"
+        remote_src: yes
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: 0755
+
+---
 - name: Verify Cluster Nodes
   hosts: master[0]
   become: true
