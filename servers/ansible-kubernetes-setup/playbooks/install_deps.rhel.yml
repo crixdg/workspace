@@ -3,11 +3,21 @@
   hosts: all
   become: true
   vars:
-    kubernetes_repo: "https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64"
+    kubernetes_repo_version: "v1.24"
     centos_version: "7"
-    kubernetes_version: "1.22.17-0"
-    containerd_version: "1.6.21-3.1.el7"
   tasks:
+    # Clean up any existing Docker CE or Kubernetes repos
+
+    - name: Remove Docker CE repo if it exists
+      yum_repository:
+        name: docker-ce-stable
+        state: absent
+
+    - name: Remove Kubernetes repo if it exists
+      yum_repository:
+        name: kubernetes
+        state: absent
+
     # Install required packages
 
     - name: Install required packages
@@ -24,7 +34,7 @@
         state: present
         update_cache: yes
 
-    # Setup Docker CE Repo & Container Runtime (CRI)
+    # Setup Docker CE repo & install containerd
 
     - name: Add Docker CE repo
       yum_repository:
@@ -38,10 +48,34 @@
     - name: Install Docker CE packages
       yum:
         name:
-          - containerd.io-{{ containerd_version }}
+          - containerd.io
         state: present
         update_cache: yes
         exclude: "*kubernetes*"
+
+    # Setup Kubernetes repo and install packages
+
+    - name: Add Kubernetes repo
+      yum_repository:
+        name: kubernetes
+        description: Kubernetes YUM Repository
+        baseurl: https://pkgs.k8s.io/core:/stable:/{{kubernetes_repo_version}}/rpm/
+        enabled: 1
+        gpgcheck: 1
+        gpgkey: https://pkgs.k8s.io/core:/stable:/{{kubernetes_repo_version}}/rpm/repodata/repomd.xml.key
+
+    - name: Install Kubernetes packages
+      yum:
+        name:
+          - kubelet
+          - kubeadm
+          - cri-tools
+          - kubernetes-cni
+        state: present
+        update_cache: yes
+        exclude: "*docker*"
+
+    # Configure containerd (required CRI for Kubernetes)
 
     - name: Create containerd configuration directory
       file:
@@ -76,29 +110,7 @@
         state: started
         enabled: true
 
-    # Setup Kubernetes Repo and Install Packages
-
-    - name: Add Kubernetes repo
-      yum_repository:
-        name: kubernetes
-        description: Kubernetes YUM Repository
-        baseurl: "{{ kubernetes_repo }}"
-        enabled: 1
-        gpgcheck: 1
-        repo_gpgcheck: 1
-        gpgkey: https://packages.cloud.google.com/yum/doc/yum-key.gpg
-          https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
-
-    - name: Install Kubernetes packages
-      yum:
-        name:
-          - kubelet-{{ kubernetes_version }}
-          - kubeadm-{{ kubernetes_version }}
-          - cri-tools
-          - kubernetes-cni
-        state: present
-        update_cache: yes
-        exclude: "*docker*"
+    # Enable and start kubelet service
 
     - name: Reload systemd daemon
       command: systemctl daemon-reexec
@@ -114,7 +126,7 @@
         enabled: true
         state: stopped
 
-    # Helm Installation
+    # Helm installation
     - name: Download Helm installation script
       get_url:
         url: https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
@@ -138,7 +150,7 @@
     - name: Install kubectl for control planes
       yum:
         name:
-          - kubectl-{{ kubernetes_version }}
+          - kubectl
         state: present
         update_cache: yes
         exclude: "*docker*"
