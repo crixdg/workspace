@@ -56,3 +56,21 @@
         state: present
         update_cache: yes
         exclude: "*kubernetes*"
+
+    # Enable and start Docker service
+    - name: Enable and start Docker
+      systemd:
+        name: docker
+        enabled: true
+        state: started
+
+    - name: Ensure docker group exists
+      group:
+        name: docker
+        state: present
+
+    - name: Add user to docker group
+      user:
+        name: "{{ ansible_user }}"
+        groups: docker
+        append: yes
