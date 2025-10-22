@@ -1,5 +1,5 @@
 ---
-- name: Ping and collect system information
+- name: Ping & System Info
   hosts: all
   gather_facts: no
 
@@ -24,6 +24,10 @@
         echo "CPU: $(nproc) cores - $(lscpu | grep 'Model name' | sed 's/.*: //')"
         echo "RAM: ${total_gb} GB total (approx), ${used_gb} GB used"
         echo "Disk usage: ${disk_usage} GB"
+        echo "========================"
+        echo "==== TIME SETTINGS ====="
+        echo "Current Time: $(date)"
+        echo "$(timedatectl status)"
         echo "========================"
       register: sysinfo
 

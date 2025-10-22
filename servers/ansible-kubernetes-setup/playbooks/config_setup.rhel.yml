@@ -1,0 +1,11 @@
+---
+- name: Configuration Setup
+  hosts: all
+  gather_facts: no
+
+  tasks:
+    - name: Disable swap
+      ansible.builtin.shell: |
+        swapoff -a
+        sed -i.bak '/swap/d' /etc/fstab
+  
