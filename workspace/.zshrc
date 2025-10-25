@@ -89,14 +89,15 @@ fi
 
 # ===============================================================================
 # GO
-export GO_DIR="$HOME/.local/go"
-if [ -d "$GO_DIR" ]; then
-	export PATH="$GO_DIR/bin:$PATH"
+export GOROOT="$HOME/.local/go"
+if [ -d "$GOROOT" ]; then
+	export PATH="$GOROOT/bin:$PATH"
 fi
 
-export GO_PATH="$HOME/go"
-if [ -d "$GO_PATH" ]; then
-	export PATH="$GO_PATH/bin:$PATH"
+export GOPATH="$HOME/go"
+if [ -d "$GOPATH" ]; then
+	export GOBIN="$GOPATH/bin"
+	export PATH="$GOBIN:$PATH"
 fi
 
 # ===============================================================================
