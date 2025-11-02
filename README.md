@@ -1,1 +1,0 @@
-An archive that documents and scripts all aspects of setting up a personal workspace.
