@@ -1,0 +1,3 @@
+set noerrorbells      " turn off error bell
+set novisualbell      " turn off visual bell
+set t_vb=             " ensure no terminal visual bell
