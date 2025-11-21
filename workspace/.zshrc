@@ -22,20 +22,11 @@ ZSH_THEME="keiron"
 plugins=(
 	man
 	git
-	mvn
-	npm
-	yarn
-	python
-	virtualenv
 	z
 )
 
-if [ -d "$ZSH_CUSTOM/plugins/zsh-autosuggestions" ]; then
-	plugins+=(zsh-autosuggestions)
-fi
-if [ -d "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting" ]; then
-	plugins+=(zsh-syntax-highlighting)
-fi
+[ -d "$ZSH_CUSTOM/plugins/zsh-autosuggestions" ] && plugins+=(zsh-autosuggestions)
+[ -d "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting" ] && plugins+=(zsh-syntax-highlighting)
 
 # ===============================================================================
 # CONFIG
@@ -79,74 +70,16 @@ fi
 
 # ===============================================================================
 # PATH
-if [ -d "$HOME/bin" ]; then
-	export PATH="$HOME/bin:$PATH"
-fi
-
-if [ -d "$HOME/.local/bin" ]; then
-	export PATH="$HOME/.local/bin:$PATH"
-fi
-
-# ===============================================================================
-# GO
-export GOROOT="$HOME/.local/go"
-if [ -d "$GOROOT" ]; then
-	export PATH="$GOROOT/bin:$PATH"
-fi
-
-export GOPATH="$HOME/go"
-if [ -d "$GOPATH" ]; then
-	export GOBIN="$GOPATH/bin"
-	export PATH="$GOBIN:$PATH"
-fi
-
-# ===============================================================================
-# SCALA
-export COURSIER_DIR="$HOME/.local/share/coursier"
-if [ -d "$COURSIER_DIR" ]; then
-	export PATH="$COURSIER_DIR/bin:$PATH"
-fi
-
-# ===============================================================================
-# NODE VERSION MANAGER
-export NVM_DIR="$HOME/.nvm"
-if [ -d "$NVM_DIR" ]; then
-	[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-	[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
-fi
-
-# ===============================================================================
-# BUN completions
-export BUN_HOME="$HOME/.bun" && mkdir -p "$BUN_HOME"
-
-# bun completions zsh > "$BUN_HOME/_bun"
-[ -s "$BUN_HOME/_bun" ] && source "$BUN_HOME/_bun"
-
-# ===============================================================================
-# MINICONDA
-export MINICONDA_HOME="$HOME/miniconda3"
-if [ -d "$MINICONDA_HOME" ]; then
-	export PATH="$MINICONDA_HOME/bin:$PATH"
-fi
-
-# >>> conda initialize >>>
-# !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/home/baod/miniconda3/bin/conda' 'shell.zsh' 'hook' 2>/dev/null)"
-if [ $? -eq 0 ]; then
-	eval "$__conda_setup"
-else
-	if [ -f "/home/baod/miniconda3/etc/profile.d/conda.sh" ]; then
-		. "/home/baod/miniconda3/etc/profile.d/conda.sh"
-	else
-		export PATH="/home/baod/miniconda3/bin:$PATH"
+[ -d "$HOME/bin" ] && export PATH="$HOME/bin:$PATH"
+[ -d "$HOME/.local/bin" ] && export PATH="$HOME/.local/bin:$PATH"
+setopt nullglob
+for dir in "$HOME/bin" "$HOME/.local/bin"; do
+	if [ -d "$dir" ]; then
+		for subdir in "$dir"/*/; do
+			[ -d "$subdir" ] && export PATH="$subdir:$PATH"
+		done
 	fi
-fi
-unset __conda_setup
-# <<< conda initialize <<<
+done
+unsetopt nullglob
 
 # ===============================================================================
-# HELM
-export HELM_COMPLETION="$HOME/.config/zsh/completions/helm.zsh"
-if [ -f "$HELM_COMPLETION" ]; then
-	source "$HELM_COMPLETION"
-fi

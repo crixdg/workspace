@@ -1,27 +1,24 @@
-#[user]
-#name = Your Name
-#email = you@example.com
+[user]
 
 [core]
-editor = vim
-autocrlf = input
-fileMode = false
+  editor = vim
+  autocrlf = input
+  fileMode = false
 
 [init]
-defaultBranch = main
+  defaultBranch = main
 
 [credential]
-helper = store
+  helper = store
 
 [alias]
-st = status
-ci = commit
-co = checkout
-br = branch
+  st = status
+  ci = commit
+  co = checkout
+  br = branch
 
 [push]
-default = current
+  default = current
 
 [pull]
-default = current
-
+  default = current

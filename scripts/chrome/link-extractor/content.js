@@ -16,14 +16,14 @@ document.addEventListener('keydown', (e) => {
     navigator.clipboard.writeText(result)
       .then(() => {
         if (links.length > 0) {
-          alert("✅ Codeforces problem links copied to clipboard!");
+          alert("Codeforces problem links copied to clipboard!");
         } else {
-          alert("ℹ️ No links found. A space was copied to the clipboard.");
+          alert("No links found. A space was copied to the clipboard.");
         }
       })
       .catch(err => {
-        console.error("❌ Failed to copy:", err);
-        alert("❌ Failed to copy links to clipboard.");
+        console.error("Failed to copy:", err);
+        alert("Failed to copy links to clipboard.");
       });
   }
 });
