@@ -1,4 +1,3 @@
-### Scan Ubuntu
 ```shell
 mkdir ~/ubuntu-scan
 dpkg -l > ~/ubuntu-scan/dpkg-list.txt
