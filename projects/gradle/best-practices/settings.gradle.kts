@@ -58,7 +58,11 @@ dependencyResolutionManagement {
 
 }
 
-// Set the root project name
+// Root project name
 rootProject.name = "my-project"
-// Include subprojects
-include("app", "lib")
+
+// Module inclusions: Declare all subprojects
+include(":app")
+include(":core:network")
+include(":core:database")
+include(":feature:authentication")
