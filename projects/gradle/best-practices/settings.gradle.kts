@@ -1,5 +1,7 @@
 // Centralize repository configuration here, not in build files.
 
+@file:Suppress("UnstableApiUsage")
+
 // Plugin management for all projects
 pluginManagement {
 
@@ -31,19 +33,17 @@ dependencyResolutionManagement {
                 password = findProperty("repoPassword") as String? ?: System.getenv("REPO_PASSWORD")
             }
         }
-        google() // 3. Google repository
-        jcenter() // 4. JCenter (deprecated, use only if necessary)
-        mavenLocal() // 5. Local Maven repository
-        // etc.
-
         // Use content filtering for multiple repositories
-        google {
+        google { // Google's Maven repository
             content {
                 includeGroupByRegex("androidx.*")
                 includeGroup("com.google.android.material")
                 includeGroup("com.google.gms")
             }
         }
+        jcenter() // 4. JCenter (deprecated, use only if necessary)
+        mavenLocal() // 5. Local Maven repository
+        // etc.
 
         // Exclusive content filtering (recommended)
         exclusiveContent {
@@ -52,6 +52,14 @@ dependencyResolutionManagement {
             }
             filter {
                 includeGroup("org.springframework")
+            }
+        }
+
+        // Gradle 8- only: Version catalogs for dependency version management
+        // Gradle 8+ automatically looks for 'gradle/libs.versions.toml'
+        versionCatalogs {
+            create("libs") {
+                from(files("gradle/libs.versions.toml"))
             }
         }
     }
