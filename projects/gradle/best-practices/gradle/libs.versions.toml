@@ -1,0 +1,45 @@
+# Use Version Catalogs to centralize dependency versions.
+
+[versions]
+# Group related versions together
+java = "17"
+kotlin = "2.0.21"
+junit = "5.10.0"
+slf4j = "2.0.13"
+jackson = "2.17.1"
+spring-boot = "3.2.0"
+
+[libraries]
+# Naming convention: group-artifact or artifact (avoid generic terms)
+# Use dashes to separate segments, derive from group/artifact IDs
+
+# SLF4J
+slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
+
+# Jackson
+jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "jackson" }
+jackson-dataformat-csv = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-csv", version.ref = "jackson" }
+
+# JUnit
+junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit" }
+junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
+
+# Apache Commons
+commons-lang3 = { group = "org.apache.commons", name = "commons-lang3", version = "3.9" }
+
+# Spring Boot
+spring-boot-starter-web = { module = "org.springframework.boot:spring-boot-starter-web", version.ref = "spring-boot" }
+
+# Version constraints example
+guava = { group = "com.google.guava", name = "guava", version = { strictly = "[32.0, 33.0[", prefer = "32.1.2-jre" } }
+
+[bundles]
+# Group commonly used dependencies together
+jackson = ["jackson-databind", "jackson-dataformat-csv"]
+junit = ["junit-jupiter", "junit-jupiter-api"]
+
+[plugins]
+# Use version catalog for plugins too
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }
+versions = { id = "com.github.ben-manes.versions", version = "0.51.0" }

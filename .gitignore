@@ -1,4 +1,9 @@
 .idea/**
 .vscode/**
 
+.gradle/
+
+build/
+out/
+
 *.tmp.ini
