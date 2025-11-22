@@ -25,7 +25,10 @@ mkdir -p $HOME/.local/gradle
 wget https://services.gradle.org/distributions/${gradle_filename} -O $HOME/.local/gradle/${gradle_filename}
 wget https://services.gradle.org/distributions/${gradle_filename}.sha256 -O $HOME/.local/gradle/${gradle_filename}.sha256
 cd $HOME/.local/gradle
-sha256sum -c <(awk '{print $1 "  gradle-'"${GRADLE_VERSION}"'-bin.zip"}' gradle-${GRADLE_VERSION}-bin.zip.sha256) || { echo "Checksum FAILED! Exiting."; exit 1; }
+sha256sum -c <(awk '{print $1 "  gradle-'"${GRADLE_VERSION}"'-bin.zip"}' gradle-${GRADLE_VERSION}-bin.zip.sha256) || {
+	echo "Checksum FAILED! Exiting."
+	exit 1
+}
 unzip -q $HOME/.local/gradle/${gradle_filename} -d $HOME/.local/gradle
 rm $HOME/.local/gradle/${gradle_filename}
 rm $HOME/.local/gradle/${gradle_filename}.sha256
