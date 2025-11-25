@@ -19,3 +19,4 @@ curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stabl
 echo "$(cat kubectl.sha256)  kubectl" | sha256sum --check
 chmod +x kubectl
 mv ./kubectl $HOME/.local/bin/kubectl
+rm -f kubectl.sha256
