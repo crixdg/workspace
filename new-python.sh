@@ -24,10 +24,50 @@ wget https://repo.anaconda.com/miniconda/$filename -O $HOME/miniconda3/miniconda
 bash $HOME/miniconda3/miniconda.sh -b -u -p $HOME/miniconda3
 rm $HOME/miniconda3/miniconda.sh
 
-source $HOME/miniconda3/bin/activate
-if command -v zsh &>/dev/null; then
-	conda init zsh
-else
-	echo "Warning: zsh is not installed or not found in PATH. Falling back to bash."
-	conda init bash
+START_MARK="# >>> conda initialize >>>"
+DESCRIPTION_MARK="# !! Contents within this block are managed by 'conda init' !!"
+END_MARK="# <<< conda initialize <<<"
+
+CONDA_BLOCK=$(
+	cat <<EOF
+$START_MARK
+$DESCRIPTION_MARK
+export MINICONDA_HOME="\$HOME/miniconda3"
+if [ -d "\$MINICONDA_HOME" ]; then
+	export PATH="\$MINICONDA_HOME/bin:\$PATH"
 fi
+$END_MARK
+EOF
+)
+
+if [[ "$SHELL" =~ "zsh" ]]; then
+	SHELL_RC="$HOME/.zshrc"
+else
+	SHELL_RC="$HOME/.bashrc"
+fi
+
+if grep -q "$START_MARK" "$SHELL_RC"; then
+	# Replace existing block, ensure empty line before block
+	awk -v block="$CONDA_BLOCK" -v start="$START_MARK" -v end="$END_MARK" '
+        BEGIN {inblock=0}
+        $0 ~ start {
+            print block;
+            inblock=1;
+            next
+        }
+        $0 ~ end {
+            inblock=0;
+            next
+        }
+        inblock == 0 {print}
+    ' "$SHELL_RC" >"$SHELL_RC.tmp" && mv "$SHELL_RC.tmp" "$SHELL_RC"
+else
+	# Append new block with preceding empty line
+	{
+		echo ""
+		echo "$CONDA_BLOCK"
+	} >>"$SHELL_RC"
+fi
+
+
+source $HOME/miniconda3/bin/activate
