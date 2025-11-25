@@ -10,5 +10,6 @@
   - IntelliJ IDEA
   - GoLand
   - DataGrip
+- Lens (Kubernetes IDE)
 - Bruno
 
