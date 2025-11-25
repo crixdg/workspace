@@ -1,5 +1,4 @@
 # zmodload zsh/zprof # Uncomment to profile zsh startup time and add 'zprof' at the end of this file
-
 # ===============================================================================
 export ZSH="$HOME/.oh-my-zsh"
 export ZSH_CACHE_DIR="$HOME/.cache/zsh"
@@ -15,10 +14,14 @@ DISABLE_AUTO_UPDATE="true"
 DISABLE_MAGIC_FUNCTIONS="true"
 
 # Uncomment the following line to disable the warning about insecure directories.
+ZSH_DISABLE_COMPFIX=true
 DISABLE_COMPFIX="true"
 
 # Uncomment the following line to disable auto-setting terminal title.
 DISABLE_AUTO_TITLE="true"
+
+# Skip compinit at startup; we will call it manually later
+skip_global_compinit=1
 
 if command -v hostname &>/dev/null; then
 	ip_address=$(hostname -I | awk '{print $1}')
@@ -26,24 +29,6 @@ if command -v hostname &>/dev/null; then
 fi
 
 [ -d "$ZSH_CACHE_DIR" ] || mkdir -p "$ZSH_CACHE_DIR"
-
-# ===============================================================================
-# COMPINIT
-
-autoload -Uz compinit
-if [[ -z "$ZSH_COMPDUMP" ]]; then
-  ZSH_COMPDUMP="${ZDOTDIR:-$HOME}/.zcompdump"
-fi
-compinit -C -d "$ZSH_COMPDUMP"
-
-# Regenerate in background
-{
-  if [[ -f "$ZSH_COMPDUMP" && \
-        (! -s "${ZSH_COMPDUMP}.zwc" || \
-         "$ZSH_COMPDUMP" -nt "${ZSH_COMPDUMP}.zwc") ]]; then
-    zcompile "$ZSH_COMPDUMP"
-  fi
-} &!
 
 # ===============================================================================
 # THEME
@@ -65,6 +50,23 @@ plugins=(
 # ===============================================================================
 
 [ -f "$ZSH/oh-my-zsh.sh" ] && source "$ZSH/oh-my-zsh.sh"
+
+# ===============================================================================
+# COMPINIT
+
+autoload -Uz compinit
+
+# Cache for 24 hours
+ZSH_COMPDUMP="${ZDOTDIR:-$HOME}/.zcompdump"
+
+if [[ -n $ZSH_COMPDUMP ]]; then
+  compinit -d "$ZSH_COMPDUMP"
+else
+  compinit -C -d "$ZSH_COMPDUMP"
+fi
+
+# Compile in background
+{ zcompile "$ZSH_COMPDUMP" } &!
 
 # ===============================================================================
 # ALIAS
@@ -93,6 +95,6 @@ fi
 # PATH
 [ -d "$HOME/bin" ] && export PATH="$HOME/bin:$PATH"
 [ -d "$HOME/.local/bin" ] && export PATH="$HOME/.local/bin:$PATH"
-[ -d "$HOME/.local/bin/cppbin" ] && export PATH="$HOME/.local/bin/cppbin:$PATH"
 
 # ===============================================================================
+# zprof  # Uncomment with zmodload above to profile zsh startup time
