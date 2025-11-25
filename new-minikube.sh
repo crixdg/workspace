@@ -7,11 +7,5 @@ if [[ "$confirm" != "y" ]]; then
 	exit 1
 fi
 
-rm -rf $HOME/.local/minikube
-mkdir -p $HOME/.local/minikube
 wget https://github.com/kubernetes/minikube/releases/latest/download/minikube-linux-amd64 -O $HOME/.local/bin/minikube
 chmod +x $HOME/.local/bin/minikube
-
-echo "Minikube installed to $HOME/.local/minikube"
-echo "Add the following line to your ~/.bashrc or ~/.zshrc to use it:"
-echo 'export PATH=$HOME/.local/minikube:$PATH'
