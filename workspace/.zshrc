@@ -1,37 +1,20 @@
+# zmodload zsh/zprof # Uncomment to profile zsh startup time and add 'zprof' at the end of this file
 # ===============================================================================
 export ZSH="$HOME/.oh-my-zsh"
 export ZSH_CACHE_DIR="$HOME/.cache/zsh"
-export ZSH_COMPDUMP="$ZSH_CACHE_DIR/.zcompdump"
 export ZSH_CUSTOM="$ZSH/custom"
 
 # ===============================================================================
-autoload -Uz compinit
-[ -d "$ZSH_CACHE_DIR" ] || mkdir -p "$ZSH_CACHE_DIR"
-if [[ ! -s "$ZSH_COMPDUMP" || "$ZSH_COMPDUMP" -ot ~/.zshrc ]]; then
-	compinit -i -d "$ZSH_COMPDUMP"
-else
-	compinit -d "$ZSH_COMPDUMP"
-fi
-
-# ===============================================================================
-# THEME
-ZSH_THEME="keiron"
-
-# ===============================================================================
-# PLUGIN
-plugins=(
-	man
-	git
-	z
-)
-
-[ -d "$ZSH_CUSTOM/plugins/zsh-autosuggestions" ] && plugins+=(zsh-autosuggestions)
-[ -d "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting" ] && plugins+=(zsh-syntax-highlighting)
-
-# ===============================================================================
 # CONFIG
+
+# Uncomment the following line to disable auto-update checks.
+DISABLE_AUTO_UPDATE="true"
+
 # Uncomment the following line if pasting URLs and other text is messed up.
 DISABLE_MAGIC_FUNCTIONS="true"
+
+# Uncomment the following line to disable the warning about insecure directories.
+DISABLE_COMPFIX="true"
 
 # Uncomment the following line to disable auto-setting terminal title.
 DISABLE_AUTO_TITLE="true"
@@ -40,6 +23,31 @@ if command -v hostname &>/dev/null; then
 	ip_address=$(hostname -I | awk '{print $1}')
 	echo -ne "\033]0;IP: $ip_address\007"
 fi
+
+[ -d "$ZSH_CACHE_DIR" ] || mkdir -p "$ZSH_CACHE_DIR"
+
+# ===============================================================================
+# COMPINIT
+
+autoload -Uz compinit
+compinit -C
+
+# ===============================================================================
+# THEME
+ZSH_THEME="keiron"
+
+# ===============================================================================
+# PLUGIN
+ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20
+ZSH_AUTOSUGGEST_USE_ASYNC=1
+
+plugins=(
+	git
+	z
+)
+
+[ -d "$ZSH_CUSTOM/plugins/zsh-autosuggestions" ] && plugins+=(zsh-autosuggestions)
+[ -d "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting" ] && plugins+=(zsh-syntax-highlighting)
 
 # ===============================================================================
 
