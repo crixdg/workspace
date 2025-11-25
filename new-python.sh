@@ -36,6 +36,7 @@ export MINICONDA_HOME="\$HOME/miniconda3"
 if [ -d "\$MINICONDA_HOME" ]; then
 	export PATH="\$MINICONDA_HOME/bin:\$PATH"
 fi
+source $HOME/miniconda3/bin/activate
 $END_MARK
 EOF
 )
@@ -68,6 +69,3 @@ else
 		echo "$CONDA_BLOCK"
 	} >>"$SHELL_RC"
 fi
-
-
-source $HOME/miniconda3/bin/activate
