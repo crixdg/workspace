@@ -54,18 +54,7 @@ plugins=(
 # ===============================================================================
 # COMPINIT
 
-autoload -Uz compinit
 ZSH_COMPDUMP="${ZDOTDIR:-$HOME}/.zcompdump"
-
-# Regenerate if dump is older than 24 hours
-if [[ -n ${ZSH_COMPDUMP}(#qNmh+24) ]]; then
-  compinit -d "$ZSH_COMPDUMP"
-else
-  compinit -C -d "$ZSH_COMPDUMP"
-fi
-
-# Compile in background
-{ [[ -f "$ZSH_COMPDUMP" ]] && zcompile "$ZSH_COMPDUMP" } &!
 
 # ===============================================================================
 # ALIAS
