@@ -31,7 +31,19 @@ fi
 # COMPINIT
 
 autoload -Uz compinit
-compinit -C
+if [[ -z "$ZSH_COMPDUMP" ]]; then
+  ZSH_COMPDUMP="${ZDOTDIR:-$HOME}/.zcompdump"
+fi
+compinit -C -d "$ZSH_COMPDUMP"
+
+# Regenerate in background
+{
+  if [[ -f "$ZSH_COMPDUMP" && \
+        (! -s "${ZSH_COMPDUMP}.zwc" || \
+         "$ZSH_COMPDUMP" -nt "${ZSH_COMPDUMP}.zwc") ]]; then
+    zcompile "$ZSH_COMPDUMP"
+  fi
+} &!
 
 # ===============================================================================
 # THEME

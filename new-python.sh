@@ -36,7 +36,8 @@ export MINICONDA_HOME="\$HOME/miniconda3"
 if [ -d "\$MINICONDA_HOME" ]; then
 	export PATH="\$MINICONDA_HOME/bin:\$PATH"
 fi
-source $HOME/miniconda3/bin/activate
+alias start_conda="source \$MINICONDA_HOME/bin/activate"
+alias stop_conda="conda deactivate"
 $END_MARK
 EOF
 )
@@ -69,3 +70,5 @@ else
 		echo "$CONDA_BLOCK"
 	} >>"$SHELL_RC"
 fi
+
+echo "Miniconda installed and configured. Please restart your terminal or run 'source $SHELL_RC' to apply the changes."
