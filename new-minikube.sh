@@ -7,5 +7,6 @@ if [[ "$confirm" != "y" ]]; then
 	exit 1
 fi
 
+rm -f $HOME/.local/bin/minikube
 wget https://github.com/kubernetes/minikube/releases/latest/download/minikube-linux-amd64 -O $HOME/.local/bin/minikube
 chmod +x $HOME/.local/bin/minikube
