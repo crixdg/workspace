@@ -1,4 +1,5 @@
 # zmodload zsh/zprof # Uncomment to profile zsh startup time and add 'zprof' at the end of this file
+
 # ===============================================================================
 export ZSH="$HOME/.oh-my-zsh"
 export ZSH_CACHE_DIR="$HOME/.cache/zsh"
@@ -46,8 +47,8 @@ plugins=(
 	z
 )
 
-[ -d "$ZSH_CUSTOM/plugins/zsh-autosuggestions" ] && plugins+=(zsh-autosuggestions)
-[ -d "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting" ] && plugins+=(zsh-syntax-highlighting)
+#[ -d "$ZSH_CUSTOM/plugins/zsh-autosuggestions" ] && plugins+=(zsh-autosuggestions)
+#[ -d "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting" ] && plugins+=(zsh-syntax-highlighting)
 
 # ===============================================================================
 
@@ -80,14 +81,6 @@ fi
 # PATH
 [ -d "$HOME/bin" ] && export PATH="$HOME/bin:$PATH"
 [ -d "$HOME/.local/bin" ] && export PATH="$HOME/.local/bin:$PATH"
-setopt nullglob
-for dir in "$HOME/bin" "$HOME/.local/bin"; do
-	if [ -d "$dir" ]; then
-		for subdir in "$dir"/*/; do
-			[ -d "$subdir" ] && export PATH="$subdir:$PATH"
-		done
-	fi
-done
-unsetopt nullglob
+[ -d "$HOME/.local/bin/cppbin" ] && export PATH="$HOME/.local/bin/cppbin:$PATH"
 
 # ===============================================================================
