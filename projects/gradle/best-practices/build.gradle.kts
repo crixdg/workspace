@@ -9,7 +9,7 @@ plugins {
     // create dependency configurations like implementation, api, testImplementation, etc.
 
     java-library // extends 'java' plugin for building Java libraries
-    // adds features for consumers of the library, like api configuration
+    // adds features for consumers of the library, like api() configuration for dependencies
 
     alias(...) apply false // placeholders for plugin aliases from version catalog
 }
