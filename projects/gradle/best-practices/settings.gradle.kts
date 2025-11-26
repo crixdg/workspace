@@ -1,21 +1,21 @@
-// Suppress warnings about using incubating APIs
+// puppress warnings about using incubating APIs
 @file:Suppress("UnstableApiUsage")
 
-// Root project name
+// root project name
 rootProject.name = "my-project"
 
-// Module inclusions: Declare all subprojects
+// module inclusions: Declare all subprojects
 include(":app")
 include(":core:network")
 include(":core:database")
 include(":feature:authentication")
 
-// Plugin management for all projects
+// plugin management for all projects
 pluginManagement {
 
-    // Repositories for resolving plugins
+    // repositories for resolving plugins
     repositories {
-        // Order matters: Gradle will search repositories in order
+        // Gradle will search repositories in `order`
         gradlePluginPortal()
         mavenCentral()
         google()
@@ -27,12 +27,12 @@ pluginManagement {
 // Dependency resolution management for all projects
 dependencyResolutionManagement {
 
-    // Prevents subprojects from declaring their own repositories
+    // prevents subprojects from declaring their own repositories
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
 
-    // Repositories for resolving dependencies
+    // repositories for resolving dependencies
     repositories {
-        // Order matters: Gradle will search repositories in order
+        // Gradle will search repositories in `order`
         mavenCentral()
         privateMaven("https://my.company.repo/maven2") { // Private company repository
             name = "CompanyRepo"
@@ -43,7 +43,7 @@ dependencyResolutionManagement {
         }
 
         google {
-            // Content filtering to only include specific groups
+            // content filtering to only include specific groups
             content {
                 includeGroupByRegex("androidx.*")
                 includeGroup("com.google.android.material")
@@ -51,7 +51,7 @@ dependencyResolutionManagement {
             }
         }
 
-        // Exclusive content filtering (recommended)
+        // exclusive content filtering (recommended)
         exclusiveContent {
             forRepository {
                 maven("https://repo.spring.io/milestone")
@@ -69,5 +69,4 @@ dependencyResolutionManagement {
             }
         }
     }
-
 }
