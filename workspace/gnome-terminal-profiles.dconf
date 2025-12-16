@@ -10,7 +10,7 @@ bold-color='#EBEBDBDBB2B2'
 bold-color-same-as-fg=true
 bold-is-bright=true
 cursor-background-color='#EBEBDBDBB2B2'
-cursor-blink-mode='off'
+cursor-blink-mode='on'
 cursor-colors-set=true
 cursor-foreground-color='#282828282828'
 cursor-shape='ibeam'
@@ -30,7 +30,7 @@ visible-name='keiron'
 [:b1dcc9dd-5262-4d8d-a863-c897e6d979b9]
 audible-bell=true
 bold-is-bright=true
-cursor-blink-mode='off'
+cursor-blink-mode='on'
 cursor-shape='ibeam'
 default-size-columns=120
 default-size-rows=30
