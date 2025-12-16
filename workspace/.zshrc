@@ -7,25 +7,14 @@ export ZSH_CUSTOM="$ZSH/custom"
 # ===============================================================================
 # CONFIG
 
-# Uncomment the following line to disable auto-update checks.
 DISABLE_AUTO_UPDATE="true"
-
-# Uncomment the following line if pasting URLs and other text is messed up.
 DISABLE_MAGIC_FUNCTIONS="true"
-
-# Uncomment the following line to disable the warning about insecure directories.
 ZSH_DISABLE_COMPFIX=true
 DISABLE_COMPFIX="true"
-
-# Uncomment the following line to disable auto-setting terminal title.
 DISABLE_AUTO_TITLE="true"
-
-# Skip compinit at startup; we will call it manually later
 skip_global_compinit=1
 
 if command -v hostname &>/dev/null; then
-	# ip_address=$(hostname -I | awk '{print $1}')
-	# echo -ne "\033]0;IP: $ip_address\007"
 	hostname=$(hostname)
 	echo -ne "\033]0;$hostname\007"
 fi
