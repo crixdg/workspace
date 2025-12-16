@@ -1,0 +1,40 @@
+[/]
+default='44af1d1a-1598-4973-bbec-be553c7082b4'
+list=['b1dcc9dd-5262-4d8d-a863-c897e6d979b9', '44af1d1a-1598-4973-bbec-be553c7082b4']
+
+[:44af1d1a-1598-4973-bbec-be553c7082b4]
+audible-bell=true
+background-color='#282828282828'
+background-transparency-percent=9
+bold-color='#EBEBDBDBB2B2'
+bold-color-same-as-fg=true
+bold-is-bright=true
+cursor-background-color='#EBEBDBDBB2B2'
+cursor-blink-mode='off'
+cursor-colors-set=true
+cursor-foreground-color='#282828282828'
+cursor-shape='ibeam'
+default-size-columns=120
+default-size-rows=30
+font='Ubuntu Mono 11'
+foreground-color='#EBEBDBDBB2B2'
+highlight-colors-set=false
+palette=['#282828282828', '#CCCC24241D1D', '#989897971A1A', '#D7D799992121', '#454585858888', '#B1B162628686', '#68689D9D6A6A', '#A8A899998484', '#929283837474', '#FBFB49493434', '#B8B8BBBB2626', '#FAFABDBD2F2F', '#8383A5A59898', '#D3D386869B9B', '#8E8EC0C07C7C', '#EBEBDBDBB2B2']
+text-blink-mode='always'
+use-system-font=false
+use-theme-colors=false
+use-theme-transparency=false
+use-transparent-background=true
+visible-name='keiron'
+
+[:b1dcc9dd-5262-4d8d-a863-c897e6d979b9]
+audible-bell=true
+bold-is-bright=true
+cursor-blink-mode='off'
+cursor-shape='ibeam'
+default-size-columns=120
+default-size-rows=30
+font='Ubuntu Mono 11'
+palette=['rgb(23,20,33)', 'rgb(192,28,40)', 'rgb(38,162,105)', 'rgb(162,115,76)', 'rgb(18,72,139)', 'rgb(163,71,186)', 'rgb(42,161,179)', 'rgb(208,207,204)', 'rgb(94,92,100)', 'rgb(246,97,81)', 'rgb(51,209,122)', 'rgb(233,173,12)', 'rgb(42,123,222)', 'rgb(192,97,203)', 'rgb(51,199,222)', 'rgb(255,255,255)']
+text-blink-mode='always'
+use-system-font=false
