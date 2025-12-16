@@ -24,8 +24,10 @@ DISABLE_AUTO_TITLE="true"
 skip_global_compinit=1
 
 if command -v hostname &>/dev/null; then
-	ip_address=$(hostname -I | awk '{print $1}')
-	echo -ne "\033]0;IP: $ip_address\007"
+	# ip_address=$(hostname -I | awk '{print $1}')
+	# echo -ne "\033]0;IP: $ip_address\007"
+	hostname=$(hostname)
+	echo -ne "\033]0;$hostname\007"
 fi
 
 [ -d "$ZSH_CACHE_DIR" ] || mkdir -p "$ZSH_CACHE_DIR"
