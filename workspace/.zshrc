@@ -50,7 +50,6 @@ ZSH_COMPDUMP="${ZDOTDIR:-$HOME}/.zcompdump"
 # ===============================================================================
 # ALIAS
 alias reload="exec zsh"
-alias vim=nvim
 
 alias ll='ls -hlF'
 alias la='ls -A'
