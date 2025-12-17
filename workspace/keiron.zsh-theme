@@ -1,4 +1,10 @@
-PROMPT='$(virtualenv_prompt_info) '
+ssh_connection_prompt() {
+	if [[ -n $SSH_CONNECTION ]]; then
+		echo "%{$fg[magenta]%}[%n@$(hostname -f)]%{$reset_color%} "
+	fi
+}
+
+PROMPT='$(ssh_connection_prompt)$(virtualenv_prompt_info) '
 PROMPT+="%(?:%{$fg_bold[green]%}%1{➜%} :%{$fg_bold[red]%}%1{➜%} ) %{$reset_color%}%{$fg[cyan]%}%c%{$reset_color%}"
 PROMPT+=' $(git_prompt_info)'
 
