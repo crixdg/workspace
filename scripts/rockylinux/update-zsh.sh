@@ -1,10 +1,11 @@
 #!/bin/zsh
 set -e
 
-read -p "This script is intended for Rocky Linux systems only. Continue? (y/n): " confirm
+echo -n "This script is intended for Rocky Linux systems only. Continue? (y/n): "
+read confirm
 if [[ "$confirm" != "y" ]]; then
-    echo "Aborted."
-    exit 1
+	echo "Aborted."
+	exit 1
 fi
 
 rm -f "$HOME/.zshrc"
