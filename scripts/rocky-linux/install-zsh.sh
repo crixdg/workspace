@@ -1,22 +1,19 @@
 #!/bin/bash
 set -e
 
-read -p "This script is intended for Rocky Linux systems only. Continue? (y/n): " confirm
-if [[ "$confirm" != "y" ]]; then
-    echo "Aborted."
-    exit 1
-fi
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/check-os.sh"
 
 sudo dnf install git -y
 sudo dnf install zsh -y
 
 if ! command -v zsh &>/dev/null; then
-    echo "Error: zsh installation failed."
-    exit 1
+	echo "Error: zsh installation failed."
+	exit 1
 fi
 
 if [ ! -d "$HOME/.oh-my-zsh" ]; then
-    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+	sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 else
-    echo "Oh My Zsh is already installed."
+	echo "Oh My Zsh is already installed."
 fi
