@@ -23,13 +23,13 @@ EOF
 # =========================
 # Detect shell rc file
 # =========================
-if [[ -n "${ZSH_VERSION:-}" ]]; then
-  SHELL_RC="$HOME/.zshrc"
-elif [[ -n "${BASH_VERSION:-}" ]]; then
-  SHELL_RC="$HOME/.bashrc"
-else
-  SHELL_RC="$HOME/.profile"
-fi
+USER_SHELL="$(basename "${SHELL:-}")"
+
+case "$USER_SHELL" in
+  zsh)  SHELL_RC="$HOME/.zshrc" ;;
+  bash) SHELL_RC="$HOME/.bashrc" ;;
+  *)    SHELL_RC="$HOME/.profile" ;;
+esac
 
 # Ensure rc file exists
 touch "$SHELL_RC"
