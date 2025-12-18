@@ -4,7 +4,8 @@ ssh_connection_prompt() {
 	fi
 }
 
-PROMPT='$(ssh_connection_prompt)$(virtualenv_prompt_info) '
+PROMPT='$(ssh_connection_prompt)'
+PROMPT+='$(virtualenv_prompt_info)'
 PROMPT+="%(?:%{$fg_bold[green]%}%1{➜%} :%{$fg_bold[red]%}%1{➜%} ) %{$reset_color%}%{$fg[cyan]%}%c%{$reset_color%}"
 PROMPT+=' $(git_prompt_info)'
 
