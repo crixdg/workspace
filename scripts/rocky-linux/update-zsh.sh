@@ -1,7 +1,7 @@
 #!/bin/zsh
 set -e
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPT_DIR="$(cd "$(dirname "${(%):-%N}")" && pwd)"
 source "$SCRIPT_DIR/check-os.sh"
 
 rm -f "$HOME/.zshrc"
