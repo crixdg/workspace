@@ -8,18 +8,9 @@ if [[ "$confirm" != "y" ]]; then
 fi
 
 sudo apt update
-
 sudo apt install -y git
-sudo apt install -y neovim
-sudo apt install -y zip unzip
-
-sudo apt install -y iproute2
-sudo apt install -y iputils-ping
-sudo apt install -y curl wget
-sudo apt install -y nmap
-sudo apt install -y ufw
-
 sudo apt install -y zsh
+
 if ! command -v zsh &>/dev/null; then
     echo "Error: zsh installation failed."
     exit 1

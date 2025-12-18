@@ -7,7 +7,8 @@ if [[ "$confirm" != "y" ]]; then
     exit 1
 fi
 
-sudo dnf install -y zsh
+sudo dnf install git -y
+sudo dnf install zsh -y
 
 if ! command -v zsh &>/dev/null; then
     echo "Error: zsh installation failed."
