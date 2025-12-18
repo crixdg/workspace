@@ -18,7 +18,7 @@ bash $HOME/miniconda3/miniconda.sh -b -u -p $HOME/miniconda3
 rm $HOME/miniconda3/miniconda.sh
 
 CONFIG_NAME="miniconda"
-CONFIG_BLOCK='export MINICONDA_HOME="$HOME/miniconda3"
+CONFIG_CONTENT='export MINICONDA_HOME="$HOME/miniconda3"
 if [ -d "$MINICONDA_HOME" ]; then
 	export PATH="$MINICONDA_HOME/bin:$PATH"
 fi

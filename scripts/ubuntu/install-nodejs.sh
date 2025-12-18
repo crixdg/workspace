@@ -13,7 +13,7 @@ else
 fi
 
 CONFIG_NAME="nvm"
-CONFIG_BLOCK='export NVM_DIR="$HOME/.nvm"
+CONFIG_CONTENT='export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"'
 source "$SCRIPT_DIR/add-auto-config.sh"
