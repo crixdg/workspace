@@ -7,9 +7,9 @@ set -euo pipefail
 : "${CONFIG_NAME:?CONFIG_NAME is required}"
 : "${CONFIG_CONTENT:?CONFIG_CONTENT is required}"
 
-START_MARK="# >>> ${CONFIG_NAME} auto-config >>>"
-DESCRIPTION_MARK="# !! Contents within this block are managed by '${CONFIG_NAME} auto-config' !!"
-END_MARK="# <<< ${CONFIG_NAME} auto-config <<<"
+START_MARK="# >>> managed:${CONFIG_NAME}:auto-config >>>"
+DESCRIPTION_MARK="# !! DO NOT EDIT !! managed by ${CONFIG_NAME} (auto-config)"
+END_MARK="# <<< managed:${CONFIG_NAME}:auto-config <<<"
 
 CONFIG_BLOCK=$(
   cat <<EOF

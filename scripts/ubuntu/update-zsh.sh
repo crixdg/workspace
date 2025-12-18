@@ -4,7 +4,6 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${(%):-%N}")" && pwd)"
 source "$SCRIPT_DIR/check-os.sh"
 
-rm -f "$HOME/.zshrc"
 rm -rf ~/.bash* || true
 rm -rf ~/.profile || true
 rm -rf ~/.zcomp* || true
@@ -19,6 +18,9 @@ if [ ! -d "$HOME/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting" ]; then
 fi
 
 cp -f "workspace/keiron.zsh-theme" "$HOME/.oh-my-zsh/custom/themes/keiron.zsh-theme"
-cp -f "workspace/.zshrc" "$HOME/.zshrc"
+
+CONFIG_NAME="keiron-zsh"
+CONFIG_CONTENT="$(cat "workspace/.zshrc")"
+source "$SCRIPT_DIR/add-auto-config.sh"
 
 echo "Zsh configuration updated. Please restart your terminal or run 'source ~/.zshrc' to apply the changes."

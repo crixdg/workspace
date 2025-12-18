@@ -17,3 +17,5 @@ if [ ! -d "$HOME/.oh-my-zsh" ]; then
 else
     echo "Oh My Zsh is already installed."
 fi
+
+rm -f "$HOME/.zshrc"

@@ -7,9 +7,9 @@ set -euo pipefail
 : "${CONFIG_NAME:?CONFIG_NAME is required}"
 : "${CONFIG_CONTENT:?CONFIG_CONTENT is required}"
 
-START_MARK="# >>> ${CONFIG_NAME} auto-config >>>"
-DESCRIPTION_MARK="# !! Contents within this block are managed by '${CONFIG_NAME} auto-config' !!"
-END_MARK="# <<< ${CONFIG_NAME} auto-config <<<"
+START_MARK="# >>> managed:${CONFIG_NAME}:auto-config >>>"
+DESCRIPTION_MARK="# !! DO NOT EDIT !! managed by ${CONFIG_NAME} (auto-config)"
+END_MARK="# <<< managed:${CONFIG_NAME}:auto-config <<<"
 
 CONFIG_BLOCK=$(
   cat <<EOF
@@ -23,10 +23,12 @@ EOF
 # =========================
 # Detect shell rc file
 # =========================
-if [[ "${SHELL:-}" == *zsh* ]]; then
+if [[ -n "${ZSH_VERSION:-}" ]]; then
   SHELL_RC="$HOME/.zshrc"
-else
+elif [[ -n "${BASH_VERSION:-}" ]]; then
   SHELL_RC="$HOME/.bashrc"
+else
+  SHELL_RC="$HOME/.profile"
 fi
 
 # Ensure rc file exists
