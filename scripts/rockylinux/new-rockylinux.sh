@@ -7,6 +7,7 @@ if [[ "$confirm" != "y" ]]; then
     exit 1
 fi
 
+sudo dnf update -y
 sudo dnf install -y zsh
 
 if ! command -v zsh &>/dev/null; then
