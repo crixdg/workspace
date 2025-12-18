@@ -12,7 +12,7 @@ mkdir -p "$HOME/.local/bin/cppbin"
 cp -r "workspace/cppbin/." "$HOME/.local/bin/cppbin/"
 cp -f "workspace/.clang-format" "$HOME/.clang-format"
 
-CONFIG_NAME="C++"
+CONFIG_NAME="c++"
 CONFIG_CONTENT='export PATH="$HOME/.local/bin/cppbin:$PATH"'
 source "$SCRIPT_DIR/add-auto-config.sh"
 

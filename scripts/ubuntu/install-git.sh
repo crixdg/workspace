@@ -1,13 +1,9 @@
-#!/usr/bin/env bash
+#!/bin/bash
 set -e
 
-read -p "This script is intended for Ubuntu systems only. Continue? (y/n): " confirm
-if [[ "$confirm" != "y" ]]; then
-	echo "Aborted."
-	exit 1
-fi
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/check-os.sh"
 
-sudo apt update
 sudo apt install -y git
 
 cp -f "workspace/.gitconfig" "$HOME/.gitconfig"
