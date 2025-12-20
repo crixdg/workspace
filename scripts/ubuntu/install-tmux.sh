@@ -19,7 +19,7 @@ fi
 
 CONFIG_NAME="tmux"
 CONFIG_CONTENT='if command -v tmux >/dev/null 2>&1; then
-  if [ -z "$TMUX" ] && [ -n "$TERM" ] && [ "$TERM_PROGRAM" != "vscode" ] ; then
+  if [ -z "$TMUX" ] && [ -n "$TERM" ] && [ "$TERM_PROGRAM" != "vscode" ] && [ "$TERMINAL_EMULATOR" != "JetBrains-JediTerm" ] ; then
   	exec tmux new-session -AD
   fi
 fi'
