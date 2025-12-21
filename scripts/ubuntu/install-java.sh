@@ -33,10 +33,10 @@ rm $HOME/.local/gradle/${gradle_filename}
 rm $HOME/.local/gradle/${gradle_filename}.sha256
 
 CONFIG_NAME="java"
-CONFIG_CONTENT='export GRADLE_HOME="\$HOME/.local/gradle/gradle-${GRADLE_VERSION}"
-if [ -d "\$GRADLE_HOME" ]; then
-	export PATH="\$GRADLE_HOME/bin:\$PATH"
-fi'
+CONFIG_CONTENT="export GRADLE_HOME=\"\$HOME/.local/gradle/gradle-${GRADLE_VERSION}\"
+if [ -d \"\$GRADLE_HOME\" ]; then
+    export PATH=\"\$GRADLE_HOME/bin:\$PATH\"
+fi"
 source "$SCRIPT_DIR/add-auto-config.sh"
 
 echo "Java OpenJDK ${LTS_VERSION} and Gradle ${GRADLE_VERSION} installed and configured. Please restart your terminal or run 'source $SHELL_RC' to apply the changes."
