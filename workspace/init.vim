@@ -1,3 +1,12 @@
+set number
+highlight LineNr ctermfg=8
+
+set expandtab
+set tabstop=4
+set shiftwidth=4
+set softtabstop=4
+set smartindent
+
 set guicursor=
   \n-v-c:block-Cursor/lCursor,
   \ve:ver35-Cursor,
