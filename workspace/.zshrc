@@ -52,6 +52,11 @@ ZSH_COMPDUMP="${ZDOTDIR:-$HOME}/.zcompdump"
 # ALIAS
 alias reload="exec zsh"
 
+if [ -x $(command -v nvim) ]; then
+	alias vim='nvim'
+	alias vi='nvim'
+fi
+
 alias ll='ls -hlF'
 alias la='ls -A'
 alias l='ls -CF'
