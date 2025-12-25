@@ -15,9 +15,8 @@ cp -f "workspace/init.lua" "$HOME/.config/nvim/init.lua"
 CONFIG_NAME="neovim"
 CONFIG_CONTENT='export PATH="$HOME/.local/nvim/nvim-linux-x86_64/bin:$PATH"
 
-alias vim='nvim'
-alias vi='nvim'
-'
+alias vim="nvim"
+alias vi="nvim"'
 source "$SCRIPT_DIR/add-auto-config.sh"
 
 echo "Neovim installation and configuration completed. You can start Neovim by running the "nvim" command."
