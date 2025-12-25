@@ -7,6 +7,11 @@ vim.cmd([[highlight SignColumn ctermbg=NONE guibg=NONE]])
 
 vim.opt.scrolloff = 7
 
+vim.opt.signcolumn = "yes"
+
+vim.opt.splitright = true
+vim.opt.splitbelow = true
+
 vim.api.nvim_create_autocmd("FileType", {
   pattern = { "c", "cpp" },
   callback = function()
@@ -35,12 +40,6 @@ vim.opt.hlsearch = true
 vim.opt.incsearch = true
 
 vim.keymap.set("n", "<Esc>", ":noh<CR>", { silent = true })
-
-vim.opt.signcolumn = "yes"
-vim.opt.showmatch = true
-
-vim.opt.splitright = true
-vim.opt.splitbelow = true
 
 vim.opt.guicursor =
   "n-v-c:block-Cursor/lCursor," ..
