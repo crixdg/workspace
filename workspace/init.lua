@@ -29,10 +29,18 @@ vim.api.nvim_create_autocmd("VimLeave", {
 
 vim.api.nvim_create_autocmd("FileType", {
   pattern = { "c", "cpp" },
-  callback = function()
-    vim.api.nvim_create_autocmd("BufWritePre", {
-      buffer = 0,
-      command = "%!clang-format",
+  callback = function(ev)
+    vim.lsp.start({
+      name = "clangd",
+      cmd = { "clangd" },
+      root_dir = vim.fn.getcwd(),
     })
+  end,
+})
+
+vim.api.nvim_create_autocmd("BufWritePre", {
+  pattern = { "*.c", "*.cpp", "*.h", "*.hpp" },
+  callback = function()
+    vim.lsp.buf.format({ async = false })
   end,
 })
