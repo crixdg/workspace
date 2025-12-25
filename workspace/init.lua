@@ -1,6 +1,21 @@
 vim.opt.number = true
 vim.cmd([[highlight LineNr ctermfg=8]])
 
+vim.cmd([[highlight Normal ctermbg=NONE guibg=NONE]])
+vim.cmd([[highlight NonText ctermbg=NONE guibg=NONE]])
+vim.cmd([[highlight SignColumn ctermbg=NONE guibg=NONE]])
+
+vim.opt.scrolloff = 7
+
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = { "c", "cpp" },
+  callback = function()
+    vim.opt_local.foldmethod = "syntax"
+    vim.opt_local.foldlevel = 99
+  end,
+})
+vim.opt.foldenable = true
+
 vim.opt.expandtab = true
 vim.opt.tabstop = 4
 vim.opt.shiftwidth = 4
@@ -10,6 +25,22 @@ vim.opt.smartindent = true
 vim.keymap.set("n", "<C-s>", ":w<CR>", { silent = true })
 vim.keymap.set("i", "<C-s>", "<Esc>:w<CR>a", { silent = true })
 vim.keymap.set("v", "<C-s>", "<Esc>:w<CR>gv", { silent = true })
+
+vim.keymap.set("n", "<C-_>", "gcc", { remap = true })
+vim.keymap.set("v", "<C-_>", "gc", { remap = true })
+
+vim.opt.ignorecase = true
+vim.opt.smartcase = true
+vim.opt.hlsearch = true
+vim.opt.incsearch = true
+
+vim.keymap.set("n", "<Esc>", ":noh<CR>", { silent = true })
+
+vim.opt.signcolumn = "yes"
+vim.opt.showmatch = true
+
+vim.opt.splitright = true
+vim.opt.splitbelow = true
 
 vim.opt.guicursor =
   "n-v-c:block-Cursor/lCursor," ..
