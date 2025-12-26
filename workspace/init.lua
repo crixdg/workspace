@@ -75,10 +75,19 @@ vim.api.nvim_create_autocmd("VimLeave", {
 vim.api.nvim_create_autocmd("FileType", {
   pattern = { "c", "cpp" },
   callback = function(ev)
+    local clients = vim.lsp.get_clients({ bufnr = ev.buf, name = "clangd" })
+    if #clients > 0 then
+      return
+    end
+
     vim.lsp.start({
       name = "clangd",
       cmd = { "clangd" },
       root_dir = vim.fn.getcwd(),
+      on_attach = function(_, bufnr)
+        local opts = { noremap = true, silent = true, buffer = bufnr }
+        vim.keymap.set("n", "<F2>", vim.lsp.buf.rename, opts)
+      end,
     })
   end,
 })
