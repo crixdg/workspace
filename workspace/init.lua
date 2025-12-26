@@ -99,6 +99,16 @@ vim.api.nvim_create_autocmd("BufWritePre", {
   end,
 })
 
-vim.cmd([[highlight Normal ctermbg=NONE guibg=NONE]])
-vim.cmd([[highlight NonText ctermbg=NONE guibg=NONE]])
-vim.cmd([[highlight SignColumn ctermbg=NONE guibg=NONE]])
+require("lazy").setup({
+  {
+    "ellisonleao/gruvbox.nvim",
+    priority = 1000,
+    config = function()
+      require("gruvbox").setup({
+        transparent_mode = true,
+        contrast = "hard",
+      })
+      vim.cmd.colorscheme("gruvbox")
+    end,
+  },
+})
