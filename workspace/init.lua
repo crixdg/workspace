@@ -49,6 +49,11 @@ vim.keymap.set("v", "<C-s>", "<Esc>:w<CR>gv", { silent = true })
 vim.keymap.set("n", "<C-_>", "gcc", { remap = true })
 vim.keymap.set("v", "<C-_>", "gc", { remap = true })
 
+vim.keymap.set("n", "<A-S-j>", ":m .+1<CR>==", { silent = true })
+vim.keymap.set("n", "<A-S-k>", ":m .-2<CR>==", { silent = true })
+vim.keymap.set("v", "<A-S-j>", ":m '>+1<CR>gv=gv", { silent = true })
+vim.keymap.set("v", "<A-S-k>", ":m '<-2<CR>gv=gv", { silent = true })
+
 vim.opt.ignorecase = true
 vim.opt.smartcase = true
 vim.opt.hlsearch = true
