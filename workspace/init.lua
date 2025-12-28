@@ -42,17 +42,20 @@ vim.opt.shiftwidth = 4
 vim.opt.softtabstop = 4
 vim.opt.smartindent = true
 
-vim.keymap.set("n", "<C-s>", ":w<CR>", { silent = true })
-vim.keymap.set("i", "<C-s>", "<Esc>:w<CR>a", { silent = true })
-vim.keymap.set("v", "<C-s>", "<Esc>:w<CR>gv", { silent = true })
+vim.keymap.set('v', '<leader>y', '"+y', { noremap = true, silent = true })
+vim.keymap.set('n', '<leader>y', '"+yy', { noremap = true, silent = true })
+
+vim.keymap.set("n", "<C-s>", ":w<CR>", { noremap = true, silent = true })
+vim.keymap.set("i", "<C-s>", "<Esc>:w<CR>a", { noremap = true, silent = true })
+vim.keymap.set("v", "<C-s>", "<Esc>:w<CR>gv", { noremap = true, silent = true })
 
 vim.keymap.set("n", "<C-_>", "gcc", { remap = true })
 vim.keymap.set("v", "<C-_>", "gc", { remap = true })
 
-vim.keymap.set("n", "<A-S-j>", ":m .+1<CR>==", { silent = true })
-vim.keymap.set("n", "<A-S-k>", ":m .-2<CR>==", { silent = true })
-vim.keymap.set("v", "<A-S-j>", ":m '>+1<CR>gv=gv", { silent = true })
-vim.keymap.set("v", "<A-S-k>", ":m '<-2<CR>gv=gv", { silent = true })
+vim.keymap.set("n", "<A-S-j>", ":m .+1<CR>==", { noremap = true, silent = true })
+vim.keymap.set("n", "<A-S-k>", ":m .-2<CR>==", { noremap = true, silent = true })
+vim.keymap.set("v", "<A-S-j>", ":m '>+1<CR>gv=gv", { noremap = true, silent = true })
+vim.keymap.set("v", "<A-S-k>", ":m '<-2<CR>gv=gv", { noremap = true, silent = true })
 
 vim.opt.ignorecase = true
 vim.opt.smartcase = true
