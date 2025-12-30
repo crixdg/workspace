@@ -14,6 +14,7 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
+vim.g.mouse = "a"
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
 
@@ -99,6 +100,21 @@ vim.api.nvim_create_autocmd("FileType", {
     })
   end,
 })
+
+vim.api.nvim_create_autocmd("CursorHold", {
+  callback = function()
+    local opts = {
+      focusable = false,
+      close_events = { "BufLeave", "CursorMoved", "InsertEnter", "FocusLost" },
+      border = 'rounded',
+      source = 'always',
+      prefix = ' ',
+    }
+    vim.diagnostic.open_float(nil, opts)
+  end
+})
+
+vim.opt.updatetime = 250
 
 vim.api.nvim_create_autocmd({ "FocusLost", "BufLeave" }, {
   pattern = { "*.c", "*.cpp", "*.h", "*.hpp" },
