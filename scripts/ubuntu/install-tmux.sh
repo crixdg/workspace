@@ -18,9 +18,14 @@ if [ ! -d "$HOME/.tmux/plugins/tpm" ]; then
 fi
 
 CONFIG_NAME="tmux"
-CONFIG_CONTENT='if command -v tmux >/dev/null 2>&1; then
-  if [ -z "$TMUX" ] && [ -n "$TERM" ] && [ "$TERM_PROGRAM" != "vscode" ] && [ "$TERMINAL_EMULATOR" != "JetBrains-JediTerm" ] ; then
-  	exec tmux new-session -AD
+CONFIG_CONTENT='if [[ -z "$SSH_CONNECTION" ]]; then
+  if command -v tmux >/dev/null 2>&1; then
+    if [ -z "$TMUX" ] \
+      && [ -n "$TERM" ] \
+      && [ "$TERM_PROGRAM" != "vscode" ] \
+      && [ "$TERMINAL_EMULATOR" != "JetBrains-JediTerm" ]; then
+      exec tmux new-session -AD
+    fi
   fi
 fi'
 source "$SCRIPT_DIR/add-auto-config.sh"
