@@ -1,18 +1,17 @@
 #!/bin/bash
 set -euo pipefail
 
-# =========================
-# Required inputs
-# =========================
+# Ensure required environment variables are set
 : "${CONFIG_NAME:?CONFIG_NAME is required}"
 : "${CONFIG_CONTENT:?CONFIG_CONTENT is required}"
 
-START_MARK="# >>> managed:${CONFIG_NAME}:auto-config >>>"
-DESCRIPTION_MARK="# !! DO NOT EDIT !! managed by ${CONFIG_NAME} (auto-config)"
-END_MARK="# <<< managed:${CONFIG_NAME}:auto-config <<<"
+# Define markers for the configuration block
+START_MARK="# >>> managed:${CONFIG_NAME}:auto>>>"
+DESCRIPTION_MARK="# !! DO NOT EDIT !! managed by ${CONFIG_NAME} (auto)"
+END_MARK="# <<< managed:${CONFIG_NAME}:auto<<<"
 
 CONFIG_BLOCK=$(
-  cat <<EOF
+	cat <<EOF
 $START_MARK
 $DESCRIPTION_MARK
 $CONFIG_CONTENT
@@ -20,25 +19,20 @@ $END_MARK
 EOF
 )
 
-# =========================
-# Detect shell rc file
-# =========================
+# Determine the user's shell and corresponding rc file
 USER_SHELL="$(basename "${SHELL:-}")"
 
 case "$USER_SHELL" in
-  zsh)  SHELL_RC="$HOME/.zshrc" ;;
-  bash) SHELL_RC="$HOME/.bashrc" ;;
-  *)    SHELL_RC="$HOME/.profile" ;;
+zsh) SHELL_RC="$HOME/.zshrc" ;;
+bash) SHELL_RC="$HOME/.bashrc" ;;
+*) SHELL_RC="$HOME/.profile" ;;
 esac
 
-# Ensure rc file exists
 touch "$SHELL_RC"
 
-# =========================
-# Insert or replace block
-# =========================
+# Remove existing block if present, then append the new block
 if grep -qF "$START_MARK" "$SHELL_RC"; then
-  awk -v block="$CONFIG_BLOCK" -v start="$START_MARK" -v end="$END_MARK" '
+	awk -v block="$CONFIG_BLOCK" -v start="$START_MARK" -v end="$END_MARK" '
     BEGIN { inblock=0 }
     $0 ~ start {
       print block
@@ -47,8 +41,8 @@ if grep -qF "$START_MARK" "$SHELL_RC"; then
     }
     $0 ~ end { inblock=0; next }
     !inblock { print }
-  ' "$SHELL_RC" > "${SHELL_RC}.tmp"
-  mv "${SHELL_RC}.tmp" "$SHELL_RC"
+  ' "$SHELL_RC" >"${SHELL_RC}.tmp"
+	mv "${SHELL_RC}.tmp" "$SHELL_RC"
 else
-  printf "\n%s\n" "$CONFIG_BLOCK" >> "$SHELL_RC"
+	printf "\n%s\n" "$CONFIG_BLOCK" >>"$SHELL_RC"
 fi
