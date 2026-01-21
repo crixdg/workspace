@@ -17,7 +17,10 @@ if [ ! -d "$HOME/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting" ]; then
 	git clone https://github.com/zsh-users/zsh-syntax-highlighting ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
 fi
 
+mkdir -p "$HOME/.oh-my-zsh/custom/themes"
 cp -f "workspace/keiron.zsh-theme" "$HOME/.oh-my-zsh/custom/themes/keiron.zsh-theme"
+
+touch "$HOME/.zshrc"
 
 CONFIG_NAME="keiron-zsh"
 CONFIG_CONTENT="$(cat "workspace/.zshrc")"
