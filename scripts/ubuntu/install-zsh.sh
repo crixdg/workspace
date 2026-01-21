@@ -4,7 +4,7 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/check-os.sh"
 
-sudo apt install -y git curl
+sudo apt install -y git curl wget
 sudo apt install -y zsh
 
 if ! command -v zsh &>/dev/null; then
