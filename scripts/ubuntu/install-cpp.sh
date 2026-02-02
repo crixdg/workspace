@@ -6,7 +6,7 @@ source "$SCRIPT_DIR/check-os.sh"
 
 sudo apt install build-essential gdb -y
 sudo apt install cmake ninja-build -y
-sudo apt install clang lldb llvm -y
+sudo apt install clang clangd lldb llvm -y
 
 mkdir -p "$HOME/.local/bin/cppbin"
 cp -r "workspace/cppbin/." "$HOME/.local/bin/cppbin/"
