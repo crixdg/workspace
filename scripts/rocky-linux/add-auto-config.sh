@@ -34,12 +34,15 @@ touch "$SHELL_RC"
 if grep -qF "$START_MARK" "$SHELL_RC"; then
 	awk -v block="$CONFIG_BLOCK" -v start="$START_MARK" -v end="$END_MARK" '
     BEGIN { inblock=0 }
-    $0 ~ start {
+    index($0, start) {
       print block
       inblock=1
       next
     }
-    $0 ~ end { inblock=0; next }
+    index($0, end) {
+      inblock=0
+      next
+    }
     !inblock { print }
   ' "$SHELL_RC" >"${SHELL_RC}.tmp"
 	mv "${SHELL_RC}.tmp" "$SHELL_RC"

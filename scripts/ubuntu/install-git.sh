@@ -4,7 +4,7 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/check-os.sh"
 
-sudo apt install -y git
+sudo apt install git -y
 
 cp -f "workspace/.gitconfig" "$HOME/.gitconfig"
 
