@@ -22,13 +22,13 @@ rm $HOME/.local/go/${FILENAME}
 CONFIG_NAME="golang"
 CONFIG_CONTENT='export GOROOT="$HOME/.local/go"
 if [ -d "$GOROOT" ]; then
-    export PATH="$GOROOT/bin:$PATH"
+    path=("$GOROOT/bin" $path)
 fi
 
 export GOPATH="$HOME/go"
 if [ -d "$GOPATH" ]; then
     export GOBIN="$GOPATH/bin"
-    export PATH="$GOBIN:$PATH"
+    path=("$GOBIN" $path)
 fi'
 source "$SCRIPT_DIR/add-auto-config.sh"
 

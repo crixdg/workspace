@@ -17,7 +17,7 @@ cp -r "workspace/cppbin/." "$HOME/.local/bin/cppbin/"
 cp -f "workspace/.clang-format" "$HOME/.clang-format"
 
 CONFIG_NAME="c++"
-CONFIG_CONTENT='export PATH="$HOME/.local/bin/cppbin:$PATH"'
+CONFIG_CONTENT='path=("$HOME/.local/bin/cppbin" $path)'
 source "$SCRIPT_DIR/add-auto-config.sh"
 
 echo "C++ workspace initialized and configured. Please restart your terminal or run 'source $SHELL_RC' to apply the changes."
