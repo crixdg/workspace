@@ -6,9 +6,9 @@ set -euo pipefail
 : "${CONFIG_CONTENT:?CONFIG_CONTENT is required}"
 
 # Define markers for the configuration block
-START_MARK="# >>> managed:${CONFIG_NAME}:auto>>>"
+START_MARK="# >>> managed:${CONFIG_NAME}:auto >>>"
 DESCRIPTION_MARK="# !! DO NOT EDIT !! managed by ${CONFIG_NAME} (auto)"
-END_MARK="# <<< managed:${CONFIG_NAME}:auto<<<"
+END_MARK="# <<< managed:${CONFIG_NAME}:auto <<<"
 
 CONFIG_BLOCK=$(
 	cat <<EOF
