@@ -12,6 +12,13 @@ sudo apt install build-essential -y
 sudo apt install cmake ninja-build -y
 sudo apt install clang clangd lldb llvm -y
 
+DEFAULT_BAZELISK_VERSION="1.28.1"
+read -p "Enter the Go version you want to install [${DEFAULT_BAZELISK_VERSION}]: " VERSION
+BAZELISK_VERSION=${BAZELISK_VERSION:-$DEFAULT_BAZELISK_VERSION}
+curl -LO https://github.com/bazelbuild/bazelisk/releases/download/v${BAZELISK_VERSION}/bazelisk-amd64.deb 2>/dev/null
+sudo dpkg -i bazelisk-amd64.deb
+rm bazelisk-amd64.deb
+
 mkdir -p "$HOME/.local/bin/cppbin"
 cp -r "workspace/cppbin/." "$HOME/.local/bin/cppbin/"
 cp -f "workspace/.clang-format" "$HOME/.clang-format"
