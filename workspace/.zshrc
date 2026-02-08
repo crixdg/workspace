@@ -7,6 +7,7 @@ export ZSH_CUSTOM="$ZSH/custom"
 # ===============================================================================
 # CONFIG
 
+typeset -U path PATH
 DISABLE_AUTO_UPDATE="true"
 DISABLE_MAGIC_FUNCTIONS="true"
 ZSH_DISABLE_COMPFIX=true
@@ -72,8 +73,8 @@ fi
 
 # ===============================================================================
 # PATH
-[ -d "$HOME/bin" ] && export PATH="$HOME/bin:$PATH"
-[ -d "$HOME/.local/bin" ] && export PATH="$HOME/.local/bin:$PATH"
+[ -d "$HOME/bin" ] && path=("$HOME/bin", $path)
+[ -d "$HOME/.local/bin" ] && path=("$HOME/.local/bin" $path)
 
 # ===============================================================================
 # zprof  # Uncomment with zmodload above to profile zsh startup time
