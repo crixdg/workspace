@@ -39,7 +39,7 @@ compile() {
 		return 1
 	fi
 
-	if [[ ! "$_source_file" =~ ^.+\.[cpp|cc]$ || ! -f "$_source_file" ]]; then
+	if [[ ! "$_source_file" =~ ^.+\.(cpp|cc)$ || ! -f "$_source_file" ]]; then
 		err_echo "Error: File '$_source_file' is invalid!"
 		return 1
 	fi
