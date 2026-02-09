@@ -82,7 +82,7 @@ vim.api.nvim_create_autocmd("VimLeave", {
 })
 
 vim.api.nvim_create_autocmd("FileType", {
-  pattern = { "c", "cpp" },
+  pattern = { "c", "cpp", "cc" },
   callback = function(ev)
     local clients = vim.lsp.get_clients({ bufnr = ev.buf, name = "clangd" })
     if #clients > 0 then
@@ -117,7 +117,7 @@ vim.api.nvim_create_autocmd("CursorHold", {
 vim.opt.updatetime = 250
 
 vim.api.nvim_create_autocmd({ "FocusLost", "BufLeave" }, {
-  pattern = { "*.c", "*.cpp", "*.h", "*.hpp" },
+  pattern = { "*.c", "*.cpp", "*.cc", "*.h", "*.hpp" },
   callback = function()
     if vim.bo.modified and not vim.bo.readonly and vim.fn.expand("%") ~= "" then
       vim.cmd("silent! write")
@@ -126,7 +126,7 @@ vim.api.nvim_create_autocmd({ "FocusLost", "BufLeave" }, {
 })
 
 vim.api.nvim_create_autocmd("BufWritePre", {
-  pattern = { "*.c", "*.cpp", "*.h", "*.hpp" },
+  pattern = { "*.c", "*.cpp", "*.cc", "*.h", "*.hpp" },
   callback = function()
     vim.lsp.buf.format({ async = false })
   end,
