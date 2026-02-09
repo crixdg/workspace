@@ -5,8 +5,12 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/check-os.sh"
 
 if [ ! -d "$HOME/.nvm" ]; then
-	read -p "Enter the NVM version you want to install (e.g., v0.40.1): " NVM_VERSION
-	curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/$NVM_VERSION/install.sh | bash
+	DEFAULT_NVM_VERSION="0.40.1"
+	read -p "Enter the NVM version you want to install [${DEFAULT_NVM_VERSION}]: " NVM_VERSION
+	NVM_VERSION=${NVM_VERSION:-$DEFAULT_NVM_VERSION}
+	curl -LO https://raw.githubusercontent.com/nvm-sh/nvm/v${NVM_VERSION}/install.sh 2>/dev/null
+	bash install.sh
+	rm install.sh
 	echo "NVM installed."
 else
 	echo "NVM already installed at $HOME/.nvm"
