@@ -4,10 +4,10 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/check-os.sh"
 
-DEFAULT_VERSION="1.25.5"
-read -p "Enter the Go version you want to install [${DEFAULT_VERSION}]: " VERSION
-VERSION=${VERSION:-$DEFAULT_VERSION}
-FILENAME="go${VERSION}.linux-amd64.tar.gz"
+DEFAULT_GO_VERSION="1.25.5"
+read -p "Enter the Go version you want to install [${DEFAULT_GO_VERSION}]: " VERSION
+GO_VERSION=${VERSION:-$DEFAULT_GO_VERSION}
+FILENAME="go${GO_VERSION}.linux-amd64.tar.gz"
 if ! curl --silent --head "https://go.dev/dl/${FILENAME}" | grep -q "HTTP/2 302"; then
 	echo "Go file ${FILENAME} not found online. Aborted."
 	exit 1
