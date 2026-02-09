@@ -39,7 +39,7 @@ compile() {
 		return 1
 	fi
 
-	if [[ ! "$_source_file" =~ ^.+\.cpp$ || ! -f "$_source_file" ]]; then
+	if [[ ! "$_source_file" =~ ^.+\.[cpp|cc]$ || ! -f "$_source_file" ]]; then
 		err_echo "Error: File '$_source_file' is invalid!"
 		return 1
 	fi
@@ -205,7 +205,7 @@ if [[ $# -lt 1 ]]; then
 fi
 
 source_file="$1"
-binary_file="${source_file%.cpp}.out"
+binary_file="${source_file%.*}.out"
 shift
 
 if [[ ${#modes[@]} -ne 0 ]]; then
