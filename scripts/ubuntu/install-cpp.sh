@@ -4,13 +4,22 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/check-os.sh"
 
-wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | gpg --dearmor - | sudo tee /usr/share/keyrings/kitware-archive-keyring.gpg >/dev/null
-echo "deb [signed-by=/usr/share/keyrings/kitware-archive-keyring.gpg] https://apt.kitware.com/ubuntu/ $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/kitware.list >/dev/null
-
 sudo apt update
 sudo apt install build-essential -y
-sudo apt install cmake ninja-build -y
-sudo apt install clang clangd lldb llvm -y
+
+wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | gpg --dearmor - | sudo tee /usr/share/keyrings/kitware-archive-keyring.gpg >/dev/null
+echo "deb [signed-by=/usr/share/keyrings/kitware-archive-keyring.gpg] https://apt.kitware.com/ubuntu/ $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/kitware.list >/dev/null
+sudo apt update
+sudo apt install cmake -y
+sudo apt install ninja-build -y
+
+DEFAULT_LLVM_VERSION="21"
+read -p "Enter the LLVM version you want to install [${DEFAULT_LLVM_VERSION}]: " LLVM_VERSION
+LLVM_VERSION=${LLVM_VERSION:-$DEFAULT_LLVM_VERSION}
+curl -LO https://apt.llvm.org/llvm.sh 2>/dev/null
+chmod +x llvm.sh
+sudo ./llvm.sh $LLVM_VERSION
+rm llvm.sh
 
 DEFAULT_BAZELISK_VERSION="1.28.1"
 read -p "Enter the Bazelisk version you want to install [${DEFAULT_BAZELISK_VERSION}]: " VERSION
