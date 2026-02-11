@@ -21,6 +21,14 @@ chmod +x llvm.sh
 sudo ./llvm.sh $LLVM_VERSION
 rm llvm.sh
 
+sudo apt install clang-format-21 clang-tidy-21 -y
+
+sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-$LLVM_VERSION 100
+sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-$LLVM_VERSION 100
+sudo update-alternatives --install /usr/bin/clangd clangd /usr/bin/clangd-$LLVM_VERSION 100
+sudo update-alternatives --install /usr/bin/clang-format clang-format /usr/bin/clang-format-$LLVM_VERSION 100
+sudo update-alternatives --install /usr/bin/clang-tidy clang-tidy /usr/bin/clang-tidy-$LLVM_VERSION 100
+
 DEFAULT_BAZELISK_VERSION="1.28.1"
 read -p "Enter the Bazelisk version you want to install [${DEFAULT_BAZELISK_VERSION}]: " VERSION
 BAZELISK_VERSION=${BAZELISK_VERSION:-$DEFAULT_BAZELISK_VERSION}
