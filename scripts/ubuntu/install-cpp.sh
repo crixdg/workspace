@@ -4,27 +4,27 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/check-os.sh"
 
-wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | gpg --dearmor - | sudo tee /usr/share/keyrings/kitware-archive-keyring.gpg >/dev/null
-echo "deb [signed-by=/usr/share/keyrings/kitware-archive-keyring.gpg] https://apt.kitware.com/ubuntu/ $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/kitware.list >/dev/null
 sudo apt update
-sudo apt install cmake -y
-sudo apt install ninja-build -y
+sudo apt install build-essential -y
 
-DEFAULT_LLVM_VERSION="21"
-read -p "Enter the LLVM version you want to install [${DEFAULT_LLVM_VERSION}]: " LLVM_VERSION
-LLVM_VERSION=${LLVM_VERSION:-$DEFAULT_LLVM_VERSION}
-curl -LO https://apt.llvm.org/llvm.sh 2>/dev/null
-chmod +x llvm.sh
-sudo ./llvm.sh $LLVM_VERSION
-rm llvm.sh
+# I follow Hermetic's recommendation to use Bazelisk instead of installing CMake and LLVM directly.
+# This way, I can manage the versions more easily and avoid potential conflicts with system packages.
 
-sudo apt install clang-format-21 clang-tidy-21 -y
+# wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | gpg --dearmor - | sudo tee /usr/share/keyrings/kitware-archive-keyring.gpg >/dev/null
+# echo "deb [signed-by=/usr/share/keyrings/kitware-archive-keyring.gpg] https://apt.kitware.com/ubuntu/ $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/kitware.list >/dev/null
+# sudo apt update
+# sudo apt install cmake -y
+# sudo apt install ninja-build -y
 
-sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-$LLVM_VERSION 100
-sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-$LLVM_VERSION 100
-sudo update-alternatives --install /usr/bin/clangd clangd /usr/bin/clangd-$LLVM_VERSION 100
-sudo update-alternatives --install /usr/bin/clang-format clang-format /usr/bin/clang-format-$LLVM_VERSION 100
-sudo update-alternatives --install /usr/bin/clang-tidy clang-tidy /usr/bin/clang-tidy-$LLVM_VERSION 100
+# DEFAULT_LLVM_VERSION="21"
+# read -p "Enter the LLVM version you want to install [${DEFAULT_LLVM_VERSION}]: " LLVM_VERSION
+# LLVM_VERSION=${LLVM_VERSION:-$DEFAULT_LLVM_VERSION}
+# curl -LO https://apt.llvm.org/llvm.sh 2>/dev/null
+# chmod +x llvm.sh
+# sudo ./llvm.sh $LLVM_VERSION
+# rm llvm.sh
+
+# sudo apt install clang-format-21 clang-tidy-21 -y
 
 DEFAULT_BAZELISK_VERSION="1.28.1"
 read -p "Enter the Bazelisk version you want to install [${DEFAULT_BAZELISK_VERSION}]: " VERSION
@@ -33,16 +33,15 @@ curl -LO https://github.com/bazelbuild/bazelisk/releases/download/v${BAZELISK_VE
 sudo dpkg -i bazelisk-amd64.deb
 rm bazelisk-amd64.deb
 
-DEFAULT_BAZEL_BUILDTOOLS_VERSION="8.5.1"
-read -p "Enter the Bazel Buildtools version you want to install [${DEFAULT_BAZEL_BUILDTOOLS_VERSION}]: " VERSION
-BAZEL_BUILDTOOLS_VERSION=${BAZEL_BUILDTOOLS_VERSION:-$DEFAULT_BAZEL_BUILDTOOLS_VERSION}
-curl -LO https://github.com/bazelbuild/buildtools/releases/download/v${BAZEL_BUILDTOOLS_VERSION}/buildifier-linux-amd64 2>/dev/null
-chmod +x buildifier-linux-amd64
-sudo mv buildifier-linux-amd64 "$HOME/.local/bin/buildifier"
+# DEFAULT_BAZEL_BUILDTOOLS_VERSION="8.5.1"
+# read -p "Enter the Bazel Buildtools version you want to install [${DEFAULT_BAZEL_BUILDTOOLS_VERSION}]: " VERSION
+# BAZEL_BUILDTOOLS_VERSION=${BAZEL_BUILDTOOLS_VERSION:-$DEFAULT_BAZEL_BUILDTOOLS_VERSION}
+# curl -LO https://github.com/bazelbuild/buildtools/releases/download/v${BAZEL_BUILDTOOLS_VERSION}/buildifier-linux-amd64 2>/dev/null
+# chmod +x buildifier-linux-amd64
+# sudo mv buildifier-linux-amd64 "$HOME/.local/bin/buildifier"
 
 mkdir -p "$HOME/.local/bin/cppbin"
 cp -r "workspace/cppbin/." "$HOME/.local/bin/cppbin/"
-cp -f "workspace/.clang-format" "$HOME/.clang-format"
 
 CONFIG_NAME="c++"
 CONFIG_CONTENT='path=("$HOME/.local/bin/cppbin" $path)'
