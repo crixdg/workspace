@@ -36,7 +36,14 @@ async function getWordData(word) {
       `<ul>` + definitions.map((d) => `<li>${d}</li>`).join("") + `</ul>`;
     const stems = entry.meta?.stems || [];
     const stemHTML =
-      `<ul>` + stems.map((s) => `<li>${s}</li>`).join("") + `</ul>`;
+      "<ul>" +
+      stems
+        .map(
+          (s) =>
+            `<li><a href="https://www.merriam-webster.com/dictionary/${encodeURIComponent(s)}" target="_blank">${s}</a></li>`,
+        )
+        .join("") +
+      "</ul>";
 
     result.push({
       partOfSpeech,
