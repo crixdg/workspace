@@ -1,6 +1,6 @@
 // Copyright (c) 2026-present, FromCero. All rights reserved.
 
-const VERSION = "1";
+const VERSION = "2";
 const ANKI_CONNECT_URL = "http://localhost:8765";
 const DICTIONARY_API_KEY = "YOUR_API_KEY";
 
@@ -92,6 +92,8 @@ async function fetchPhonetic(word) {
 async function convertToCardData(word, entry) {
   const partOfSpeech = entry.fl || "";
   const pronunciation = await fetchPhonetic(word);
+  const audioName = entry.hwi?.prs?.[0]?.sound?.audio || "";
+  const audioUrl = audioName ? getMWAudioUrl(audioName) : "";
   const definition = extractDefEx(entry);
   const definitionHTML =
     "<ul>" +
@@ -117,11 +119,24 @@ async function convertToCardData(word, entry) {
     word,
     partOfSpeech,
     pronunciation,
+    audio: audioUrl,
     definition: definitionHTML,
     stems: stemHTML,
     url: `https://www.merriam-webster.com/dictionary/${word}`,
     version: VERSION,
   };
+}
+
+function getMWAudioUrl(audio) {
+  const base = "https://media.merriam-webster.com/audio/prons/en/us/mp3/";
+  let subdir;
+
+  if (audio.startsWith("bix")) subdir = "bix";
+  else if (audio.startsWith("gg")) subdir = "gg";
+  else if (/^[0-9]/.test(audio)) subdir = "number";
+  else subdir = audio[0];
+
+  return `${base}${subdir}/${audio}.mp3`;
 }
 
 function extractDefEx(entry) {
@@ -231,6 +246,7 @@ async function createCard(entry) {
         word: entry.word,
         type: entry.partOfSpeech,
         pronunciation: entry.pronunciation,
+        audio: entry.audio,
         definition: entry.definition,
         stems: entry.stems,
         url: `https://www.merriam-webster.com/dictionary/${entry.word}`,
@@ -250,6 +266,7 @@ async function updateCard(entry) {
         word: entry.word,
         type: entry.partOfSpeech,
         pronunciation: entry.pronunciation,
+        audio: entry.audio,
         definition: entry.definition,
         stems: entry.stems,
         url: `https://www.merriam-webster.com/dictionary/${entry.word}`,
