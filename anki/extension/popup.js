@@ -13,7 +13,7 @@ async function addWord() {
     setStatus("Fetching dictionary...");
     const cardData = await getCardData(word);
 
-    for (const entry of cardData) {
+    for (const entry of cardData.values()) {
       const notes = await findNote(entry);
 
       if (notes.length > 0) {
