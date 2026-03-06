@@ -65,9 +65,22 @@ async function fetchWordDataFromDictionary(word) {
   return data;
 }
 
+async function fetchPhonetic(word) {
+  const url = `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`;
+
+  const res = await fetch(url);
+  const data = await res.json();
+
+  if (!Array.isArray(data) || !data[0] || !data[0].phonetic) {
+    return "";
+  }
+
+  return data[0].phonetic;
+}
+
 async function convertToCardData(word, entry) {
   const partOfSpeech = entry.fl || "";
-  const pronunciation = entry.hwi?.prs?.[0]?.mw || "";
+  const pronunciation = await fetchPhonetic(word);
   const definition = extractDefEx(entry);
   const definitionHTML =
     "<ul>" +
@@ -135,14 +148,32 @@ function extractDefEx(entry) {
 }
 
 function cleanMW(text) {
-  return text
-    .replace(/\{d_link\|([^|]+)\|[^}]+\}/g, "$1")
-    .replace(/\{sx\|([^|]+)\|[^}]*\}/g, "$1")
-    .replace(/\{i_link\|([^}]+)\}/g, "$1")
-    .replace(/\{wi\}|\{\/wi\}/g, "")
-    .replace(/\{it\}|\{\/it\}/g, "")
-    .replace(/\{bc\}/g, "")
-    .trim();
+  return (
+    text
+      // links
+      .replace(/\{d_link\|([^|]+)\|[^}]+\}/g, "$1")
+      .replace(/\{a_link\|([^}]+)\}/g, "$1")
+      .replace(/\{i_link\|([^}]+)\}/g, "$1")
+      .replace(/\{et_link\|([^|]+)\|[^}]+\}/g, "$1")
+      .replace(/\{sx\|([^|]+)\|[^}]*\}/g, "$1")
+
+      // formatting
+      .replace(/\{wi\}|\{\/wi\}/g, "")
+      .replace(/\{it\}|\{\/it\}/g, "")
+      .replace(/\{sc\}|\{\/sc\}/g, "")
+
+      // punctuation / markers
+      .replace(/\{bc\}/g, "")
+      .replace(/\{ldquo\}|\{rdquo\}/g, '"')
+
+      // math / misc
+      .replace(/\{mat\|([^}]+)\}/g, "$1")
+
+      // remove any remaining unknown tokens
+      .replace(/\{[^}]+\}/g, "")
+
+      .trim()
+  );
 }
 
 async function getCardData(word) {
@@ -153,6 +184,7 @@ async function getCardData(word) {
     "biographical name",
     "geographical name",
     "proper noun",
+    "phrase",
   ]);
   for (const entry of data) {
     try {
