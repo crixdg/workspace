@@ -9,3 +9,5 @@ out/
 *.tmp.ini
 .env*
 !.env.example
+*.pem
+*.crx
