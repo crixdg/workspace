@@ -4,5 +4,11 @@
 
 <div class="front">
     <div class="word">{{word}}</div>
-    <div class="type">{{type}}</div>
+    <div class="type" onclick="audio.play()">{{type}}</div>
+    <audio id="audio" src="{{audio}}"></audio>
 </div>
+
+<script>
+    const audio = document.getElementById('audio');
+    audio.play().catch(() => { }); // autoplay front
+</script>

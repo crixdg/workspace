@@ -55,12 +55,14 @@
 .type {
   font-size: 14px;
   color: #98c379;
+  cursor: pointer;
 }
 
 /* pronunciation */
 .pronunciation {
   font-size: 14px;
   color: #61afef;
+  cursor: pointer;
 }
 
 /* separator */
