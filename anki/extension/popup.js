@@ -7,6 +7,7 @@ document.getElementById("add").addEventListener("click", async () => {
   const word = document.getElementById("word").value.trim();
   if (!word) return;
 
+  const finalStatus = [];
   try {
     setStatus("Fetching dictionary...");
     const cardData = await getCardData(word);
@@ -17,13 +18,15 @@ document.getElementById("add").addEventListener("click", async () => {
       if (notes.length > 0) {
         setStatus(`Updating ${entry.word} (${entry.partOfSpeech})`);
         await updateCard({ ...entry, id: notes[0] });
+        finalStatus.push(`Updated ${entry.word} (${entry.partOfSpeech})`);
+        setStatus(`Updated ${entry.word} (${entry.partOfSpeech})`);
       } else {
         setStatus(`Creating ${entry.word} (${entry.partOfSpeech})`);
         await createCard(entry);
+        finalStatus.push(`Created ${entry.word} (${entry.partOfSpeech})`);
       }
     }
-
-    setStatus("Done!");
+    setStatus(finalStatus.join("\n"));
   } catch (e) {
     setStatus("Error: " + e.message);
   }
@@ -62,23 +65,10 @@ async function fetchWordDataFromDictionary(word) {
   return data;
 }
 
-async function getCardData(word) {
-  const data = await fetchWordDataFromDictionary(word);
-
-  const result = [];
-  for (const entry of data) {
-    const cardData = await convertToCardData(word, entry);
-    result.push(cardData);
-  }
-
-  return result;
-}
-
 async function convertToCardData(word, entry) {
   const partOfSpeech = entry.fl || "";
   const pronunciation = entry.hwi?.prs?.[0]?.mw || "";
   const definition = extractDefEx(entry);
-
   const definitionHTML =
     "<ul>" +
     definition
@@ -88,27 +78,24 @@ async function convertToCardData(word, entry) {
       )
       .join("") +
     "</ul>";
-
   const stems = entry.meta?.stems || [];
-
   const stemHTML =
     "<ul>" +
     stems
       .map(
         (s) =>
-          `<li><a href="https://www.merriam-webster.com/dictionary/${encodeURIComponent(
-            s,
-          )}" target="_blank">${s}</a></li>`,
+          `<li><a href="https://www.merriam-webster.com/dictionary/${encodeURIComponent(s)}" target="_blank">${s}</a></li>`,
       )
       .join("") +
     "</ul>";
-
   return {
+    node_id: word + "::" + partOfSpeech,
     word,
     partOfSpeech,
     pronunciation,
     definition: definitionHTML,
     stems: stemHTML,
+    url: `https://www.merriam-webster.com/dictionary/${word}`,
   };
 }
 
@@ -125,8 +112,13 @@ function extractDefEx(entry) {
         let example = null;
 
         for (const dt of sense.dt || []) {
-          if (dt[0] === "text") definition = dt[1];
-          if (dt[0] === "vis" && dt[1]?.length) example = dt[1][0].t;
+          if (dt[0] === "text") {
+            definition = dt[1];
+          }
+
+          if (dt[0] === "vis" && dt[1]?.length) {
+            example = dt[1][0].t;
+          }
         }
 
         if (definition) {
@@ -146,17 +138,39 @@ function cleanMW(text) {
   return text
     .replace(/\{d_link\|([^|]+)\|[^}]+\}/g, "$1")
     .replace(/\{sx\|([^|]+)\|[^}]*\}/g, "$1")
+    .replace(/\{i_link\|([^}]+)\}/g, "$1")
     .replace(/\{wi\}|\{\/wi\}/g, "")
     .replace(/\{it\}|\{\/it\}/g, "")
     .replace(/\{bc\}/g, "")
     .trim();
 }
 
-async function findNote(entry) {
-  const id = entry.word + "::" + entry.partOfSpeech;
+async function getCardData(word) {
+  const data = await fetchWordDataFromDictionary(word);
 
-  return invoke("findNotes", {
-    query: `id:${id}`,
+  const result = [];
+  const ignorePartOfSpeech = new Set([
+    "biographical name",
+    "geographical name",
+    "proper noun",
+  ]);
+  for (const entry of data) {
+    try {
+      const cardData = await convertToCardData(word, entry);
+      if (cardData.partOfSpeech === "") continue; // Skip entries without part of speech
+      if (!ignorePartOfSpeech.has(cardData.partOfSpeech)) {
+        result.push(cardData);
+      }
+    } catch (e) {
+      console.warn(`Skipping entry due to error: ${e.message}`);
+    }
+  }
+  return result;
+}
+
+async function findNote(entry) {
+  return await invoke("findNotes", {
+    query: `node_id:"${entry.node_id}"`,
   });
 }
 
@@ -166,7 +180,7 @@ async function createCard(entry) {
       deckName: "English",
       modelName: "Vocabulary",
       fields: {
-        id: entry.word + "::" + entry.partOfSpeech,
+        node_id: entry.node_id,
         word: entry.word,
         type: entry.partOfSpeech,
         pronunciation: entry.pronunciation,
