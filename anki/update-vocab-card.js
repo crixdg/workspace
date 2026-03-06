@@ -1,5 +1,6 @@
 // Copyright (c) 2026-present, FromCero. All rights reserved.
 
+const VERSION = "1";
 const ANKI_CONNECT_URL = process.env.ANKI_CONNECT_URL;
 const DICTIONARY_API_KEY = process.env.DICTIONARY_API_KEY;
 
@@ -76,6 +77,7 @@ async function convertToCardData(word, entry) {
     definition: definitionHTML,
     stems: stemHTML,
     url: `https://www.merriam-webster.com/dictionary/${word}`,
+    version: VERSION,
   };
 }
 
@@ -115,48 +117,53 @@ function extractDefEx(entry) {
 }
 
 function cleanMW(text) {
-  return text
-    // links
-    .replace(/\{d_link\|([^|]+)\|[^}]+\}/g, "$1")
-    .replace(/\{a_link\|([^}]+)\}/g, "$1")
-    .replace(/\{i_link\|([^}]+)\}/g, "$1")
-    .replace(/\{et_link\|([^|]+)\|[^}]+\}/g, "$1")
-    .replace(/\{sx\|([^|]+)\|[^}]*\}/g, "$1")
+  return (
+    text
+      // links
+      .replace(/\{d_link\|([^|]+)\|[^}]+\}/g, "$1")
+      .replace(/\{a_link\|([^}]+)\}/g, "$1")
+      .replace(/\{i_link\|([^}]+)\}/g, "$1")
+      .replace(/\{et_link\|([^|]+)\|[^}]+\}/g, "$1")
+      .replace(/\{sx\|([^|]+)\|[^}]*\}/g, "$1")
 
-    // formatting
-    .replace(/\{wi\}|\{\/wi\}/g, "")
-    .replace(/\{it\}|\{\/it\}/g, "")
-    .replace(/\{sc\}|\{\/sc\}/g, "")
+      // formatting
+      .replace(/\{wi\}|\{\/wi\}/g, "")
+      .replace(/\{it\}|\{\/it\}/g, "")
+      .replace(/\{sc\}|\{\/sc\}/g, "")
 
-    // punctuation / markers
-    .replace(/\{bc\}/g, "")
-    .replace(/\{ldquo\}|\{rdquo\}/g, '"')
+      // punctuation / markers
+      .replace(/\{bc\}/g, "")
+      .replace(/\{ldquo\}|\{rdquo\}/g, '"')
 
-    // math / misc
-    .replace(/\{mat\|([^}]+)\}/g, "$1")
+      // math / misc
+      .replace(/\{mat\|([^}]+)\}/g, "$1")
 
-    // remove any remaining unknown tokens
-    .replace(/\{[^}]+\}/g, "")
+      // remove any remaining unknown tokens
+      .replace(/\{[^}]+\}/g, "")
 
-    .trim();
+      .trim()
+  );
 }
 
 async function getCardData(word) {
   const data = await fetchWordDataFromDictionary(word);
 
-  const result = [];
-  const ignorePartOfSpeech = new Set([
-    "biographical name",
-    "geographical name",
-    "proper noun",
-    "phrase",
+  const result = new Map();
+  const supportPartOfSpeech = new Set([
+    "noun",
+    "verb",
+    "adjective",
+    "adverb",
+    "preposition",
   ]);
   for (const entry of data) {
     try {
       const cardData = await convertToCardData(word, entry);
-      if (cardData.partOfSpeech === "") continue; // Skip entries without part of speech
-      if (!ignorePartOfSpeech.has(cardData.partOfSpeech)) {
-        result.push(cardData);
+      if (cardData.partOfSpeech === "") continue;
+      if (supportPartOfSpeech.has(cardData.partOfSpeech)) {
+        if (!result.has(cardData.node_id)) {
+          result.set(cardData.node_id, cardData);
+        }
       }
     } catch (e) {
       console.warn(`Skipping entry due to error: ${e.message}`);
@@ -184,6 +191,7 @@ async function createCard(entry) {
         definition: entry.definition,
         stems: entry.stems,
         url: `https://www.merriam-webster.com/dictionary/${entry.word}`,
+        version: entry.version,
       },
       options: { allowDuplicate: false },
       tags: ["english"],
@@ -202,6 +210,7 @@ async function updateCard(entry) {
         definition: entry.definition,
         stems: entry.stems,
         url: `https://www.merriam-webster.com/dictionary/${entry.word}`,
+        version: entry.version,
       },
     },
   });
@@ -217,7 +226,7 @@ async function main() {
   console.log(`Fetching data for: ${word}`);
   const cardData = await getCardData(word);
 
-  for (const entry of cardData) {
+  for (const entry of cardData.values()) {
     const notes = await findNote(entry);
     if (notes.length > 0) {
       console.log(
