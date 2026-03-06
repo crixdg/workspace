@@ -3,7 +3,7 @@
 const ANKI_CONNECT_URL = "http://localhost:8765";
 const DICTIONARY_API_KEY = "YOUR_API_KEY";
 
-document.getElementById("add").addEventListener("click", async () => {
+async function addWord() {
   const word = document.getElementById("word").value.trim();
   if (!word) return;
 
@@ -19,16 +19,25 @@ document.getElementById("add").addEventListener("click", async () => {
         setStatus(`Updating ${entry.word} (${entry.partOfSpeech})`);
         await updateCard({ ...entry, id: notes[0] });
         finalStatus.push(`Updated ${entry.word} (${entry.partOfSpeech})`);
-        setStatus(`Updated ${entry.word} (${entry.partOfSpeech})`);
       } else {
         setStatus(`Creating ${entry.word} (${entry.partOfSpeech})`);
         await createCard(entry);
         finalStatus.push(`Created ${entry.word} (${entry.partOfSpeech})`);
       }
     }
+
     setStatus(finalStatus.join("\n"));
   } catch (e) {
     setStatus("Error: " + e.message);
+  }
+}
+
+document.getElementById("add").addEventListener("click", addWord);
+
+document.getElementById("word").addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    addWord();
   }
 });
 
