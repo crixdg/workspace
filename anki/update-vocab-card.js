@@ -1,3 +1,5 @@
+// Copyright (c) 2026-present, FromCero. All rights reserved.
+
 const ANKI_CONNECT_URL = process.env.ANKI_CONNECT_URL;
 const DICTIONARY_API_KEY = process.env.DICTIONARY_API_KEY;
 
@@ -54,7 +56,7 @@ async function convertToCardData(word, entry) {
       .join("") +
     "</ul>";
   return {
-    id: word + "::" + partOfSpeech,
+    node_id: word + "::" + partOfSpeech,
     word,
     partOfSpeech,
     pronunciation,
@@ -100,33 +102,32 @@ function extractDefEx(entry) {
 }
 
 function cleanMW(text) {
-  return (
-    text
-      // {d_link|fathom|fathom:2} -> fathom
-      .replace(/\{d_link\|([^|]+)\|[^}]+\}/g, "$1")
-
-      // {sx|complete||} -> complete
-      .replace(/\{sx\|([^|]+)\|[^}]*\}/g, "$1")
-
-      // remove simple tags
-      .replace(/\{wi\}|\{\/wi\}/g, "")
-      .replace(/\{it\}|\{\/it\}/g, "")
-
-      // remove {bc}
-      .replace(/\{bc\}/g, "")
-
-      .trim()
-  );
+  return text
+    .replace(/\{d_link\|([^|]+)\|[^}]+\}/g, "$1")
+    .replace(/\{sx\|([^|]+)\|[^}]*\}/g, "$1")
+    .replace(/\{i_link\|([^}]+)\}/g, "$1")
+    .replace(/\{wi\}|\{\/wi\}/g, "")
+    .replace(/\{it\}|\{\/it\}/g, "")
+    .replace(/\{bc\}/g, "")
+    .trim();
 }
 
 async function getCardData(word) {
   const data = await fetchWordDataFromDictionary(word);
 
   const result = [];
+  const ignorePartOfSpeech = new Set([
+    "biographical name",
+    "geographical name",
+    "proper noun",
+  ]);
   for (const entry of data) {
     try {
       const cardData = await convertToCardData(word, entry);
-      result.push(cardData);
+      if (cardData.partOfSpeech === "") continue; // Skip entries without part of speech
+      if (!ignorePartOfSpeech.has(cardData.partOfSpeech)) {
+        result.push(cardData);
+      }
     } catch (e) {
       console.warn(`Skipping entry due to error: ${e.message}`);
     }
@@ -135,11 +136,9 @@ async function getCardData(word) {
 }
 
 async function findNote(entry) {
-  const id = entry.word + "::" + entry.partOfSpeech;
-  const result = await invoke("findNotes", {
-    query: `id:${id}`,
+  return await invoke("findNotes", {
+    query: `node_id:"${entry.node_id}"`,
   });
-  return result;
 }
 
 async function createCard(entry) {
@@ -148,7 +147,7 @@ async function createCard(entry) {
       deckName: "English",
       modelName: "Vocabulary",
       fields: {
-        id: entry.word + "::" + entry.partOfSpeech,
+        node_id: entry.node_id,
         word: entry.word,
         type: entry.partOfSpeech,
         pronunciation: entry.pronunciation,
@@ -200,8 +199,8 @@ async function main() {
       console.log(
         `Creating Anki card (${entry.word} - ${entry.partOfSpeech})...`,
       );
-      const noteId = await createCard(entry);
-      console.log(`Card created with ID: ${noteId}`);
+      const id = await createCard(entry);
+      console.log(`Card created with ID: ${id}`);
     }
   }
 }
