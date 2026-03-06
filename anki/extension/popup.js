@@ -1,5 +1,6 @@
 // Copyright (c) 2026-present, FromCero. All rights reserved.
 
+const VERSION = "1";
 const ANKI_CONNECT_URL = "http://localhost:8765";
 const DICTIONARY_API_KEY = "YOUR_API_KEY";
 
@@ -32,8 +33,11 @@ async function addWord() {
   }
 }
 
-document.getElementById("add").addEventListener("click", addWord);
+function setStatus(text) {
+  document.getElementById("status").innerText = text;
+}
 
+document.getElementById("add").addEventListener("click", addWord);
 document.getElementById("word").addEventListener("keydown", (e) => {
   if (e.key === "Enter") {
     e.preventDefault();
@@ -41,9 +45,7 @@ document.getElementById("word").addEventListener("keydown", (e) => {
   }
 });
 
-function setStatus(text) {
-  document.getElementById("status").innerText = text;
-}
+//===========================================================================
 
 async function invoke(action, params = {}) {
   const res = await fetch(ANKI_CONNECT_URL, {
@@ -118,6 +120,7 @@ async function convertToCardData(word, entry) {
     definition: definitionHTML,
     stems: stemHTML,
     url: `https://www.merriam-webster.com/dictionary/${word}`,
+    version: VERSION,
   };
 }
 
@@ -188,19 +191,22 @@ function cleanMW(text) {
 async function getCardData(word) {
   const data = await fetchWordDataFromDictionary(word);
 
-  const result = [];
-  const ignorePartOfSpeech = new Set([
-    "biographical name",
-    "geographical name",
-    "proper noun",
-    "phrase",
+  const result = new Map();
+  const supportPartOfSpeech = new Set([
+    "noun",
+    "verb",
+    "adjective",
+    "adverb",
+    "preposition",
   ]);
   for (const entry of data) {
     try {
       const cardData = await convertToCardData(word, entry);
-      if (cardData.partOfSpeech === "") continue; // Skip entries without part of speech
-      if (!ignorePartOfSpeech.has(cardData.partOfSpeech)) {
-        result.push(cardData);
+      if (cardData.partOfSpeech === "") continue;
+      if (supportPartOfSpeech.has(cardData.partOfSpeech)) {
+        if (!result.has(cardData.node_id)) {
+          result.set(cardData.node_id, cardData);
+        }
       }
     } catch (e) {
       console.warn(`Skipping entry due to error: ${e.message}`);
@@ -228,6 +234,7 @@ async function createCard(entry) {
         definition: entry.definition,
         stems: entry.stems,
         url: `https://www.merriam-webster.com/dictionary/${entry.word}`,
+        version: entry.version,
       },
       options: { allowDuplicate: false },
       tags: ["english"],
@@ -246,6 +253,7 @@ async function updateCard(entry) {
         definition: entry.definition,
         stems: entry.stems,
         url: `https://www.merriam-webster.com/dictionary/${entry.word}`,
+        version: entry.version,
       },
     },
   });
