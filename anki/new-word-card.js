@@ -19,6 +19,7 @@ async function invoke(action, params = {}) {
 
 async function getWordData(word) {
   const url = `https://www.dictionaryapi.com/api/v3/references/collegiate/json/${word}?key=${DICTIONARY_API_KEY}`;
+  console.log(url);
 
   const res = await fetch(url);
   const data = await res.json();
