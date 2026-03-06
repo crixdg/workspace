@@ -1,0 +1,197 @@
+// Copyright (c) 2026-present, FromCero. All rights reserved.
+
+const ANKI_CONNECT_URL = "http://localhost:8765";
+const DICTIONARY_API_KEY = "YOUR_API_KEY";
+
+document.getElementById("add").addEventListener("click", async () => {
+  const word = document.getElementById("word").value.trim();
+  if (!word) return;
+
+  try {
+    setStatus("Fetching dictionary...");
+    const cardData = await getCardData(word);
+
+    for (const entry of cardData) {
+      const notes = await findNote(entry);
+
+      if (notes.length > 0) {
+        setStatus(`Updating ${entry.word} (${entry.partOfSpeech})`);
+        await updateCard({ ...entry, id: notes[0] });
+      } else {
+        setStatus(`Creating ${entry.word} (${entry.partOfSpeech})`);
+        await createCard(entry);
+      }
+    }
+
+    setStatus("Done!");
+  } catch (e) {
+    setStatus("Error: " + e.message);
+  }
+});
+
+function setStatus(text) {
+  document.getElementById("status").innerText = text;
+}
+
+async function invoke(action, params = {}) {
+  const res = await fetch(ANKI_CONNECT_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      action,
+      version: 6,
+      params,
+    }),
+  });
+
+  const data = await res.json();
+  if (data.error) throw new Error(data.error);
+  return data.result;
+}
+
+async function fetchWordDataFromDictionary(word) {
+  const url = `https://www.dictionaryapi.com/api/v3/references/collegiate/json/${word}?key=${DICTIONARY_API_KEY}`;
+
+  const res = await fetch(url);
+  const data = await res.json();
+
+  if (!Array.isArray(data) || !data[0] || typeof data[0] === "string") {
+    throw new Error("Word not found in dictionary");
+  }
+
+  return data;
+}
+
+async function getCardData(word) {
+  const data = await fetchWordDataFromDictionary(word);
+
+  const result = [];
+  for (const entry of data) {
+    const cardData = await convertToCardData(word, entry);
+    result.push(cardData);
+  }
+
+  return result;
+}
+
+async function convertToCardData(word, entry) {
+  const partOfSpeech = entry.fl || "";
+  const pronunciation = entry.hwi?.prs?.[0]?.mw || "";
+  const definition = extractDefEx(entry);
+
+  const definitionHTML =
+    "<ul>" +
+    definition
+      .map(
+        (i) =>
+          `<li>${i.def}${i.ex ? `<ul><li><i>${i.ex}</i></li></ul>` : ""}</li>`,
+      )
+      .join("") +
+    "</ul>";
+
+  const stems = entry.meta?.stems || [];
+
+  const stemHTML =
+    "<ul>" +
+    stems
+      .map(
+        (s) =>
+          `<li><a href="https://www.merriam-webster.com/dictionary/${encodeURIComponent(
+            s,
+          )}" target="_blank">${s}</a></li>`,
+      )
+      .join("") +
+    "</ul>";
+
+  return {
+    word,
+    partOfSpeech,
+    pronunciation,
+    definition: definitionHTML,
+    stems: stemHTML,
+  };
+}
+
+function extractDefEx(entry) {
+  const results = [];
+
+  for (const defBlock of entry.def || []) {
+    for (const sseq of defBlock.sseq || []) {
+      for (const item of sseq) {
+        if (item[0] !== "sense") continue;
+
+        const sense = item[1];
+        let definition = null;
+        let example = null;
+
+        for (const dt of sense.dt || []) {
+          if (dt[0] === "text") definition = dt[1];
+          if (dt[0] === "vis" && dt[1]?.length) example = dt[1][0].t;
+        }
+
+        if (definition) {
+          results.push({
+            def: cleanMW(definition),
+            ex: example ? cleanMW(example) : null,
+          });
+        }
+      }
+    }
+  }
+
+  return results;
+}
+
+function cleanMW(text) {
+  return text
+    .replace(/\{d_link\|([^|]+)\|[^}]+\}/g, "$1")
+    .replace(/\{sx\|([^|]+)\|[^}]*\}/g, "$1")
+    .replace(/\{wi\}|\{\/wi\}/g, "")
+    .replace(/\{it\}|\{\/it\}/g, "")
+    .replace(/\{bc\}/g, "")
+    .trim();
+}
+
+async function findNote(entry) {
+  const id = entry.word + "::" + entry.partOfSpeech;
+
+  return invoke("findNotes", {
+    query: `id:${id}`,
+  });
+}
+
+async function createCard(entry) {
+  return invoke("addNote", {
+    note: {
+      deckName: "English",
+      modelName: "Vocabulary",
+      fields: {
+        id: entry.word + "::" + entry.partOfSpeech,
+        word: entry.word,
+        type: entry.partOfSpeech,
+        pronunciation: entry.pronunciation,
+        definition: entry.definition,
+        stems: entry.stems,
+        url: `https://www.merriam-webster.com/dictionary/${entry.word}`,
+      },
+      options: { allowDuplicate: false },
+      tags: ["english"],
+    },
+  });
+}
+
+async function updateCard(entry) {
+  return invoke("updateNoteFields", {
+    note: {
+      id: entry.id,
+      fields: {
+        word: entry.word,
+        type: entry.partOfSpeech,
+        pronunciation: entry.pronunciation,
+        definition: entry.definition,
+        stems: entry.stems,
+        url: `https://www.merriam-webster.com/dictionary/${entry.word}`,
+      },
+    },
+  });
+}
