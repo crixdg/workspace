@@ -1,0 +1,31 @@
+<!--
+ Copyright (c) 2026-present, FromCero. All rights reserved.
+-->
+
+<div>
+    <div class="word">
+        {{#url}}
+        <a href="{{url}}" target="_blank">{{word}}</a>
+        {{/url}}
+        {{^url}}
+        <a href="https://www.merriam-webster.com/dictionary/{{word}}" target="_blank">{{word}}</a>
+        {{/url}}
+    </div>
+
+    <div class="meta">
+        <div class="type">{{type}}</div>
+        <div class="pronunciation">{{pronunciation}}</div>
+    </div>
+    <hr />
+    <div class="definition">
+        <b>definition</b>
+        {{definition}}
+    </div>
+    {{#stems}}
+    <hr />
+    <div class="stems">
+        <b>forms</b>
+        {{stems}}
+    </div>
+    {{/stems}}
+</div>

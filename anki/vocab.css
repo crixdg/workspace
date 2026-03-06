@@ -1,0 +1,119 @@
+/**
+ * Copyright (c) 2026-present, FromCero. All rights reserved.
+ */
+
+.card {
+  font-family: "Ubuntu Mono", monospace;
+  padding: 25px 30px;
+  background-color: #2b2b2b;
+  border-radius: 12px;
+  border: 1px solid #000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  max-width: 500px;
+  margin: 20px auto;
+  word-wrap: break-word;
+}
+
+.front {
+  display: flex;
+  flex-direction: column;
+}
+
+.front .type {
+  text-align: center;
+}
+
+.word {
+  font-size: 24px;
+  font-weight: 700;
+  color: #ff6c6b;
+  text-align: center;
+  margin-bottom: 6px;
+}
+
+.word a {
+  color: #ff6c6b;
+  text-decoration: none;
+}
+
+.word a:hover {
+  text-decoration: underline;
+}
+
+/* row containing type + pronunciation */
+.meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+/* part of speech */
+.type {
+  font-size: 14px;
+  color: #98c379;
+}
+
+/* pronunciation */
+.pronunciation {
+  font-size: 15px;
+  color: #61afef;
+  font-style: italic;
+}
+
+/* separator */
+hr {
+  border: none;
+  height: 1px;
+  background-color: #444;
+  margin: 12px 0;
+}
+
+/* definition text */
+.definition {
+  font-size: 14px;
+  color: #e0e0e0;
+  line-height: 1.6;
+}
+
+.definition ul {}
+
+.definition > ul > li {
+  color: #e0e0e0;
+}
+
+/* example list */
+.definition ul ul {}
+
+/* example text */
+.definition ul ul li {
+  color: #a9b7c6;
+  font-style: italic;
+}
+
+/* nicer bullet hierarchy */
+.definition ul {
+  list-style-type: disc;
+}
+
+.definition ul ul {
+  list-style-type: circle;
+}
+
+/* stems block */
+.stems {
+  font-size: 14px;
+  color: #dcdcaa;
+  line-height: 1.6;
+}
+
+.stems a {
+  color: #dcdcaa;
+  text-decoration: none;
+}
+
+.pronunciation:empty,
+.definition:empty,
+.type:empty {
+  display: none;
+}
