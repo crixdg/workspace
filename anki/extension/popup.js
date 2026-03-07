@@ -52,19 +52,30 @@ document.getElementById("word").addEventListener("keydown", (e) => {
 //===========================================================================
 
 async function invoke(action, params = {}) {
-  const res = await fetch(ANKI_CONNECT_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      action,
-      version: 6,
-      params,
-    }),
-  });
+  try {
+    const res = await fetch(ANKI_CONNECT_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        action,
+        version: 6,
+        params,
+      }),
+    });
 
-  const data = await res.json();
-  if (data.error) throw new Error("Anki Connect error: " + data.error);
-  return data.result;
+    if (!res.ok) {
+      throw new Error(`AnkiConnnect HTTP error: ${res.status}`);
+    }
+
+    const data = await res.json();
+    if (data.error) {
+      throw new Error("AnkiConnect error: " + data.error);
+    }
+
+    return data.result;
+  } catch (err) {
+    throw new Error("Cannot connect to Anki. Is Anki running?\n" + err.message);
+  }
 }
 
 async function fetchWordDataFromDictionary(word) {
