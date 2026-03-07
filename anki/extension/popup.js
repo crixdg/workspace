@@ -7,46 +7,34 @@ const DICTIONARY_API_KEY = "YOUR_API_KEY";
 async function addWord() {
   const word = document.getElementById("word").value.trim();
   const pos = document.getElementById("pos").value;
-
   if (!word) return;
 
-  let isError = false;
   const finalStatus = [];
-
   try {
     setStatus("Fetching dictionary...");
     const cardData = await getCardData(word);
 
     for (const entry of cardData) {
       if (pos && entry.partOfSpeech !== pos) continue;
+      const notes = await findNote(entry);
 
-      try {
-        const notes = await findNote(entry);
-
-        if (notes.length > 0) {
-          setStatus(`Updating ${entry.word} (${entry.partOfSpeech})`);
-          await updateCard({ ...entry, id: notes[0] });
-          finalStatus.push(`Updated ${entry.word} (${entry.partOfSpeech})`);
-        } else {
-          setStatus(`Creating ${entry.word} (${entry.partOfSpeech})`);
-          await createCard(entry);
-          finalStatus.push(`Created ${entry.word} (${entry.partOfSpeech})`);
-        }
-      } catch (err) {
-        isError = true;
-        finalStatus.push(
-          `AnkiConnect error for ${entry.word} (${entry.partOfSpeech}): ${err.message}`,
-        );
+      if (notes.length > 0) {
+        setStatus(`Updating ${entry.word} (${entry.partOfSpeech})`);
+        await updateCard({ ...entry, id: notes[0] });
+        finalStatus.push(`Updated ${entry.word} (${entry.partOfSpeech})`);
+      } else {
+        setStatus(`Creating ${entry.word} (${entry.partOfSpeech})`);
+        await createCard(entry);
+        finalStatus.push(`Created ${entry.word} (${entry.partOfSpeech})`);
       }
     }
 
-    if (!isError && finalStatus.length === 0) {
+    if (finalStatus.length === 0) {
       finalStatus.push("No entries found for the specified part of speech.");
     }
-
     setStatus(finalStatus.join("\n"));
   } catch (err) {
-    setStatus(`Failed to fetch dictionary data: ${err.message}`);
+    setStatus("Failed: " + err.message);
   }
 }
 
@@ -54,7 +42,6 @@ function setStatus(text) {
   document.getElementById("status").innerText = text;
 }
 
-document.getElementById("add").addEventListener("click", addWord);
 document.getElementById("word").addEventListener("keydown", (e) => {
   if (e.key === "Enter") {
     e.preventDefault();
