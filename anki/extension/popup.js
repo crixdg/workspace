@@ -66,7 +66,7 @@ async function invoke(action, params = {}) {
   });
 
   const data = await res.json();
-  if (data.error) throw new Error(data.error);
+  if (data.error) throw new Error("Anki Connect error: " + data.error);
   return data.result;
 }
 
