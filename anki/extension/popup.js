@@ -7,46 +7,46 @@ const DICTIONARY_API_KEY = "YOUR_API_KEY";
 async function addWord() {
   const word = document.getElementById("word").value.trim();
   const pos = document.getElementById("pos").value;
+
   if (!word) return;
 
+  let isError = false;
   const finalStatus = [];
+
   try {
     setStatus("Fetching dictionary...");
+    const cardData = await getCardData(word);
 
-    try {
-      const cardData = await getCardData(word);
+    for (const entry of cardData) {
+      if (pos && entry.partOfSpeech !== pos) continue;
 
-      for (const entry of cardData.values()) {
-        if (pos && entry.partOfSpeech !== pos) {
-          continue;
+      try {
+        const notes = await findNote(entry);
+
+        if (notes.length > 0) {
+          setStatus(`Updating ${entry.word} (${entry.partOfSpeech})`);
+          await updateCard({ ...entry, id: notes[0] });
+          finalStatus.push(`Updated ${entry.word} (${entry.partOfSpeech})`);
+        } else {
+          setStatus(`Creating ${entry.word} (${entry.partOfSpeech})`);
+          await createCard(entry);
+          finalStatus.push(`Created ${entry.word} (${entry.partOfSpeech})`);
         }
-
-        try {
-          const notes = await findNote(entry);
-
-          if (notes.length > 0) {
-            setStatus(`Updating ${entry.word} (${entry.partOfSpeech})`);
-            await updateCard({ ...entry, id: notes[0] });
-            finalStatus.push(`Updated ${entry.word} (${entry.partOfSpeech})`);
-          } else {
-            setStatus(`Creating ${entry.word} (${entry.partOfSpeech})`);
-            await createCard(entry);
-            finalStatus.push(`Created ${entry.word} (${entry.partOfSpeech})`);
-          }
-        } catch (e) {
-          setStatus(`Anki Connect Error: ${e.message}`);
-        }
+      } catch (err) {
+        isError = true;
+        finalStatus.push(
+          `AnkiConnect error for ${entry.word} (${entry.partOfSpeech}): ${err.message}`,
+        );
       }
-
-      if (finalStatus.length === 0) {
-        finalStatus.push("No entries found for the specified part of speech.");
-      }
-      setStatus(finalStatus.join("\n"));
-    } catch (e) {
-      setStatus("Failed to fetch dictionary data: " + e.message);
     }
-  } catch (e) {
-    setStatus("Error: " + e.message);
+
+    if (!isError && finalStatus.length === 0) {
+      finalStatus.push("No entries found for the specified part of speech.");
+    }
+
+    setStatus(finalStatus.join("\n"));
+  } catch (err) {
+    setStatus(`Failed to fetch dictionary data: ${err.message}`);
   }
 }
 
