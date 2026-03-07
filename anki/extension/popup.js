@@ -34,7 +34,7 @@ async function addWord() {
     }
     setStatus(finalStatus.join("\n"));
   } catch (err) {
-    setStatus("Failed: " + err.message);
+    setStatus(err.message);
   }
 }
 
