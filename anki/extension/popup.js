@@ -6,6 +6,7 @@ const DICTIONARY_API_KEY = "YOUR_API_KEY";
 
 async function addWord() {
   const word = document.getElementById("word").value.trim();
+  const pos = document.getElementById("pos").value;
   if (!word) return;
 
   const finalStatus = [];
@@ -14,6 +15,10 @@ async function addWord() {
     const cardData = await getCardData(word);
 
     for (const entry of cardData.values()) {
+      if (pos && entry.partOfSpeech !== pos) {
+        continue;
+      }
+
       const notes = await findNote(entry);
 
       if (notes.length > 0) {
@@ -26,7 +31,9 @@ async function addWord() {
         finalStatus.push(`Created ${entry.word} (${entry.partOfSpeech})`);
       }
     }
-
+    if (finalStatus.length === 0) {
+      finalStatus.push("No entries found for the specified part of speech.");
+    }
     setStatus(finalStatus.join("\n"));
   } catch (e) {
     setStatus("Error: " + e.message);

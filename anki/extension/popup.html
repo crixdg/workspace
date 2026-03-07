@@ -13,35 +13,70 @@
 
         body {
             margin: 0;
-            padding: 16px;
-            width: 260px;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background: #f7f7f8;
-            color: #1f2328;
+            width: 360px;
+            font-family: -apple-system, BlinkMacSystemFont, "Ubuntu Mono", "Segoe UI", Roboto, sans-serif;
+
+            background: #282828;
+            color: #ebdbb2;
         }
 
         .container {
             display: flex;
             flex-direction: column;
             gap: 10px;
+
+            background: #3c3836;
+            padding: 12px;
+            border: 1px solid #504945;
         }
 
         .title {
             font-size: 14px;
             font-weight: 600;
-            color: #444;
+            color: #fabd2f;
         }
 
         input {
             padding: 10px 12px;
             border-radius: 8px;
-            border: 1px solid #d0d7de;
+            border: 1px solid #504945;
             font-size: 14px;
             outline: none;
-            transition: border 0.2s, box-shadow 0.2s;
+
+            background: #282828;
+            color: #ebdbb2;
+        }
+
+        input::placeholder {
+            color: #a89984;
         }
 
         input:focus {
+            border-color: #458588;
+            box-shadow: 0 0 0 2px rgba(69, 133, 136, 0.3);
+        }
+
+        .input-row {
+            display: flex;
+            gap: 6px;
+        }
+
+        .input-row input {
+            flex: 1;
+        }
+
+        select {
+            width: 100px;
+            padding: 10px 6px;
+            border-radius: 8px;
+            border: 1px solid #504945;
+            font-size: 13px;
+            outline: none;
+            background: #282828;
+            color: #ebdbb2;
+        }
+
+        select:focus {
             border-color: #4c8bf5;
             box-shadow: 0 0 0 2px rgba(76, 139, 245, 0.2);
         }
@@ -50,8 +85,10 @@
             padding: 10px;
             border-radius: 8px;
             border: none;
-            background: #4c8bf5;
-            color: white;
+
+            background: #8f8f13;
+            color: #282828;
+
             font-size: 14px;
             font-weight: 600;
             cursor: pointer;
@@ -59,7 +96,7 @@
         }
 
         button:hover {
-            background: #3a73d9;
+            background: #b8bb26;
         }
 
         button:active {
@@ -68,7 +105,7 @@
 
         #status {
             font-size: 12px;
-            color: #6a737d;
+            color: #a89984;
         }
     </style>
 </head>
@@ -78,7 +115,18 @@
     <div class="container">
         <div class="title">Add Vocabulary</div>
 
-        <input id="word" placeholder="Enter word..." />
+        <div class="input-row">
+            <input id="word" placeholder="Enter word..." />
+
+            <select id="pos">
+                <option value="">Auto</option>
+                <option value="noun">Noun</option>
+                <option value="verb">Verb</option>
+                <option value="adjective">Adjective</option>
+                <option value="adverb">Adverb</option>
+                <option value="preposition">Preposition</option>
+            </select>
+        </div>
 
         <button id="add">Add to Anki</button>
 
