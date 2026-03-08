@@ -72,7 +72,7 @@ async function getCardData(word, pos) {
           result.set(cardData.node_id, cardData);
         }
       }
-      if (!pos && result.length > 0) break;
+      if (!pos && result.size > 0) break;
     } catch (e) {
       console.warn(`Skipping entry due to error: ${e.message}`);
     }
