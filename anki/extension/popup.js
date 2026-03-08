@@ -13,9 +13,27 @@ async function addWord() {
   try {
     setStatus("Fetching dictionary...");
     const cardData = await getCardData(word);
+    if (!pos && cardData.size > 1) {
+      const notes = await findNote(cardData[0]);
+      if (notes.length > 0) {
+        setStatus(`Updating ${cardData[0].word} (${cardData[0].partOfSpeech})`);
+        await updateCard({ ...cardData[0], id: notes[0] });
+        finalStatus.push(
+          `Updated ${cardData[0].word} (${cardData[0].partOfSpeech})`,
+        );
+      } else {
+        setStatus(`Creating ${cardData[0].word} (${cardData[0].partOfSpeech})`);
+        await createCard(cardData[0]);
+        finalStatus.push(
+          `Created ${cardData[0].word} (${cardData[0].partOfSpeech})`,
+        );
+      }
+      setStatus(finalStatus.join("\n"));
+      return;
+    }
 
     for (const entry of cardData) {
-      if (pos && entry.partOfSpeech !== pos) continue;
+      if (pos && pos != "any" && entry.partOfSpeech !== pos) continue;
       const notes = await findNote(entry);
 
       if (notes.length > 0) {
