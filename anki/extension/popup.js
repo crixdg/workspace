@@ -13,9 +13,8 @@ async function addWord() {
   try {
     setStatus("Fetching dictionary...");
     const cardData = await getCardData(word, pos);
-    console.log(cardData);
 
-    for (const entry of cardData) {
+    for (const entry of cardData.values()) {
       const notes = await findNote(entry);
       if (notes.length > 0) {
         setStatus(`Updating ${entry.word} (${entry.partOfSpeech})`);
