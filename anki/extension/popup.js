@@ -12,27 +12,10 @@ async function addWord() {
   const finalStatus = [];
   try {
     setStatus("Fetching dictionary...");
-    const cardData = await getCardData(word);
-
-    if (!pos && cardData.size > 1) {
-      const entry = cardData[0];
-      const notes = await findNote(entry);
-      if (notes.length > 0) {
-        setStatus(`Updating ${entry.word} (${entry.partOfSpeech})`);
-        await updateCard({ ...entry, id: notes[0] });
-        finalStatus.push(`Updated ${entry.word} (${entry.partOfSpeech})`);
-      } else {
-        setStatus(`Creating ${entry.word} (${entry.partOfSpeech})`);
-        await createCard(entry);
-        finalStatus.push(`Created ${entry.word} (${entry.partOfSpeech})`);
-      }
-      setStatus(finalStatus.join("\n"));
-      return;
-    }
+    const cardData = await getCardData(word, pos);
+    console.log(cardData);
 
     for (const entry of cardData) {
-      if (pos && pos != "any" && entry.partOfSpeech !== pos) continue;
-
       const notes = await findNote(entry);
       if (notes.length > 0) {
         setStatus(`Updating ${entry.word} (${entry.partOfSpeech})`);
@@ -67,9 +50,9 @@ document.getElementById("word").addEventListener("keydown", (e) => {
 
 //===========================================================================
 
-async function getCardData(word) {
+async function getCardData(word, pos) {
   const data = await fetchWordDataFromDictionary(word);
-  const pronunciation = await fetchPhonetic(word)
+  const pronunciation = await fetchPhonetic(word);
 
   const result = new Map();
   const supportPartOfSpeech = new Set([
@@ -85,10 +68,12 @@ async function getCardData(word) {
       const cardData = await convertToCardData(word, entry);
       if (cardData.partOfSpeech === "") continue;
       if (supportPartOfSpeech.has(cardData.partOfSpeech)) {
+        if (pos && pos != "any" && pos != cardData.partOfSpeech) continue;
         if (!result.has(cardData.node_id)) {
           result.set(cardData.node_id, cardData);
         }
       }
+      if (!pos && result.length > 0) break;
     } catch (e) {
       console.warn(`Skipping entry due to error: ${e.message}`);
     }
