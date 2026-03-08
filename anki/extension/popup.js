@@ -13,20 +13,18 @@ async function addWord() {
   try {
     setStatus("Fetching dictionary...");
     const cardData = await getCardData(word);
+
     if (!pos && cardData.size > 1) {
-      const notes = await findNote(cardData[0]);
+      const entry = cardData[0];
+      const notes = await findNote(entry);
       if (notes.length > 0) {
-        setStatus(`Updating ${cardData[0].word} (${cardData[0].partOfSpeech})`);
-        await updateCard({ ...cardData[0], id: notes[0] });
-        finalStatus.push(
-          `Updated ${cardData[0].word} (${cardData[0].partOfSpeech})`,
-        );
+        setStatus(`Updating ${entry.word} (${entry.partOfSpeech})`);
+        await updateCard({ ...entry, id: notes[0] });
+        finalStatus.push(`Updated ${entry.word} (${entry.partOfSpeech})`);
       } else {
-        setStatus(`Creating ${cardData[0].word} (${cardData[0].partOfSpeech})`);
-        await createCard(cardData[0]);
-        finalStatus.push(
-          `Created ${cardData[0].word} (${cardData[0].partOfSpeech})`,
-        );
+        setStatus(`Creating ${entry.word} (${entry.partOfSpeech})`);
+        await createCard(entry);
+        finalStatus.push(`Created ${entry.word} (${entry.partOfSpeech})`);
       }
       setStatus(finalStatus.join("\n"));
       return;
@@ -34,8 +32,8 @@ async function addWord() {
 
     for (const entry of cardData) {
       if (pos && pos != "any" && entry.partOfSpeech !== pos) continue;
-      const notes = await findNote(entry);
 
+      const notes = await findNote(entry);
       if (notes.length > 0) {
         setStatus(`Updating ${entry.word} (${entry.partOfSpeech})`);
         await updateCard({ ...entry, id: notes[0] });
@@ -69,62 +67,38 @@ document.getElementById("word").addEventListener("keydown", (e) => {
 
 //===========================================================================
 
-async function invoke(action, params = {}) {
-  try {
-    const res = await fetch(ANKI_CONNECT_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        action,
-        version: 6,
-        params,
-      }),
-    });
+async function getCardData(word) {
+  const data = await fetchWordDataFromDictionary(word);
+  const pronunciation = await fetchPhonetic(word)
 
-    if (!res.ok) {
-      throw new Error(`AnkiConnnect HTTP error: ${res.status}`);
+  const result = new Map();
+  const supportPartOfSpeech = new Set([
+    "noun",
+    "verb",
+    "adjective",
+    "adverb",
+    "preposition",
+  ]);
+  for (const entry of data) {
+    try {
+      entry.pronunciation = pronunciation;
+      const cardData = await convertToCardData(word, entry);
+      if (cardData.partOfSpeech === "") continue;
+      if (supportPartOfSpeech.has(cardData.partOfSpeech)) {
+        if (!result.has(cardData.node_id)) {
+          result.set(cardData.node_id, cardData);
+        }
+      }
+    } catch (e) {
+      console.warn(`Skipping entry due to error: ${e.message}`);
     }
-
-    const data = await res.json();
-    if (data.error) {
-      throw new Error("AnkiConnect error: " + data.error);
-    }
-
-    return data.result;
-  } catch (err) {
-    throw new Error("Cannot connect to Anki. Is Anki running?\n" + err.message);
   }
-}
-
-async function fetchWordDataFromDictionary(word) {
-  const url = `https://www.dictionaryapi.com/api/v3/references/collegiate/json/${word}?key=${DICTIONARY_API_KEY}`;
-
-  const res = await fetch(url);
-  const data = await res.json();
-
-  if (!Array.isArray(data) || !data[0] || typeof data[0] === "string") {
-    throw new Error("Word not found in dictionary");
-  }
-
-  return data;
-}
-
-async function fetchPhonetic(word) {
-  const url = `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`;
-
-  const res = await fetch(url);
-  const data = await res.json();
-
-  if (!Array.isArray(data) || !data[0] || !data[0].phonetic) {
-    return "";
-  }
-
-  return data[0].phonetic;
+  return result;
 }
 
 async function convertToCardData(word, entry) {
   const partOfSpeech = entry.fl || "";
-  const pronunciation = await fetchPhonetic(word);
+  const pronunciation = entry.pronunciation || "";
   const audioName = entry.hwi?.prs?.[0]?.sound?.audio || "";
   const audioUrl = audioName ? getMWAudioUrl(audioName) : "";
   const definition = extractDefEx(entry);
@@ -158,6 +132,32 @@ async function convertToCardData(word, entry) {
     url: `https://www.merriam-webster.com/dictionary/${word}`,
     version: VERSION,
   };
+}
+
+async function fetchWordDataFromDictionary(word) {
+  const url = `https://www.dictionaryapi.com/api/v3/references/collegiate/json/${word}?key=${DICTIONARY_API_KEY}`;
+
+  const res = await fetch(url);
+  const data = await res.json();
+
+  if (!Array.isArray(data) || !data[0] || typeof data[0] === "string") {
+    throw new Error("Word not found in dictionary");
+  }
+
+  return data;
+}
+
+async function fetchPhonetic(word) {
+  const url = `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`;
+
+  const res = await fetch(url);
+  const data = await res.json();
+
+  if (!Array.isArray(data) || !data[0] || !data[0].phonetic) {
+    return "";
+  }
+
+  return data[0].phonetic;
 }
 
 function getMWAudioUrl(audio) {
@@ -236,33 +236,6 @@ function cleanMW(text) {
   );
 }
 
-async function getCardData(word) {
-  const data = await fetchWordDataFromDictionary(word);
-
-  const result = new Map();
-  const supportPartOfSpeech = new Set([
-    "noun",
-    "verb",
-    "adjective",
-    "adverb",
-    "preposition",
-  ]);
-  for (const entry of data) {
-    try {
-      const cardData = await convertToCardData(word, entry);
-      if (cardData.partOfSpeech === "") continue;
-      if (supportPartOfSpeech.has(cardData.partOfSpeech)) {
-        if (!result.has(cardData.node_id)) {
-          result.set(cardData.node_id, cardData);
-        }
-      }
-    } catch (e) {
-      console.warn(`Skipping entry due to error: ${e.message}`);
-    }
-  }
-  return result;
-}
-
 async function findNote(entry) {
   return await invoke("findNotes", {
     query: `node_id:"${entry.node_id}"`,
@@ -307,4 +280,31 @@ async function updateCard(entry) {
       },
     },
   });
+}
+
+async function invoke(action, params = {}) {
+  try {
+    const res = await fetch(ANKI_CONNECT_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        action,
+        version: 6,
+        params,
+      }),
+    });
+
+    if (!res.ok) {
+      throw new Error(`AnkiConnnect HTTP error: ${res.status}`);
+    }
+
+    const data = await res.json();
+    if (data.error) {
+      throw new Error("AnkiConnect error: " + data.error);
+    }
+
+    return data.result;
+  } catch (err) {
+    throw new Error("Cannot connect to Anki. Is Anki running?\n" + err.message);
+  }
 }
