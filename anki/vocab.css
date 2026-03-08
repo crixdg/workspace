@@ -13,7 +13,6 @@
   width: 560px;
   margin: 20px auto;
 
-  white-space: nowrap; /* prevent wrapping */
   overflow-x: auto; /* allow horizontal scroll if needed */
 }
 
