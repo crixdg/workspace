@@ -82,7 +82,7 @@ async function getCardData(word, pos) {
 
 async function convertToCardData(word, entry) {
   const partOfSpeech = entry.fl || "";
-  const pronunciation = entry.pronunciation || "";
+  const pronunciation = entry.pronunciation || entry.hwi?.prs?.[0]?.mw || "";
   const audioName = entry.hwi?.prs?.[0]?.sound?.audio || "";
   const audioUrl = audioName ? getMWAudioUrl(audioName) : "";
   const definition = extractDefEx(entry);

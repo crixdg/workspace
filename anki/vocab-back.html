@@ -14,7 +14,9 @@
 
     <div class="meta">
         <div class="type">{{type}}</div>
-        <div class="pronunciation" onclick="audio.play()">{{pronunciation}}</div>
+        <div class="pronunciation" onclick="document.getElementById('audio').play()">
+            {{pronunciation}}
+        </div>
     </div>
     <audio id="audio" src="{{audio}}"></audio>
     <hr />
