@@ -13,11 +13,12 @@
 
         body {
             margin: 0;
-            width: 360px;
+            width: 400px;
             font-family: -apple-system, BlinkMacSystemFont, "Ubuntu Mono", "Segoe UI", Roboto, sans-serif;
 
             background: #282828;
             color: #ebdbb2;
+            border: 1.5px solid #aaaaaa;
         }
 
         .container {
@@ -26,7 +27,7 @@
             gap: 10px;
 
             background: #3c3836;
-            padding: 12px;
+            padding: 12px 16px;
             border: 1px solid #504945;
         }
 
@@ -81,28 +82,6 @@
             box-shadow: 0 0 0 2px rgba(76, 139, 245, 0.2);
         }
 
-        button {
-            padding: 10px;
-            border-radius: 8px;
-            border: none;
-
-            background: #8f8f13;
-            color: #282828;
-
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s, transform 0.05s;
-        }
-
-        button:hover {
-            background: #b8bb26;
-        }
-
-        button:active {
-            transform: scale(0.97);
-        }
-
         #status {
             font-size: 12px;
             color: #a89984;
@@ -116,19 +95,18 @@
         <div class="title">Add Vocabulary</div>
 
         <div class="input-row">
-            <input id="word" placeholder="Enter word..." />
+            <input id="word" placeholder="enter word..." />
 
             <select id="pos">
-                <option value="">Auto</option>
-                <option value="noun">Noun</option>
-                <option value="verb">Verb</option>
-                <option value="adjective">Adjective</option>
-                <option value="adverb">Adverb</option>
-                <option value="preposition">Preposition</option>
+                <option value="">auto</option>
+                <option value="any">any</option>
+                <option value="noun">noun</option>
+                <option value="verb">verb</option>
+                <option value="adjective">adjective</option>
+                <option value="adverb">adverb</option>
+                <option value="preposition">preposition</option>
             </select>
         </div>
-
-        <button id="add">Add to Anki</button>
 
         <div id="status"></div>
     </div>
