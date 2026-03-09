@@ -71,6 +71,6 @@ async function cleanDuplicateVerbs(deckName) {
   console.log("Deleted duplicates:", deleteIds.length);
 }
 
-cleanDuplicateVerbs("Gerund or Infinitive").catch((err) => {
+cleanDuplicateVerbs("English: Verb Usage").catch((err) => {
   console.error("Error:", err);
 });
