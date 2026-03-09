@@ -13,7 +13,7 @@
   width: 560px;
   margin: 20px auto;
 
-  overflow-x: auto; /* allow horizontal scroll if needed */
+  overflow-x: auto;
 }
 
 .front {
