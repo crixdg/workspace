@@ -5,13 +5,26 @@
 <div class="container">
     <div class="verb" onclick="audio.play()">{{verb}}</div>
     <audio id="audio" src="https://api.dictionaryapi.dev/media/pronunciations/en/{{verb}}-us.mp3"></audio>
-    <hr>
 
+    <hr>
     <div class="quiz">
         {{cloze:quiz}}
     </div>
-</div>
 
+    {{#rule}}
+    <hr />
+    <div class="rule">
+        {{rule}}
+    </div>
+    {{/rule}}
+
+    {{#extra}}
+    <hr />
+    <div class="extra">
+        {{extra}}
+    </div>
+    {{/extra}}
+</div>
 
 <script>
     document.getElementById("audio").play().catch(() => { });

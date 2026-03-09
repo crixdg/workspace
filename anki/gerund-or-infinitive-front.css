@@ -16,27 +16,39 @@
   overflow-x: auto;
 }
 
-/* main verb */
+.container {
+  display: flex;
+  flex-direction: column;
+}
 
-.word {
+.verb {
   font-size: 24px;
   font-weight: 700;
   color: #ff6c6b;
   text-align: center;
-  margin-bottom: 8px;
-  text-transform: uppercase;
+  margin-bottom: 6px;
+
+  cursor: pointer;
+
+  min-height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-/* sentence block */
+/* separator */
+hr {
+  border: none;
+  height: 1px;
+  background-color: #444;
+  margin: 12px 0;
+}
 
-.definition {
-  font-size: 16px;
+.quiz {
+  font-size: 13px;
   color: #e6edf3;
-  line-height: 1.7;
-  margin-top: 8px;
+  line-height: 2;
 }
-
-/* cloze highlight */
 
 .cloze {
   font-weight: 700;
@@ -46,36 +58,38 @@
   border-radius: 4px;
 }
 
-/* rule section */
-
-.stems {
+.rule {
   font-size: 14px;
-  color: #98c379;
+  color: #e6edf3;
   line-height: 1.6;
 }
 
-/* extra examples */
+.rule > ul > li {
+  color: #e6edf3;
+  font-size: 13px;
+  margin-bottom: 6px;
+}
 
-.extra {
-  font-size: 14px;
+.rule ul ul {
+  padding-left: 22px;
+  margin-top: 2px;
+}
+
+.rule ul ul li {
+  font-size: 13px;
   color: #8b949e;
   font-style: italic;
-  line-height: 1.6;
 }
 
-/* separators */
-
-hr {
-  border: none;
-  height: 1px;
-  background-color: #444;
-  margin: 14px 0;
+.rule ul {
+  list-style-type: disc;
 }
 
-/* hide empty fields */
+.rule ul ul {
+  list-style-type: circle;
+}
 
-.stems:empty,
-.definition:empty,
+.rule:empty,
 .extra:empty {
   display: none;
 }
