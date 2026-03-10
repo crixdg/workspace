@@ -20,14 +20,14 @@ async function addWord() {
     const cardData = await getCardData(word, pos);
 
     for (const entry of cardData.values()) {
-      const notes = await findNote(entry);
+      const notes = await findWordNote(entry);
       if (notes.length > 0) {
         setStatus(`Updating ${entry.word} (${entry.partOfSpeech})`);
-        await updateCard({ ...entry, id: notes[0] });
+        await updateWordNote({ ...entry, id: notes[0] });
         finalStatus.push(`Updated ${entry.word} (${entry.partOfSpeech})`);
       } else {
         setStatus(`Creating ${entry.word} (${entry.partOfSpeech})`);
-        await createCard(entry);
+        await createWordNote(entry);
         finalStatus.push(`Created ${entry.word} (${entry.partOfSpeech})`);
       }
     }
@@ -79,7 +79,7 @@ async function convertToCardData(word, entry) {
   const pronunciation = entry.pronunciation || entry.hwi?.prs?.[0]?.mw || "";
   const audioName = entry.hwi?.prs?.[0]?.sound?.audio || "";
   const audioUrl = audioName ? getMWAudioUrl(audioName) : "";
-  const definition = extractDefEx(entry);
+  const definition = extractMWDefEx(entry);
   const definitionHTML =
     "<ul>" +
     definition
@@ -152,7 +152,7 @@ function getMWAudioUrl(audio) {
   return `${base}${subdir}/${audio}.mp3`;
 }
 
-function extractDefEx(entry) {
+function extractMWDefEx(entry) {
   const results = [];
 
   for (const defBlock of entry.def || []) {
@@ -176,8 +176,8 @@ function extractDefEx(entry) {
 
         if (definition) {
           results.push({
-            def: cleanMW(definition),
-            ex: example ? cleanMW(example) : null,
+            def: cleanMWStyleSymbols(definition),
+            ex: example ? cleanMWStyleSymbols(example) : null,
           });
         }
       }
@@ -187,7 +187,7 @@ function extractDefEx(entry) {
   return results;
 }
 
-function cleanMW(text) {
+function cleanMWStyleSymbols(text) {
   return (
     text
       // links
@@ -218,17 +218,17 @@ function cleanMW(text) {
 
 //===========================================================================
 
-async function findNote(entry) {
+async function findWordNote(entry) {
   return await invoke("findNotes", {
     query: `node_id:"${entry.node_id}"`,
   });
 }
 
-async function createCard(entry) {
+async function createWordNote(entry) {
   return invoke("addNote", {
     note: {
-      deckName: "English",
-      modelName: "Vocabulary",
+      deckName: WORD_DESK_NAME,
+      modelName: WORD_CARD_TYPE,
       fields: {
         node_id: entry.node_id,
         word: entry.word,
@@ -246,7 +246,7 @@ async function createCard(entry) {
   });
 }
 
-async function updateCard(entry) {
+async function updateWordNote(entry) {
   return invoke("updateNoteFields", {
     note: {
       id: entry.id,
