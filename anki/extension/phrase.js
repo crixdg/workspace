@@ -1,11 +1,20 @@
 // Copyright (c) 2026-present, FromCero. All rights reserved.
 
 document.getElementById("phrase-input").addEventListener("keydown", (e) => {
-  if (e.key === "Enter") {
+  if (e.key === "Enter" && !e.shiftKey && !e.altKey) {
     e.preventDefault();
     addPhrase();
   }
 });
+
+document
+  .getElementById("phrase-definition")
+  .addEventListener("keydown", (e) => {
+    if (e.key === "Enter" && !e.shiftKey && !e.altKey) {
+      e.preventDefault();
+      addPhrase();
+    }
+  });
 
 //===========================================================================
 
