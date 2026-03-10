@@ -15,14 +15,14 @@ async function addPhrase() {
 
   try {
     const entry = { phrase };
-    const notes = await findPhrase(entry);
+    const notes = await findPhraseNote(entry);
     if (notes.length > 0) {
       setStatus(`Updating phrase: "${phrase}"`);
-      await updatePhrase({ ...entry, id: notes[0] });
+      await updatePhraseNote({ ...entry, id: notes[0] });
       setStatus(`Updated phrase: "${phrase}"`);
     } else {
       setStatus(`Creating phrase: "${phrase}"`);
-      await createPhrase(entry);
+      await createPhraseNote(entry);
       setStatus(`Created phrase: "${phrase}"`);
     }
   } catch (err) {
@@ -32,13 +32,13 @@ async function addPhrase() {
 
 //===========================================================================
 
-async function findPhrase(entry) {
+async function findPhraseNote(entry) {
   return await invoke("findNotes", {
     query: `phrase:"${entry.phrase}"`,
   });
 }
 
-async function updatePhrase(entry) {
+async function updatePhraseNote(entry) {
   return invoke("updateNoteFields", {
     note: {
       id: entry.id,
@@ -50,11 +50,11 @@ async function updatePhrase(entry) {
   });
 }
 
-async function createPhrase(entry) {
+async function createPhraseNote(entry) {
   return invoke("addNote", {
     note: {
-      deckName: "English",
-      modelName: "Phrase",
+      deckName: PHRASE_DESK_NAME,
+      modelName: PHRASE_CARD_TYPE,
       fields: {
         phrase: entry.phrase,
         version: VERSION,

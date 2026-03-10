@@ -25,6 +25,12 @@ const VERSION = "2";
 const ANKI_CONNECT_URL = "http://localhost:8765";
 const DICTIONARY_API_KEY = "YOUR_DICTIONARY_API_KEY";
 
+const WORD_DESK_NAME = "English: Words";
+const WORD_CARD_TYPE = "English: Word";
+
+const PHRASE_DESK_NAME = "English: Phrases";
+const PHRASE_CARD_TYPE = "English: Phrase";
+
 //==========================================================================
 
 async function invoke(action, params = {}) {
