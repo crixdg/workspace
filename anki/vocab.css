@@ -121,6 +121,12 @@ hr {
   font-size: 13px;
 }
 
+.extra {
+  font-size: 14px;
+  color: #e5c07b;
+  line-height: 1.6;
+}
+
 .pronunciation:empty,
 .definition:empty,
 .type:empty {
