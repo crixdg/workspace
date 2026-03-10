@@ -241,7 +241,7 @@ async function createWordNote(entry) {
         version: entry.version,
       },
       options: { allowDuplicate: false },
-      tags: ["english"],
+      tags: ["english", "word"],
     },
   });
 }

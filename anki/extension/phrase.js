@@ -11,10 +11,22 @@ document.getElementById("phrase-input").addEventListener("keydown", (e) => {
 
 async function addPhrase() {
   const phrase = document.getElementById("phrase-input").value.trim();
+  const definition = document.getElementById("phrase-definition").value.trim();
   if (!phrase) return;
 
+  const definitionHTML = definition
+    ? "<ul>" +
+      definition
+        .split("\n")
+        .map((line) => line.trim())
+        .filter((line) => line.length > 0)
+        .map((line) => `<li>${line}</li>`)
+        .join("") +
+      "</ul>"
+    : "";
+
   try {
-    const entry = { phrase };
+    const entry = { phrase, definition: definitionHTML };
     const notes = await findPhraseNote(entry);
     if (notes.length > 0) {
       setStatus(`Updating phrase: "${phrase}"`);
@@ -44,6 +56,7 @@ async function updatePhraseNote(entry) {
       id: entry.id,
       fields: {
         phrase: entry.phrase,
+        definition: entry.definition,
         version: VERSION,
       },
     },
@@ -57,6 +70,7 @@ async function createPhraseNote(entry) {
       modelName: PHRASE_CARD_TYPE,
       fields: {
         phrase: entry.phrase,
+        definition: entry.definition,
         version: VERSION,
       },
       options: { allowDuplicate: false },
