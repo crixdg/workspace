@@ -3,7 +3,7 @@
 document.getElementById("word-input").addEventListener("keydown", (e) => {
   if (e.key === "Enter" && !e.shiftKey && !e.altKey) {
     e.preventDefault();
-    addPhrase();
+    addWord();
   }
 });
 
