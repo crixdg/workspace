@@ -81,8 +81,15 @@ body {
   gap: 6px;
 }
 
+.input-row.phrase-input-row {
+  flex-direction: column;
+  height: 200px;
+}
+
 input {
   flex: 1;
+  max-height: 40px;
+
   padding: 10px 12px;
   border-radius: 8px;
   border: 1px solid #504945;
@@ -102,8 +109,32 @@ input:focus {
   box-shadow: 0 0 0 2px rgba(69, 133, 136, 0.3);
 }
 
+textarea {
+  flex: 1;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #504945;
+  font-size: 13px;
+  outline: none;
+  resize: none;
+
+  background: #282828;
+  color: #ebdbb2;
+  font-family: inherit;
+}
+
+textarea::placeholder {
+  color: #a89984;
+}
+
+textarea:focus {
+  border-color: #458588;
+  box-shadow: 0 0 0 2px rgba(69, 133, 136, 0.3);
+}
+
 select {
   flex: 1;
+  max-height: 40px;
   padding: 10px 6px;
   border-radius: 8px;
   border: 1px solid #504945;
