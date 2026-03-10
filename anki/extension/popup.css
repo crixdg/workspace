@@ -15,7 +15,12 @@ body {
 
   background: #282828;
   color: #ebdbb2;
-  border: 1.5px solid #aaaaaa;
+  border: 2px solid #aaaaaa;
+}
+
+body * {
+  font-family: inherit;
+  line-height: 1.6;
 }
 
 .container {
@@ -120,8 +125,6 @@ textarea {
 
   background: #282828;
   color: #ebdbb2;
-  font-family: inherit;
-  line-height: 1.6;
 }
 
 textarea::placeholder {
@@ -134,7 +137,7 @@ textarea:focus {
 }
 
 select {
-  flex: 1;
+  width: 35%;
   max-height: 40px;
   padding: 10px 6px;
   border-radius: 8px;
