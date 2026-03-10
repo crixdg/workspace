@@ -1,9 +1,9 @@
 // Copyright (c) 2026-present, FromCero. All rights reserved.
 
 document.getElementById("word-input").addEventListener("keydown", (e) => {
-  if (e.key === "Enter") {
+  if (e.key === "Enter" && !e.shiftKey && !e.altKey) {
     e.preventDefault();
-    addWord();
+    addPhrase();
   }
 });
 
