@@ -77,7 +77,6 @@ async function getCardData(word, pos) {
 async function convertToCardData(word, entry) {
   const partOfSpeech = entry.fl || "";
   const pronunciation = entry.hwi?.prs?.[0]?.mw || entry.pronunciation || "";
-  pronunciation = pronunciation + " (" + respellPhonetic(pronunciation) + ")";
   const audioName = entry.hwi?.prs?.[0]?.sound?.audio || "";
   const audioUrl = audioName ? getMWAudioUrl(audioName) : "";
   const definition = extractMWDefEx(entry);
@@ -104,7 +103,7 @@ async function convertToCardData(word, entry) {
     node_id: word + "::" + partOfSpeech,
     word,
     partOfSpeech,
-    pronunciation,
+    pronunciation: pronunciation + " (" + respellPhonetic(pronunciation) + ")",
     audio: audioUrl,
     definition: definitionHTML,
     stems: stemHTML,
@@ -141,53 +140,63 @@ async function fetchDevPhonetic(word) {
 
 //===========================================================================
 
-function respellPhonetic(phonetic) {
-  const soundMap = {
-    "ir": "ear", // ɪɚ [ear] — fear, near, here
-    "er": "air", // ɛɚ [air] — bear, square, chair
+function respellPhonetic(phoneticInput) {
+  let phonetic = phoneticInput.normalize("NFC");
 
-    "au̇r": "ow.er", // aʊɚ [ow.er] — power
-    "ȯir": "oy.er", // ɔɪɚ [oy.er] — lawyer
-    "ār": "ey.er", // eɪɚ [ey.er] — player
-    "īr": "ai.er", // aɪɚ [ai.er] — fire
-    "ōr": "oh.er", // oʊɚ [oh.er] — blower
-    "u̇r": "u.er", // ʊɚ [u.er] — lure
+  const soundMap = [
+    ["ir", "ear"], // ɪɚ — fear, near
+    ["er", "air"], // ɛɚ — bear, square
 
-    "ər": "er", // ɝ [er] — bird, nurse, ɚ [er] — better, actor
-    "är": "ahr", // ɑɚ [ahr] — start, part, large
-    "ȯr": "awr", // ɔɚ [awr] — force, more, chores
+    ["au\u0307r", "ow.er"], // aʊɚ — power
+    ["\u022Fir", "oy.er"], // ɔɪɚ — lawyer
+    ["\u0101r", "ey.er"], // eɪɚ — player
+    ["\u012Br", "ai.er"], // aɪɚ — fire
+    ["\u014Dr", "oh.er"], // oʊɚ — blower
+    ["u\u0307r", "u.er"], // ʊɚ — lure
 
-    "au̇": "ow", // aʊ [ow] — loud, blouse
-    "ȯi": "oy", // ɔɪ [oy] — boiled, oyster
-    "ā": "ey", // eɪ [ey] — savory, gravy
-    "ī": "ai", // aɪ [ai] — nice, bike
-    "ō": "oh", // oʊ [oh] — old, note
+    ["\u0259r", "er"], // ɝ/ɚ — bird, better
+    ["\u00E4r", "ahr"], // ɑɚ — start, part
+    ["\u022Fr", "awr"], // ɔɚ — force, more
 
-    "ē": "ee", // i: [ee] — reason, machine, police
-    "ä": "ah", // ɑ: [ah] — father, pasta, drama
-    "ü": "oo", // u: [oo] — moose, goofy
-    "u̇": "u", // ʊ [u] — good, pudding
-    "ȯ": "aw", // ɔ: [aw] — awful, coffee
-    "ə": "uh", // ʌ [uh] — cup, sun, love, ə [uh] (unstressed syllable) — about, banana, sofa
+    // Diphthongs
+    ["au\u0307", "ow"], // aʊ — loud, blouse
+    ["\u022Fi", "oy"], // ɔɪ — boiled, oyster
+    ["\u0101", "ey"], // eɪ — savory, gravy
+    ["\u012B", "ai"], // aɪ — nice, bike
+    ["\u014D", "oh"], // oʊ — old, note
 
-    "ŋ": "ng", // ɳ [ng] — stunning, ring
-    "t͟h": "tH", // ð [tH] — this, that, breathing
-  };
+    // Monophthongs
+    ["\u0113", "ee"], // i: — reason, machine
+    ["\u00E4", "ah"], // ɑ: — father, pasta
+    ["\u00FC", "oo"], // u: — moose, goofy
+    ["u\u0307", "u"], // ʊ — good, pudding
+    ["\u022F", "aw"], // ɔ: — awful, coffee
+    ["\u0259", "uh"], // ʌ/ə — cup, about
+
+    // Consonants
+    ["\u014B", "ng"], // ɳ — stunning, ring
+    ["t\u035Fh", "tH"], // ð — this, that
+  ];
 
   phonetic = phonetic.replace(/\([^)]*\)/g, "");
-  for (const [key, value] of Object.entries(soundMap)) {
-    phonetic = phonetic.replace(new RegExp(key, "g"), value);
+
+  for (const [key, value] of soundMap) {
+    phonetic = phonetic.replaceAll(key.normalize("NFC"), value);
   }
 
   let syllables = phonetic.split("-");
   for (let i = 0; i < syllables.length; i++) {
-    if (syllables[i].includes("ˈ")) {
-      syllables[i] = syllables[i].replace("ˈ", "");
+    if (syllables[i].includes("\u02C8")) {
+      syllables[i] = syllables[i].replace("\u02C8", "");
       if (syllables.length > 1) {
         syllables[i] = syllables[i].toUpperCase();
       }
     }
+    if (syllables[i].includes("\u02CC")) {
+      syllables[i] = syllables[i].replace("\u02CC", "");
+    }
   }
+
   return syllables.join("-");
 }
 
