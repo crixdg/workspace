@@ -143,35 +143,35 @@ async function fetchDevPhonetic(word) {
 
 function respellPhonetic(phonetic) {
   const soundMap = {
-    ir: "ear", // ɪɚ [ear] — fear, near, here
-    er: "air", // ɛɚ [air] — bear, square, chair
+    "ir": "ear", // ɪɚ [ear] — fear, near, here
+    "er": "air", // ɛɚ [air] — bear, square, chair
 
-    au̇r: "ow.er", // aʊɚ [ow.er] — power
-    ȯir: "oy.er", // ɔɪɚ [oy.er] — lawyer
-    ār: "ey.er", // eɪɚ [ey.er] — player
-    īr: "ai.er", // aɪɚ [ai.er] — fire
-    ōr: "oh.er", // oʊɚ [oh.er] — blower
-    u̇r: "u.er", // ʊɚ [u.er] — lure
+    "au̇r": "ow.er", // aʊɚ [ow.er] — power
+    "ȯir": "oy.er", // ɔɪɚ [oy.er] — lawyer
+    "ār": "ey.er", // eɪɚ [ey.er] — player
+    "īr": "ai.er", // aɪɚ [ai.er] — fire
+    "ōr": "oh.er", // oʊɚ [oh.er] — blower
+    "u̇r": "u.er", // ʊɚ [u.er] — lure
 
-    ər: "er", // ɝ [er] — bird, nurse, ɚ [er] — better, actor
-    är: "ahr", // ɑɚ [ahr] — start, part, large
-    ȯr: "awr", // ɔɚ [awr] — force, more, chores
+    "ər": "er", // ɝ [er] — bird, nurse, ɚ [er] — better, actor
+    "är": "ahr", // ɑɚ [ahr] — start, part, large
+    "ȯr": "awr", // ɔɚ [awr] — force, more, chores
 
-    au̇: "ow", // aʊ [ow] — loud, blouse
-    ȯi: "oy", // ɔɪ [oy] — boiled, oyster
-    ā: "ey", // eɪ [ey] — savory, gravy
-    ī: "ai", // aɪ [ai] — nice, bike
-    ō: "oh", // oʊ [oh] — old, note
+    "au̇": "ow", // aʊ [ow] — loud, blouse
+    "ȯi": "oy", // ɔɪ [oy] — boiled, oyster
+    "ā": "ey", // eɪ [ey] — savory, gravy
+    "ī": "ai", // aɪ [ai] — nice, bike
+    "ō": "oh", // oʊ [oh] — old, note
 
-    ē: "ee", // i: [ee] — reason, machine, police
-    ä: "ah", // ɑ: [ah] — father, pasta, drama
-    ü: "oo", // u: [oo] — moose, goofy
-    u̇: "u", // ʊ [u] — good, pudding
-    ȯ: "aw", // ɔ: [aw] — awful, coffee
-    ə: "uh", // ʌ [uh] — cup, sun, love, ə [uh] (unstressed syllable) — about, banana, sofa
+    "ē": "ee", // i: [ee] — reason, machine, police
+    "ä": "ah", // ɑ: [ah] — father, pasta, drama
+    "ü": "oo", // u: [oo] — moose, goofy
+    "u̇": "u", // ʊ [u] — good, pudding
+    "ȯ": "aw", // ɔ: [aw] — awful, coffee
+    "ə": "uh", // ʌ [uh] — cup, sun, love, ə [uh] (unstressed syllable) — about, banana, sofa
 
-    ŋ: "ng", // ɳ [ng] — stunning, ring
-    t͟h: "tH", // ð [tH] — this, that, breathing
+    "ŋ": "ng", // ɳ [ng] — stunning, ring
+    "t͟h": "tH", // ð [tH] — this, that, breathing
   };
 
   phonetic = phonetic.replace(/\([^)]*\)/g, "");
