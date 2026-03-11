@@ -45,7 +45,7 @@ async function addWord() {
 
 async function getCardData(word, pos) {
   const data = await fetchWordDataFromDictionary(word);
-  const pronunciation = await fetchPhonetic(word);
+  const pronunciation = await fetchDevPhonetic(word);
 
   const result = new Map();
   const supportPartOfSpeech = new Set([
@@ -76,7 +76,8 @@ async function getCardData(word, pos) {
 
 async function convertToCardData(word, entry) {
   const partOfSpeech = entry.fl || "";
-  const pronunciation = entry.pronunciation || entry.hwi?.prs?.[0]?.mw || "";
+  const pronunciation = entry.hwi?.prs?.[0]?.mw || entry.pronunciation || "";
+  pronunciation = pronunciation + " (" + respellPhonetic(pronunciation) + ")";
   const audioName = entry.hwi?.prs?.[0]?.sound?.audio || "";
   const audioUrl = audioName ? getMWAudioUrl(audioName) : "";
   const definition = extractMWDefEx(entry);
@@ -112,8 +113,6 @@ async function convertToCardData(word, entry) {
   };
 }
 
-//===========================================================================
-
 async function fetchWordDataFromDictionary(word) {
   const url = `https://www.dictionaryapi.com/api/v3/references/collegiate/json/${word}?key=${DICTIONARY_API_KEY}`;
 
@@ -127,7 +126,7 @@ async function fetchWordDataFromDictionary(word) {
   return data;
 }
 
-async function fetchPhonetic(word) {
+async function fetchDevPhonetic(word) {
   const url = `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`;
 
   const res = await fetch(url);
@@ -138,6 +137,58 @@ async function fetchPhonetic(word) {
   }
 
   return data[0].phonetic;
+}
+
+//===========================================================================
+
+function respellPhonetic(phonetic) {
+  const soundMap = {
+    ir: "ear", // ɪɚ [ear] — fear, near, here
+    er: "air", // ɛɚ [air] — bear, square, chair
+
+    au̇r: "ow.er", // aʊɚ [ow.er] — power
+    ȯir: "oy.er", // ɔɪɚ [oy.er] — lawyer
+    ār: "ey.er", // eɪɚ [ey.er] — player
+    īr: "ai.er", // aɪɚ [ai.er] — fire
+    ōr: "oh.er", // oʊɚ [oh.er] — blower
+    u̇r: "u.er", // ʊɚ [u.er] — lure
+
+    ər: "er", // ɝ [er] — bird, nurse, ɚ [er] — better, actor
+    är: "ahr", // ɑɚ [ahr] — start, part, large
+    ȯr: "awr", // ɔɚ [awr] — force, more, chores
+
+    au̇: "ow", // aʊ [ow] — loud, blouse
+    ȯi: "oy", // ɔɪ [oy] — boiled, oyster
+    ā: "ey", // eɪ [ey] — savory, gravy
+    ī: "ai", // aɪ [ai] — nice, bike
+    ō: "oh", // oʊ [oh] — old, note
+
+    ē: "ee", // i: [ee] — reason, machine, police
+    ä: "ah", // ɑ: [ah] — father, pasta, drama
+    ü: "oo", // u: [oo] — moose, goofy
+    u̇: "u", // ʊ [u] — good, pudding
+    ȯ: "aw", // ɔ: [aw] — awful, coffee
+    ə: "uh", // ʌ [uh] — cup, sun, love, ə [uh] (unstressed syllable) — about, banana, sofa
+
+    ŋ: "ng", // ɳ [ng] — stunning, ring
+    t͟h: "tH", // ð [tH] — this, that, breathing
+  };
+
+  phonetic = phonetic.replace(/\([^)]*\)/g, "");
+  for (const [key, value] of Object.entries(soundMap)) {
+    phonetic = phonetic.replace(new RegExp(key, "g"), value);
+  }
+
+  let syllables = phonetic.split("-");
+  for (let i = 0; i < syllables.length; i++) {
+    if (syllables[i].includes("ˈ")) {
+      syllables[i] = syllables[i].replace("ˈ", "");
+      if (syllables.length > 1) {
+        syllables[i] = syllables[i].toUpperCase();
+      }
+    }
+  }
+  return syllables.join("-");
 }
 
 function getMWAudioUrl(audio) {
