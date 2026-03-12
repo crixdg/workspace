@@ -2,12 +2,38 @@
  Copyright (c) 2026-present, FromCero. All rights reserved.
 -->
 
+<!--
+ Copyright (c) 2026-present, FromCero. All rights reserved.
+-->
+
 <div class="front">
-    <div class="word">{{word}}</div>
-    <div class="type" onclick="audio.play()">{{type}}</div>
-    <audio id="audio" src="{{audio}}"></audio>
+  <div class="word">
+    {{#url}}
+    <a href="{{url}}" target="_blank">{{word}}</a>
+    {{/url}} {{^url}}
+    <a
+      href="https://www.merriam-webster.com/dictionary/{{word}}"
+      target="_blank"
+      >{{word}}</a
+    >
+    {{/url}}
+  </div>
+
+  <div class="meta">
+    <div class="type">{{type}}</div>
+    <div
+      class="pronunciation"
+      onclick="document.getElementById('audio').play()"
+    >
+      {{pronunciation}}
+    </div>
+  </div>
+  <audio id="audio" src="{{audio}}"></audio>
 </div>
 
 <script>
-    document.getElementById("audio").play().catch(() => { });
+  document
+    .getElementById("audio")
+    .play()
+    .catch(() => {});
 </script>
