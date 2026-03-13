@@ -21,13 +21,25 @@ async function addWord() {
 
     for (const entry of cardData.values()) {
       const notes = await findWordNote(entry);
+      console.log(
+        `Found notes for ${entry.word} (${entry.partOfSpeech}):`,
+        notes,
+      );
       if (notes.length > 0) {
         setStatus(`Updating ${entry.word} (${entry.partOfSpeech})`);
-        await updateWordNote({ ...entry, id: notes[0] });
+        const result = await updateWordNote({ ...entry, id: notes[0] });
+        console.log(
+          `Updated note for ${entry.word} (${entry.partOfSpeech}):`,
+          result,
+        );
         finalStatus.push(`Updated ${entry.word} (${entry.partOfSpeech})`);
       } else {
         setStatus(`Creating ${entry.word} (${entry.partOfSpeech})`);
-        await createWordNote(entry);
+        const result = await createWordNote(entry);
+        console.log(
+          `Created note for ${entry.word} (${entry.partOfSpeech}):`,
+          result,
+        );
         finalStatus.push(`Created ${entry.word} (${entry.partOfSpeech})`);
       }
     }
@@ -66,7 +78,7 @@ async function getCardData(word, pos) {
           result.set(cardData.node_id, cardData);
         }
       }
-      if (!pos && result.size > 0) break;
+      if (pos != "all" && result.size > 0) break;
     } catch (e) {
       console.warn(`Skipping entry due to error: ${e.message}`);
     }
@@ -120,6 +132,9 @@ async function fetchWordDataFromDictionary(word) {
   const url = `https://www.dictionaryapi.com/api/v3/references/collegiate/json/${word}?key=${DICTIONARY_API_KEY}`;
 
   const res = await fetch(url);
+  if (!res.ok) {
+    throw new Error(`Dictionary API error: ${res.status} ${res.statusText}`);
+  }
   const data = await res.json();
 
   if (!Array.isArray(data) || !data[0] || typeof data[0] === "string") {
@@ -133,9 +148,14 @@ async function fetchDevPhonetic(word) {
   const url = `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`;
 
   const res = await fetch(url);
-  const data = await res.json();
+  if (!res.ok) {
+    console.warn(`Dev Phonetic API error: ${res.status} ${res.statusText}`);
+    return "";
+  }
 
+  const data = await res.json();
   if (!Array.isArray(data) || !data[0] || !data[0].phonetic) {
+    console.warn(`Dev Phonetic API empty data: ${JSON.stringify(data)}`);
     return "";
   }
 
