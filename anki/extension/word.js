@@ -77,11 +77,9 @@ async function getCardData(word, pos) {
 async function convertToCardData(word, entry) {
   const partOfSpeech = entry.fl || "";
   const pronunciation = entry.hwi?.prs?.[0]?.mw;
-  const pronunciationHTML =
-    pronunciation +
-      (pronunciation ? ` (${respellPhonetic(pronunciation)})` : "") ||
-    entry.pronunciation ||
-    "";
+  const pronunciationHTML = pronunciation
+    ? `${pronunciation} [ ${respellPhonetic(pronunciation)} ]`
+    : entry.pronunciation || "";
   const audioName = entry.hwi?.prs?.[0]?.sound?.audio || "";
   const audioUrl = audioName ? getMWAudioUrl(audioName) : "";
   const definition = extractMWDefEx(entry);
