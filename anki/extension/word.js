@@ -75,6 +75,7 @@ async function getCardData(word, pos) {
 }
 
 async function convertToCardData(word, entry) {
+  const headword = entry.hwi?.hw || word;
   const partOfSpeech = entry.fl || "";
   const pronunciation = entry.hwi?.prs?.[0]?.mw;
   const pronunciationHTML = pronunciation
@@ -103,14 +104,14 @@ async function convertToCardData(word, entry) {
       .join("") +
     "</ul>";
   return {
-    node_id: word + "::" + partOfSpeech,
-    word,
+    node_id: headword + "::" + partOfSpeech,
+    word: headword,
     partOfSpeech,
     pronunciation: pronunciationHTML,
     audio: audioUrl,
     definition: definitionHTML,
     stems: stemHTML,
-    url: `https://www.merriam-webster.com/dictionary/${word}`,
+    url: `https://www.merriam-webster.com/dictionary/${headword}`,
     version: VERSION,
   };
 }
