@@ -75,7 +75,7 @@ async function getCardData(word, pos) {
 }
 
 async function convertToCardData(word, entry) {
-  const headword = entry.hwi?.hw || word;
+  const headword = entry.hwi?.hw?.replaceAll("*", "") || word;
   const partOfSpeech = entry.fl || "";
   const pronunciation = entry.hwi?.prs?.[0]?.mw;
   const pronunciationHTML = pronunciation
@@ -321,7 +321,7 @@ async function updateWordNote(entry) {
         audio: entry.audio,
         definition: entry.definition,
         stems: entry.stems,
-        url: `https://www.merriam-webster.com/dictionary/${entry.word}`,
+        url: entry.url,
         version: entry.version,
       },
     },
