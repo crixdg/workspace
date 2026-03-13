@@ -80,7 +80,7 @@ async function getCardData(word, pos) {
       }
       if (pos != "all" && result.size > 0) break;
     } catch (e) {
-      console.warn(`Skipping entry due to error: ${e.message}`);
+      console.log(`Skipping entry due to error: ${e.message}`);
     }
   }
   return result;
@@ -149,13 +149,13 @@ async function fetchDevPhonetic(word) {
 
   const res = await fetch(url);
   if (!res.ok) {
-    console.warn(`Dev Phonetic API error: ${res.status} ${res.statusText}`);
+    console.log(`Dev Phonetic API error: ${res.status} ${res.statusText}`);
     return "";
   }
 
   const data = await res.json();
   if (!Array.isArray(data) || !data[0] || !data[0].phonetic) {
-    console.warn(`Dev Phonetic API empty data: ${JSON.stringify(data)}`);
+    console.log(`Dev Phonetic API empty data: ${JSON.stringify(data)}`);
     return "";
   }
 
@@ -331,9 +331,11 @@ async function createWordNote(entry) {
 }
 
 async function updateWordNote(entry) {
-  return invoke("updateNoteFields", {
+  return invoke("updateNote", {
     note: {
       id: entry.id,
+      deckName: WORD_DESK_NAME,
+      modelName: WORD_CARD_TYPE,
       fields: {
         word: entry.word,
         type: entry.partOfSpeech,
@@ -344,6 +346,7 @@ async function updateWordNote(entry) {
         url: entry.url,
         version: entry.version,
       },
+      tags: ["english", "word"],
     },
   });
 }
