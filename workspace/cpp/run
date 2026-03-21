@@ -25,8 +25,8 @@ compile() {
 	local _warning_flags=("-Wall" "-Wextra" "-Wno-sign-compare" "-Wno-parentheses")
 	local _optimization_flags=("-O0")
 	# local _debugging_options="-g"
-	# local _preprocessor_defines="-DDEBUG"
-	# local _include_paths=""
+	local _preprocessor_defines="-DLOCAL"
+	local _include_paths="-I$HOME/.local/bin/cpp"
 	# local _libraries=""
 	local _prefix_flag_count=$3
 	local _prefix_flags=("${@:4:$_prefix_flag_count}")

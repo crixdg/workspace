@@ -40,11 +40,12 @@ rm bazelisk-amd64.deb
 # chmod +x buildifier-linux-amd64
 # sudo mv buildifier-linux-amd64 "$HOME/.local/bin/buildifier"
 
-mkdir -p "$HOME/.local/bin/cppbin"
-cp -r "workspace/cppbin/." "$HOME/.local/bin/cppbin/"
+rm -rf "$HOME/.local/bin/cpp"
+mkdir -p "$HOME/.local/bin/cpp"
+cp -r "workspace/cpp/." "$HOME/.local/bin/cpp/"
 
 CONFIG_NAME="c++"
-CONFIG_CONTENT='path=("$HOME/.local/bin/cppbin" $path)'
+CONFIG_CONTENT='path=("$HOME/.local/bin/cpp" $path)'
 source "$SCRIPT_DIR/add-auto-config.sh"
 
 echo "C++ workspace initialized and configured. Please restart your terminal or run 'source $SHELL_RC' to apply the changes."
