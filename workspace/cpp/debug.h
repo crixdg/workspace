@@ -1,25 +1,35 @@
-// Copyright (c) 2026-present, FromCero. All rights reserved.
-
 #pragma once
 
 #include <bits/stdc++.h>
+
 using namespace std;
 
-template <typename T> void __dbg(const T &t);
+template <typename T>
+void __dbg(const T &t);
 
-template <typename T, typename V> void __dbg(const pair<T, V> &t);
-template <typename... Ts> void __dbg(const tuple<Ts...> &t);
+template <typename T, typename V>
+void __dbg(const pair<T, V> &t);
+template <typename... Ts>
+void __dbg(const tuple<Ts...> &t);
 
-template <typename K, typename V> void __dbg(const map<K, V> &t);
-template <typename K, typename V> void __dbg(const unordered_map<K, V> &t);
-template <typename K, typename V> void __dbg(const multimap<K, V> &t);
-template <typename K, typename V> void __dbg(const unordered_multimap<K, V> &t);
+template <typename K, typename V>
+void __dbg(const map<K, V> &t);
+template <typename K, typename V>
+void __dbg(const unordered_map<K, V> &t);
+template <typename K, typename V>
+void __dbg(const multimap<K, V> &t);
+template <typename K, typename V>
+void __dbg(const unordered_multimap<K, V> &t);
 
-template <typename T> void __dbg(const stack<T> &t);
-template <typename T> void __dbg(const queue<T> &t);
+template <typename T>
+void __dbg(const stack<T> &t);
+template <typename T>
+void __dbg(const queue<T> &t);
 
-template <typename T> void __dbg(const priority_queue<T> &t);
-template <typename T> void __dbg(const priority_queue<T, vector<T>, greater<T>> &t);
+template <typename T>
+void __dbg(const priority_queue<T> &t);
+template <typename T>
+void __dbg(const priority_queue<T, vector<T>, greater<T>> &t);
 
 inline void __dbg(short t) { cerr << t; }
 inline void __dbg(unsigned short t) { cerr << t; }
@@ -42,7 +52,8 @@ inline void __dbg(__int128_t t) { cerr << __i128_to_string(t); }
 
 inline void __dbg_print() { cerr << '\n'; }
 
-template <typename T, typename... V> inline void __dbg_print(T t, V... v) {
+template <typename T, typename... V>
+inline void __dbg_print(T t, V... v) {
   __dbg(t);
   if (sizeof...(v)) {
     cerr << ", ";
@@ -55,7 +66,8 @@ template <typename T, typename... V> inline void __dbg_print(T t, V... v) {
   __dbg_print(t);                                                                                                                                    \
   cerr << "\e[39m";
 
-template <typename T> void __dbg(const T &t) {
+template <typename T>
+void __dbg(const T &t) {
   int f = 0;
   cerr << '[';
   for (auto &i : t) {
@@ -64,7 +76,8 @@ template <typename T> void __dbg(const T &t) {
   cerr << "]";
 }
 
-template <typename T, typename V> void __dbg(const pair<T, V> &t) {
+template <typename T, typename V>
+void __dbg(const pair<T, V> &t) {
   cerr << '(';
   __dbg(t.first);
   cerr << ", ";
@@ -72,7 +85,8 @@ template <typename T, typename V> void __dbg(const pair<T, V> &t) {
   cerr << ')';
 }
 
-template <size_t I = 0, typename... Ts> void _dbg_tuple(const tuple<Ts...> &t) {
+template <size_t I = 0, typename... Ts>
+void _dbg_tuple(const tuple<Ts...> &t) {
   if constexpr (I < sizeof...(Ts)) {
     if constexpr (I > 0) {
       cerr << ", ";
@@ -82,13 +96,15 @@ template <size_t I = 0, typename... Ts> void _dbg_tuple(const tuple<Ts...> &t) {
   }
 }
 
-template <typename... Ts> void __dbg(const tuple<Ts...> &t) {
+template <typename... Ts>
+void __dbg(const tuple<Ts...> &t) {
   cerr << '(';
   _dbg_tuple(t);
   cerr << ')';
 }
 
-template <typename K, typename V> void __dbg(const map<K, V> &t) {
+template <typename K, typename V>
+void __dbg(const map<K, V> &t) {
   int f = 0;
   cerr << '{';
   for (auto &[k, v] : t) {
@@ -97,7 +113,8 @@ template <typename K, typename V> void __dbg(const map<K, V> &t) {
   cerr << '}';
 }
 
-template <typename K, typename V> void __dbg(const unordered_map<K, V> &t) {
+template <typename K, typename V>
+void __dbg(const unordered_map<K, V> &t) {
   int f = 0;
   cerr << '{';
   for (auto &[k, v] : t) {
@@ -106,7 +123,8 @@ template <typename K, typename V> void __dbg(const unordered_map<K, V> &t) {
   cerr << '}';
 }
 
-template <typename K, typename V> void __dbg(const multimap<K, V> &t) {
+template <typename K, typename V>
+void __dbg(const multimap<K, V> &t) {
   int f = 0;
   cerr << '{';
   for (auto &[k, v] : t) {
@@ -115,7 +133,8 @@ template <typename K, typename V> void __dbg(const multimap<K, V> &t) {
   cerr << '}';
 }
 
-template <typename K, typename V> void __dbg(const unordered_multimap<K, V> &t) {
+template <typename K, typename V>
+void __dbg(const unordered_multimap<K, V> &t) {
   int f = 0;
   cerr << '{';
   for (auto &[k, v] : t) {
@@ -124,7 +143,8 @@ template <typename K, typename V> void __dbg(const unordered_multimap<K, V> &t) 
   cerr << '}';
 }
 
-template <typename T> void __dbg(const queue<T> &t) {
+template <typename T>
+void __dbg(const queue<T> &t) {
   int f = 0;
   cerr << '[';
   queue<T> tmp = t;
@@ -134,7 +154,8 @@ template <typename T> void __dbg(const queue<T> &t) {
   cerr << "]";
 }
 
-template <typename T> void __dbg(const stack<T> &t) {
+template <typename T>
+void __dbg(const stack<T> &t) {
   int f = 0;
   cerr << '[';
   stack<T> tmp = t;
@@ -144,7 +165,8 @@ template <typename T> void __dbg(const stack<T> &t) {
   cerr << "]";
 }
 
-template <typename T> void __dbg(const priority_queue<T> &t) {
+template <typename T>
+void __dbg(const priority_queue<T> &t) {
   int f = 0;
   cerr << '[';
   priority_queue<T> tmp = t;
@@ -154,7 +176,8 @@ template <typename T> void __dbg(const priority_queue<T> &t) {
   cerr << "]";
 }
 
-template <typename T> void __dbg(const priority_queue<T, vector<T>, greater<T>> &t) {
+template <typename T>
+void __dbg(const priority_queue<T, vector<T>, greater<T>> &t) {
   int f = 0;
   cerr << '[';
   priority_queue<T, vector<T>, greater<T>> tmp = t;
