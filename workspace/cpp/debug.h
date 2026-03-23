@@ -4,32 +4,21 @@
 
 using namespace std;
 
-template <typename T>
-void __dbg(const T &t);
+template <typename T> void __dbg(const T &t);
 
-template <typename T, typename V>
-void __dbg(const pair<T, V> &t);
-template <typename... Ts>
-void __dbg(const tuple<Ts...> &t);
+template <typename T, typename V> void __dbg(const pair<T, V> &t);
+template <typename... Ts> void __dbg(const tuple<Ts...> &t);
 
-template <typename K, typename V>
-void __dbg(const map<K, V> &t);
-template <typename K, typename V>
-void __dbg(const unordered_map<K, V> &t);
-template <typename K, typename V>
-void __dbg(const multimap<K, V> &t);
-template <typename K, typename V>
-void __dbg(const unordered_multimap<K, V> &t);
+template <typename K, typename V> void __dbg(const map<K, V> &t);
+template <typename K, typename V> void __dbg(const unordered_map<K, V> &t);
+template <typename K, typename V> void __dbg(const multimap<K, V> &t);
+template <typename K, typename V> void __dbg(const unordered_multimap<K, V> &t);
 
-template <typename T>
-void __dbg(const stack<T> &t);
-template <typename T>
-void __dbg(const queue<T> &t);
+template <typename T> void __dbg(const stack<T> &t);
+template <typename T> void __dbg(const queue<T> &t);
 
-template <typename T>
-void __dbg(const priority_queue<T> &t);
-template <typename T>
-void __dbg(const priority_queue<T, vector<T>, greater<T>> &t);
+template <typename T> void __dbg(const priority_queue<T> &t);
+template <typename T> void __dbg(const priority_queue<T, vector<T>, greater<T>> &t);
 
 inline void __dbg(short t) { cerr << t; }
 inline void __dbg(unsigned short t) { cerr << t; }
