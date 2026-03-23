@@ -61,9 +61,9 @@ inline void __dbg_print(T t, V... v) {
   __dbg_print(v...);
 }
 
-#define debug(t...)                                                                                                                                  \
-  cerr << "\e[90m" << __func__ << "::" << __LINE__ << ": ";                                                                                          \
-  __dbg_print(t);                                                                                                                                    \
+#define debug(t...)                                         \
+  cerr << "\e[90m" << __func__ << "::" << __LINE__ << ": "; \
+  __dbg_print(t);                                           \
   cerr << "\e[39m";
 
 template <typename T>
