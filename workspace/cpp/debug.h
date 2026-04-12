@@ -2,189 +2,161 @@
 
 #include <bits/stdc++.h>
 
+namespace cp_debug {
+
 using namespace std;
 
-template <typename T> void __dbg(const T &t);
 template <typename T>
-concept Iterable = requires(T t) {
+concept DebugIterable = requires(T t) {
   begin(t);
   end(t);
 };
-template <Iterable T> void __dbg(const T &t);
 
-template <typename T, typename V> void __dbg(const pair<T, V> &t);
-template <typename... Ts> void __dbg(const tuple<Ts...> &t);
+namespace detail {
 
-template <typename K, typename V> void __dbg(const map<K, V> &t);
-template <typename K, typename V> void __dbg(const unordered_map<K, V> &t);
-template <typename K, typename V> void __dbg(const multimap<K, V> &t);
-template <typename K, typename V> void __dbg(const unordered_multimap<K, V> &t);
+inline void emit(short t) { cerr << t; }
+inline void emit(unsigned short t) { cerr << t; }
+inline void emit(int t) { cerr << t; }
+inline void emit(long t) { cerr << t; }
+inline void emit(long long t) { cerr << t; }
+inline void emit(unsigned int t) { cerr << t; }
+inline void emit(unsigned long t) { cerr << t; }
+inline void emit(unsigned long long t) { cerr << t; }
+inline void emit(float t) { cerr << t; }
+inline void emit(double t) { cerr << t; }
+inline void emit(long double t) { cerr << t; }
+inline void emit(char t) { cerr << '\'' << t << '\''; }
+inline void emit(const char *t) { cerr << '\"' << t << '\"'; }
+inline void emit(const string &t) { cerr << '\"' << t << '\"'; }
+inline void emit(bool t) { cerr << (t ? "true" : "false"); }
 
-template <typename T> void __dbg(const stack<T> &t);
-template <typename T> void __dbg(const queue<T> &t);
+inline string int128_to_string(__int128_t t);
+inline void emit(__int128_t t) { cerr << int128_to_string(t); }
 
-template <typename T> void __dbg(const priority_queue<T> &t);
-template <typename T> void __dbg(const priority_queue<T, vector<T>, greater<T>> &t);
+template <typename T> inline void emit(const T &t) { cerr << t; }
 
-inline void __dbg(short t) { cerr << t; }
-inline void __dbg(unsigned short t) { cerr << t; }
-inline void __dbg(int t) { cerr << t; }
-inline void __dbg(long t) { cerr << t; }
-inline void __dbg(long long t) { cerr << t; }
-inline void __dbg(unsigned int t) { cerr << t; }
-inline void __dbg(unsigned long t) { cerr << t; }
-inline void __dbg(unsigned long long t) { cerr << t; }
-inline void __dbg(float t) { cerr << t; }
-inline void __dbg(double t) { cerr << t; }
-inline void __dbg(long double t) { cerr << t; }
-inline void __dbg(char t) { cerr << '\'' << t << '\''; }
-inline void __dbg(const char *t) { cerr << '\"' << t << '\"'; }
-inline void __dbg(const string &t) { cerr << '\"' << t << '\"'; }
-inline void __dbg(bool t) { cerr << (t ? "true" : "false"); }
-
-inline string __i128_to_string(__int128_t t);
-inline void __dbg(__int128_t t) { cerr << __i128_to_string(t); }
-
-inline void __dbg_print() { cerr << '\n'; }
-
-template <typename T, typename... V>
-inline void __dbg_print(T t, V... v) {
-  __dbg(t);
-  if (sizeof...(v)) {
-    cerr << ", ";
-  }
-  __dbg_print(v...);
-}
-
-#define debug(t...)                                         \
-  cerr << "\e[90m" << __func__ << "::" << __LINE__ << ": "; \
-  __dbg_print(t);                                           \
-  cerr << "\e[39m";
-
-template <typename T> inline void __dbg(const T &t) { cerr << t; }
-
-template <Iterable T>
-void __dbg(const T &t) {
+template <DebugIterable T>
+void emit(const T &t) {
   int f = 0;
   cerr << '[';
   for (const auto &i : t) {
-    cerr << (f++ ? ", " : ""), __dbg(i);
+    cerr << (f++ ? ", " : ""), emit(i);
   }
   cerr << "]";
 }
 
 template <typename T, typename V>
-void __dbg(const pair<T, V> &t) {
+void emit(const pair<T, V> &t) {
   cerr << '(';
-  __dbg(t.first);
+  emit(t.first);
   cerr << ", ";
-  __dbg(t.second);
+  emit(t.second);
   cerr << ')';
 }
 
 template <size_t I = 0, typename... Ts>
-void _dbg_tuple(const tuple<Ts...> &t) {
+void emit_tuple_recursive(const tuple<Ts...> &t) {
   if constexpr (I < sizeof...(Ts)) {
     if constexpr (I > 0) {
       cerr << ", ";
     }
-    __dbg(get<I>(t));
-    _dbg_tuple<I + 1>(t);
+    emit(get<I>(t));
+    emit_tuple_recursive<I + 1>(t);
   }
 }
 
 template <typename... Ts>
-void __dbg(const tuple<Ts...> &t) {
+void emit(const tuple<Ts...> &t) {
   cerr << '(';
-  _dbg_tuple(t);
+  emit_tuple_recursive(t);
   cerr << ')';
 }
 
 template <typename K, typename V>
-void __dbg(const map<K, V> &t) {
+void emit(const map<K, V> &t) {
   int f = 0;
   cerr << '{';
   for (const auto &[k, v] : t) {
-    cerr << (f++ ? ", " : ""), __dbg(k), cerr << ": ", __dbg(v);
+    cerr << (f++ ? ", " : ""), emit(k), cerr << ": ", emit(v);
   }
   cerr << '}';
 }
 
 template <typename K, typename V>
-void __dbg(const unordered_map<K, V> &t) {
+void emit(const unordered_map<K, V> &t) {
   int f = 0;
   cerr << '{';
   for (const auto &[k, v] : t) {
-    cerr << (f++ ? ", " : ""), __dbg(k), cerr << ": ", __dbg(v);
+    cerr << (f++ ? ", " : ""), emit(k), cerr << ": ", emit(v);
   }
   cerr << '}';
 }
 
 template <typename K, typename V>
-void __dbg(const multimap<K, V> &t) {
+void emit(const multimap<K, V> &t) {
   int f = 0;
   cerr << '{';
   for (const auto &[k, v] : t) {
-    cerr << (f++ ? ", " : ""), __dbg(k), cerr << ": ", __dbg(v);
+    cerr << (f++ ? ", " : ""), emit(k), cerr << ": ", emit(v);
   }
   cerr << '}';
 }
 
 template <typename K, typename V>
-void __dbg(const unordered_multimap<K, V> &t) {
+void emit(const unordered_multimap<K, V> &t) {
   int f = 0;
   cerr << '{';
   for (const auto &[k, v] : t) {
-    cerr << (f++ ? ", " : ""), __dbg(k), cerr << ": ", __dbg(v);
+    cerr << (f++ ? ", " : ""), emit(k), cerr << ": ", emit(v);
   }
   cerr << '}';
 }
 
 template <typename T>
-void __dbg(const queue<T> &t) {
+void emit(const queue<T> &t) {
   int f = 0;
   cerr << '[';
   queue<T> tmp = t;
   while (!tmp.empty()) {
-    cerr << (f++ ? ", " : ""), __dbg(tmp.front()), tmp.pop();
+    cerr << (f++ ? ", " : ""), emit(tmp.front()), tmp.pop();
   }
   cerr << "]";
 }
 
 template <typename T>
-void __dbg(const stack<T> &t) {
+void emit(const stack<T> &t) {
   int f = 0;
   cerr << '[';
   stack<T> tmp = t;
   while (!tmp.empty()) {
-    cerr << (f++ ? ", " : ""), __dbg(tmp.top()), tmp.pop();
+    cerr << (f++ ? ", " : ""), emit(tmp.top()), tmp.pop();
   }
   cerr << "]";
 }
 
 template <typename T>
-void __dbg(const priority_queue<T> &t) {
+void emit(const priority_queue<T> &t) {
   int f = 0;
   cerr << '[';
   priority_queue<T> tmp = t;
   while (!tmp.empty()) {
-    cerr << (f++ ? ", " : ""), __dbg(tmp.top()), tmp.pop();
+    cerr << (f++ ? ", " : ""), emit(tmp.top()), tmp.pop();
   }
   cerr << "]";
 }
 
 template <typename T>
-void __dbg(const priority_queue<T, vector<T>, greater<T>> &t) {
+void emit(const priority_queue<T, vector<T>, greater<T>> &t) {
   int f = 0;
   cerr << '[';
   priority_queue<T, vector<T>, greater<T>> tmp = t;
   while (!tmp.empty()) {
-    cerr << (f++ ? ", " : ""), __dbg(tmp.top()), tmp.pop();
+    cerr << (f++ ? ", " : ""), emit(tmp.top()), tmp.pop();
   }
   cerr << "]";
 }
 
-inline string __i128_to_string(__int128_t t) {
+inline string int128_to_string(__int128_t t) {
   if (t == 0) {
     return "0";
   }
@@ -196,7 +168,7 @@ inline string __i128_to_string(__int128_t t) {
 
   string s;
   while (t) {
-    s.push_back(t % 10 + '0');
+    s.push_back(static_cast<char>(t % 10 + '0'));
     t /= 10;
   }
   if (neg) {
@@ -205,3 +177,23 @@ inline string __i128_to_string(__int128_t t) {
   reverse(s.begin(), s.end());
   return s;
 }
+
+inline void emit_args() { cerr << '\n'; }
+
+template <typename T, typename... V>
+inline void emit_args(T t, V... v) {
+  emit(t);
+  if (sizeof...(v)) {
+    cerr << ", ";
+  }
+  emit_args(v...);
+}
+
+} // namespace detail
+
+} // namespace cp_debug
+
+#define debug(t...)                                         \
+  cerr << "\e[90m" << __func__ << "::" << __LINE__ << ": "; \
+  ::cp_debug::detail::emit_args(t);                         \
+  cerr << "\e[39m";
