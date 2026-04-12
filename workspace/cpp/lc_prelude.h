@@ -176,6 +176,10 @@ Tuple input_read_params() {
 template <typename T>
 void output_print(const T &v) { cout << v; }
 
+template <> inline void output_print<string>(const string &v) { cout << '"' << v << '"'; }
+template <> inline void output_print<char>(const char &v) { cout << '\'' << v << '\''; }
+template <> inline void output_print<bool>(const bool &v) { cout << (v ? "true" : "false"); }
+
 template <typename T>
 void output_print(const vector<T> &v) {
   cout << '[';
