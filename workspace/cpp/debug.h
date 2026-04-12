@@ -5,6 +5,12 @@
 using namespace std;
 
 template <typename T> void __dbg(const T &t);
+template <typename T>
+concept Iterable = requires(T t) {
+  begin(t);
+  end(t);
+};
+template <Iterable T> void __dbg(const T &t);
 
 template <typename T, typename V> void __dbg(const pair<T, V> &t);
 template <typename... Ts> void __dbg(const tuple<Ts...> &t);
@@ -55,11 +61,13 @@ inline void __dbg_print(T t, V... v) {
   __dbg_print(t);                                           \
   cerr << "\e[39m";
 
-template <typename T>
+template <typename T> inline void __dbg(const T &t) { cerr << t; }
+
+template <Iterable T>
 void __dbg(const T &t) {
   int f = 0;
   cerr << '[';
-  for (auto &i : t) {
+  for (const auto &i : t) {
     cerr << (f++ ? ", " : ""), __dbg(i);
   }
   cerr << "]";
@@ -96,7 +104,7 @@ template <typename K, typename V>
 void __dbg(const map<K, V> &t) {
   int f = 0;
   cerr << '{';
-  for (auto &[k, v] : t) {
+  for (const auto &[k, v] : t) {
     cerr << (f++ ? ", " : ""), __dbg(k), cerr << ": ", __dbg(v);
   }
   cerr << '}';
@@ -106,7 +114,7 @@ template <typename K, typename V>
 void __dbg(const unordered_map<K, V> &t) {
   int f = 0;
   cerr << '{';
-  for (auto &[k, v] : t) {
+  for (const auto &[k, v] : t) {
     cerr << (f++ ? ", " : ""), __dbg(k), cerr << ": ", __dbg(v);
   }
   cerr << '}';
@@ -116,7 +124,7 @@ template <typename K, typename V>
 void __dbg(const multimap<K, V> &t) {
   int f = 0;
   cerr << '{';
-  for (auto &[k, v] : t) {
+  for (const auto &[k, v] : t) {
     cerr << (f++ ? ", " : ""), __dbg(k), cerr << ": ", __dbg(v);
   }
   cerr << '}';
@@ -126,7 +134,7 @@ template <typename K, typename V>
 void __dbg(const unordered_multimap<K, V> &t) {
   int f = 0;
   cerr << '{';
-  for (auto &[k, v] : t) {
+  for (const auto &[k, v] : t) {
     cerr << (f++ ? ", " : ""), __dbg(k), cerr << ": ", __dbg(v);
   }
   cerr << '}';
