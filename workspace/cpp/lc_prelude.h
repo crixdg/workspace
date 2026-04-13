@@ -173,12 +173,12 @@ Tuple input_read_params() {
 
 // -- stdout ------------------------------------------------------------------
 
-template <typename T>
-void output_print(const T &v) { cout << v; }
-
-template <> inline void output_print<string>(const string &v) { cout << '"' << v << '"'; }
-template <> inline void output_print<char>(const char &v) { cout << '\'' << v << '\''; }
-template <> inline void output_print<bool>(const bool &v) { cout << (v ? "true" : "false"); }
+inline void output_print(const int &v) { cout << v; }
+inline void output_print(const long long &v) { cout << v; }
+inline void output_print(const double &v) { cout << fixed << setprecision(15) << v; }
+inline void output_print(const bool &v) { cout << (v ? "true" : "false"); }
+inline void output_print(const string &v) { cout << '"' << v << '"'; }
+inline void output_print(const char &v) { cout << '\'' << v << '\''; }
 
 template <typename T>
 void output_print(const vector<T> &v) {
