@@ -10,7 +10,7 @@ usage() {
 	err_echo "Options:"
 	err_echo "	-p,	--path <path>	Use this source file (e.g. absolute path)."
 	err_echo "	-t,	--time		Measure and display the runtime."
-	err_echo "	-g,	--gdb		Debug with GNU Debugger."
+	err_echo "	-g,	--lldb		Debug with Debugger."
 	err_echo "	-i,	--info		Enable INFO macro."
 	err_echo "	-s,	--samples	Run with generated samples (*.in.txt) then comparing with expected outputs (*.out.txt))."
 	err_echo "				The prefix file name of (*.in.txt)), (*.out.txt)) is same as the executable."
@@ -196,11 +196,11 @@ while [[ $# -gt 0 && $1 == -* ]]; do
 		commands+=("time")
 		shift
 		;;
-	-g | --gdb)
-		modes+=("\e[1m[GDB]\e[0m")
+	-g | --lldb)
+		modes+=("\e[1m[LLDB]\e[0m")
 		prefix_flags+=("-g")
 		((prefix_count++))
-		commands+=("LSAN_OPTIONS=detect_leaks=0 gdb -q")
+		commands+=("LSAN_OPTIONS=detect_leaks=0 lldb")
 		shift
 		;;
 	-i | --info)
