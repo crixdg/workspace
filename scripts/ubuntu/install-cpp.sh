@@ -26,19 +26,19 @@ sudo apt install build-essential -y
 
 # sudo apt install clang-format-21 clang-tidy-21 -y
 
-DEFAULT_BAZELISK_VERSION="1.28.1"
-if command -v bazelisk >/dev/null 2>&1; then
-	INSTALLED_VERSION=$(bazelisk --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
-	if [ "$INSTALLED_VERSION" = "$DEFAULT_BAZELISK_VERSION" ]; then
-		echo "Bazelisk version $DEFAULT_BAZELISK_VERSION is already installed. Skipping installation."
-	fi
-else
-	read -p "Enter the Bazelisk version you want to install [${DEFAULT_BAZELISK_VERSION}]: " VERSION
-	BAZELISK_VERSION=${BAZELISK_VERSION:-$DEFAULT_BAZELISK_VERSION}
-	curl -LO https://github.com/bazelbuild/bazelisk/releases/download/v${BAZELISK_VERSION}/bazelisk-amd64.deb 2>/dev/null
-	sudo dpkg -i bazelisk-amd64.deb
-	rm bazelisk-amd64.deb
-fi
+# DEFAULT_BAZELISK_VERSION="1.28.1"
+# if command -v bazelisk >/dev/null 2>&1; then
+# 	INSTALLED_VERSION=$(bazelisk --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
+# 	if [ "$INSTALLED_VERSION" = "$DEFAULT_BAZELISK_VERSION" ]; then
+# 		echo "Bazelisk version $DEFAULT_BAZELISK_VERSION is already installed. Skipping installation."
+# 	fi
+# else
+# 	read -p "Enter the Bazelisk version you want to install [${DEFAULT_BAZELISK_VERSION}]: " VERSION
+# 	BAZELISK_VERSION=${BAZELISK_VERSION:-$DEFAULT_BAZELISK_VERSION}
+# 	curl -LO https://github.com/bazelbuild/bazelisk/releases/download/v${BAZELISK_VERSION}/bazelisk-amd64.deb 2>/dev/null
+# 	sudo dpkg -i bazelisk-amd64.deb
+# 	rm bazelisk-amd64.deb
+# fi
 
 # DEFAULT_BAZEL_BUILDTOOLS_VERSION="8.5.1"
 # read -p "Enter the Bazel Buildtools version you want to install [${DEFAULT_BAZEL_BUILDTOOLS_VERSION}]: " VERSION
