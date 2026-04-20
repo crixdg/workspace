@@ -3,7 +3,6 @@
 #include <bits/stdc++.h>
 
 namespace lc_prelude {
-
 using namespace std;
 
 // -- Leetcode-shaped DS (local run only) ------------------------------------
@@ -53,16 +52,15 @@ inline vector<string> split_bracket(const string &s) {
       cur += c;
     }
   }
-  if (!cur.empty()) { tokens.push_back(cur); }
+  if (!cur.empty()) tokens.push_back(cur);
   return tokens;
 }
 
 template <typename T>
 vector<T> input_parse_vector(const string &s) {
   vector<T> res;
-  for (const string &tok : split_bracket(s)) {
+  for (const string &tok : split_bracket(s))
     res.push_back(input_parse<T>(tok));
-  }
   return res;
 }
 
@@ -92,8 +90,7 @@ template <> inline vector<vector<vector<string>>> input_parse<vector<vector<vect
 template <typename T>
 LinkedListNode<T> *input_parse_linked_list(const string &s) {
   vector<string> tokens = split_bracket(s);
-  if (tokens.empty()) { return nullptr; }
-
+  if (tokens.empty()) return nullptr;
   LinkedListNode<T> dummy(T{});
   LinkedListNode<T> *cur = &dummy;
   for (const string &tok : tokens) {
@@ -113,17 +110,14 @@ template <> inline LinkedListNode<string> *input_parse<LinkedListNode<string> *>
 template <typename T>
 BinaryTreeNode<T> *input_parse_binary_tree(const string &s) {
   vector<string> tokens = split_bracket(s);
-  if (tokens.empty() || tokens[0] == "null") { return nullptr; }
-
+  if (tokens.empty() || tokens[0] == "null") return nullptr;
   BinaryTreeNode<T> *root = new BinaryTreeNode<T>(input_parse<T>(tokens[0]));
   queue<BinaryTreeNode<T> *> q;
   q.push(root);
-
   int i = 1;
   while (!q.empty() && i < (int)tokens.size()) {
     BinaryTreeNode<T> *node = q.front();
     q.pop();
-
     if (i < (int)tokens.size() && tokens[i] != "null") {
       node->left = new BinaryTreeNode<T>(input_parse<T>(tokens[i]));
       q.push(node->left);
@@ -184,7 +178,7 @@ template <typename T>
 void output_print(const vector<T> &v) {
   cout << '[';
   for (int i = 0; i < (int)v.size(); i++) {
-    if (i) { cout << ','; }
+    if (i) cout << ',';
     output_print(v[i]);
   }
   cout << ']';
@@ -195,7 +189,7 @@ void output_print(const LinkedListNode<T> *head) {
   cout << '[';
   bool first = true;
   while (head) {
-    if (!first) { cout << ','; }
+    if (!first) cout << ',';
     output_print(head->val);
     first = false;
     head = head->next;
@@ -223,15 +217,12 @@ void output_print(const BinaryTreeNode<T> *root) {
       q.push(node->right);
     }
   }
-  while (!vals.empty() && !vals.back().has_value()) { vals.pop_back(); }
+  while (!vals.empty() && !vals.back().has_value()) vals.pop_back();
   cout << '[';
   for (int i = 0; i < (int)vals.size(); i++) {
-    if (i) { cout << ','; }
-    if (!vals[i].has_value()) {
-      cout << "null";
-    } else {
-      output_print(*vals[i]);
-    }
+    if (i) cout << ',';
+    if (!vals[i].has_value()) cout << "null";
+    else output_print(*vals[i]);
   }
   cout << ']';
 }

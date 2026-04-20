@@ -6,8 +6,7 @@ namespace cp_debug {
 
 using namespace std;
 
-template <typename T>
-concept DebugIterable = requires(T t) {
+template <typename T> concept DebugIterable = requires(T t) {
   begin(t);
   end(t);
 };
@@ -39,9 +38,7 @@ template <DebugIterable T>
 void emit(const T &t) {
   int f = 0;
   cerr << '[';
-  for (const auto &i : t) {
-    cerr << (f++ ? ", " : ""), emit(i);
-  }
+  for (const auto &i : t) cerr << (f++ ? ", " : ""), emit(i);
   cerr << "]";
 }
 
@@ -57,9 +54,7 @@ void emit(const pair<T, V> &t) {
 template <size_t I = 0, typename... Ts>
 void emit_tuple_recursive(const tuple<Ts...> &t) {
   if constexpr (I < sizeof...(Ts)) {
-    if constexpr (I > 0) {
-      cerr << ", ";
-    }
+    if constexpr (I > 0) cerr << ", ";
     emit(get<I>(t));
     emit_tuple_recursive<I + 1>(t);
   }
@@ -76,9 +71,8 @@ template <typename K, typename V>
 void emit(const map<K, V> &t) {
   int f = 0;
   cerr << '{';
-  for (const auto &[k, v] : t) {
+  for (const auto &[k, v] : t)
     cerr << (f++ ? ", " : ""), emit(k), cerr << ": ", emit(v);
-  }
   cerr << '}';
 }
 
@@ -86,9 +80,8 @@ template <typename K, typename V>
 void emit(const unordered_map<K, V> &t) {
   int f = 0;
   cerr << '{';
-  for (const auto &[k, v] : t) {
+  for (const auto &[k, v] : t)
     cerr << (f++ ? ", " : ""), emit(k), cerr << ": ", emit(v);
-  }
   cerr << '}';
 }
 
@@ -96,9 +89,8 @@ template <typename K, typename V>
 void emit(const multimap<K, V> &t) {
   int f = 0;
   cerr << '{';
-  for (const auto &[k, v] : t) {
+  for (const auto &[k, v] : t)
     cerr << (f++ ? ", " : ""), emit(k), cerr << ": ", emit(v);
-  }
   cerr << '}';
 }
 
@@ -106,9 +98,8 @@ template <typename K, typename V>
 void emit(const unordered_multimap<K, V> &t) {
   int f = 0;
   cerr << '{';
-  for (const auto &[k, v] : t) {
+  for (const auto &[k, v] : t)
     cerr << (f++ ? ", " : ""), emit(k), cerr << ": ", emit(v);
-  }
   cerr << '}';
 }
 
@@ -117,9 +108,7 @@ void emit(const queue<T> &t) {
   int f = 0;
   cerr << '[';
   queue<T> tmp = t;
-  while (!tmp.empty()) {
-    cerr << (f++ ? ", " : ""), emit(tmp.front()), tmp.pop();
-  }
+  while (!tmp.empty()) cerr << (f++ ? ", " : ""), emit(tmp.front()), tmp.pop();
   cerr << "]";
 }
 
@@ -128,9 +117,7 @@ void emit(const stack<T> &t) {
   int f = 0;
   cerr << '[';
   stack<T> tmp = t;
-  while (!tmp.empty()) {
-    cerr << (f++ ? ", " : ""), emit(tmp.top()), tmp.pop();
-  }
+  while (!tmp.empty()) cerr << (f++ ? ", " : ""), emit(tmp.top()), tmp.pop();
   cerr << "]";
 }
 
@@ -139,9 +126,7 @@ void emit(const priority_queue<T> &t) {
   int f = 0;
   cerr << '[';
   priority_queue<T> tmp = t;
-  while (!tmp.empty()) {
-    cerr << (f++ ? ", " : ""), emit(tmp.top()), tmp.pop();
-  }
+  while (!tmp.empty()) cerr << (f++ ? ", " : ""), emit(tmp.top()), tmp.pop();
   cerr << "]";
 }
 
@@ -150,30 +135,20 @@ void emit(const priority_queue<T, vector<T>, greater<T>> &t) {
   int f = 0;
   cerr << '[';
   priority_queue<T, vector<T>, greater<T>> tmp = t;
-  while (!tmp.empty()) {
-    cerr << (f++ ? ", " : ""), emit(tmp.top()), tmp.pop();
-  }
+  while (!tmp.empty()) cerr << (f++ ? ", " : ""), emit(tmp.top()), tmp.pop();
   cerr << "]";
 }
 
 inline string int128_to_string(__int128_t t) {
-  if (t == 0) {
-    return "0";
-  }
-
+  if (t == 0) return "0";
   bool neg = t < 0;
-  if (t < 0) {
-    t = -t;
-  }
-
+  if (t < 0) t = -t;
   string s;
   while (t) {
     s.push_back(static_cast<char>(t % 10 + '0'));
     t /= 10;
   }
-  if (neg) {
-    s.push_back('-');
-  }
+  if (neg) s.push_back('-');
   reverse(s.begin(), s.end());
   return s;
 }
@@ -183,9 +158,7 @@ inline void emit_args() { cerr << '\n'; }
 template <typename T, typename... V>
 inline void emit_args(T t, V... v) {
   emit(t);
-  if (sizeof...(v)) {
-    cerr << ", ";
-  }
+  if (sizeof...(v)) cerr << ", ";
   emit_args(v...);
 }
 
