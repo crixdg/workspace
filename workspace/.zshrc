@@ -79,7 +79,5 @@ bindkey -r '\el'
 [ -d "$HOME/bin" ] && path=("$HOME/bin", $path)
 [ -d "$HOME/.local/bin" ] && path=("$HOME/.local/bin" $path)
 
-export GITHUB_TOKEN=$(gh auth token)
-
 # ===============================================================================
 # zprof  # Uncomment with zmodload above to profile zsh startup time
