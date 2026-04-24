@@ -1,9 +1,7 @@
 #pragma once
-
 #include <bits/stdc++.h>
 
 namespace cp_debug {
-
 using namespace std;
 
 template <typename T> concept DebugIterable = requires(T t) {
@@ -12,6 +10,8 @@ template <typename T> concept DebugIterable = requires(T t) {
 };
 
 namespace detail {
+
+inline string int128_to_string(__int128_t t);
 
 inline void emit(short t) { cerr << t; }
 inline void emit(unsigned short t) { cerr << t; }
@@ -28,10 +28,7 @@ inline void emit(char t) { cerr << '\'' << t << '\''; }
 inline void emit(const char *t) { cerr << '\"' << t << '\"'; }
 inline void emit(const string &t) { cerr << '\"' << t << '\"'; }
 inline void emit(bool t) { cerr << (t ? "true" : "false"); }
-
-inline string int128_to_string(__int128_t t);
 inline void emit(__int128_t t) { cerr << int128_to_string(t); }
-
 template <typename T> inline void emit(const T &t) { cerr << t; }
 
 template <DebugIterable T>
@@ -40,6 +37,14 @@ void emit(const T &t) {
   cerr << '[';
   for (const auto &i : t) cerr << (f++ ? ", " : ""), emit(i);
   cerr << "]";
+}
+
+template <typename T>
+void emit(const vector<vector<T>> &t) {
+  int f = 0;
+  cerr << '[' << '\n';
+  for (const auto &i : t) cerr << '\t', emit(i), cerr << '\n';
+  cerr << ']';
 }
 
 template <typename T, typename V>
@@ -71,8 +76,7 @@ template <typename K, typename V>
 void emit(const map<K, V> &t) {
   int f = 0;
   cerr << '{';
-  for (const auto &[k, v] : t)
-    cerr << (f++ ? ", " : ""), emit(k), cerr << ": ", emit(v);
+  for (const auto &[k, v] : t) cerr << (f++ ? ", " : ""), emit(k), cerr << ": ", emit(v);
   cerr << '}';
 }
 
@@ -80,8 +84,7 @@ template <typename K, typename V>
 void emit(const unordered_map<K, V> &t) {
   int f = 0;
   cerr << '{';
-  for (const auto &[k, v] : t)
-    cerr << (f++ ? ", " : ""), emit(k), cerr << ": ", emit(v);
+  for (const auto &[k, v] : t) cerr << (f++ ? ", " : ""), emit(k), cerr << ": ", emit(v);
   cerr << '}';
 }
 
@@ -89,8 +92,7 @@ template <typename K, typename V>
 void emit(const multimap<K, V> &t) {
   int f = 0;
   cerr << '{';
-  for (const auto &[k, v] : t)
-    cerr << (f++ ? ", " : ""), emit(k), cerr << ": ", emit(v);
+  for (const auto &[k, v] : t) cerr << (f++ ? ", " : ""), emit(k), cerr << ": ", emit(v);
   cerr << '}';
 }
 
@@ -98,8 +100,7 @@ template <typename K, typename V>
 void emit(const unordered_multimap<K, V> &t) {
   int f = 0;
   cerr << '{';
-  for (const auto &[k, v] : t)
-    cerr << (f++ ? ", " : ""), emit(k), cerr << ": ", emit(v);
+  for (const auto &[k, v] : t) cerr << (f++ ? ", " : ""), emit(k), cerr << ": ", emit(v);
   cerr << '}';
 }
 
@@ -107,8 +108,8 @@ template <typename T>
 void emit(const queue<T> &t) {
   int f = 0;
   cerr << '[';
-  queue<T> tmp = t;
-  while (!tmp.empty()) cerr << (f++ ? ", " : ""), emit(tmp.front()), tmp.pop();
+  queue<T> k = t;
+  while (!k.empty()) cerr << (f++ ? ", " : ""), emit(k.front()), k.pop();
   cerr << "]";
 }
 
@@ -116,8 +117,8 @@ template <typename T>
 void emit(const stack<T> &t) {
   int f = 0;
   cerr << '[';
-  stack<T> tmp = t;
-  while (!tmp.empty()) cerr << (f++ ? ", " : ""), emit(tmp.top()), tmp.pop();
+  stack<T> k = t;
+  while (!k.empty()) cerr << (f++ ? ", " : ""), emit(k.top()), k.pop();
   cerr << "]";
 }
 
@@ -125,8 +126,8 @@ template <typename T>
 void emit(const priority_queue<T> &t) {
   int f = 0;
   cerr << '[';
-  priority_queue<T> tmp = t;
-  while (!tmp.empty()) cerr << (f++ ? ", " : ""), emit(tmp.top()), tmp.pop();
+  priority_queue<T> k = t;
+  while (!k.empty()) cerr << (f++ ? ", " : ""), emit(k.top()), k.pop();
   cerr << "]";
 }
 
@@ -134,8 +135,8 @@ template <typename T>
 void emit(const priority_queue<T, vector<T>, greater<T>> &t) {
   int f = 0;
   cerr << '[';
-  priority_queue<T, vector<T>, greater<T>> tmp = t;
-  while (!tmp.empty()) cerr << (f++ ? ", " : ""), emit(tmp.top()), tmp.pop();
+  priority_queue<T, vector<T>, greater<T>> k = t;
+  while (!k.empty()) cerr << (f++ ? ", " : ""), emit(k.top()), k.pop();
   cerr << "]";
 }
 
@@ -163,10 +164,16 @@ inline void emit_args(T t, V... v) {
 }
 
 } // namespace detail
-
 } // namespace cp_debug
 
-#define debug(t...)                                         \
-  cerr << "\e[90m" << __func__ << "::" << __LINE__ << ": "; \
-  ::cp_debug::detail::emit_args(t);                         \
-  cerr << "\e[39m";
+inline int __debug_depth = 0;
+#define debug(...)                                     \
+  do {                                                 \
+    bool __outer = (__debug_depth == 0);               \
+    __debug_depth++;                                   \
+    if (__outer) std::cerr << "\e[90m";                \
+    std::cerr << __func__ << "::" << __LINE__ << ": "; \
+    ::cp_debug::detail::emit_args(__VA_ARGS__);        \
+    __debug_depth--;                                   \
+    if (__outer) std::cerr << "\e[0m";                 \
+  } while (0)
