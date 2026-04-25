@@ -4,7 +4,7 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/check-os.sh"
 
-sudo apt install -y bison
+sudo apt install -y curl git mercurial make binutils bison gcc build-essential
 if ! command -v gvm &>/dev/null; then
     bash < <(curl -s -S -L https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer)
     source "$HOME/.gvm/scripts/gvm"
