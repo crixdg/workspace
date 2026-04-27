@@ -70,6 +70,7 @@ Scripts use `command -v <tool>` to skip already-installed tools and log errors t
 ## Notes (`workspace/notes/`)
 
 Key references:
+
 - `go-microservice-bootstrap.md` — Production Go service architecture patterns
 - `golang-expertise.md` — Go language patterns and idioms reference
 - `cp-speed-typing-techniques.md` — Competitive programming techniques
