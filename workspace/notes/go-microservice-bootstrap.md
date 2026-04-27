@@ -38,7 +38,19 @@
   - [20. Kubernetes Manifests](#20-kubernetes-manifests)
   - [21. Security Checklist](#21-security-checklist)
   - [22. Production Checklist](#22-production-checklist)
-  - [Key Dependencies Reference](#key-dependencies-reference)
+  - [23. Scaling a Large \& Complex Codebase](#23-scaling-a-large--complex-codebase)
+    - [23.1 Warning Signs You've Outgrown the Bootstrap Layout](#231-warning-signs-youve-outgrown-the-bootstrap-layout)
+    - [23.2 Bounded Context Decomposition](#232-bounded-context-decomposition)
+    - [23.3 Go Workspace for Multi-Module Monorepos](#233-go-workspace-for-multi-module-monorepos)
+    - [23.4 Dependency Injection at Scale — `wire`](#234-dependency-injection-at-scale--wire)
+    - [23.5 API Contracts \& Versioning at Scale](#235-api-contracts--versioning-at-scale)
+    - [23.6 Feature Flags](#236-feature-flags)
+    - [23.7 Managing Shared Internal Libraries](#237-managing-shared-internal-libraries)
+    - [23.8 Database at Scale](#238-database-at-scale)
+    - [23.9 Service Mesh \& Inter-Service Communication](#239-service-mesh--inter-service-communication)
+    - [23.10 Code Ownership \& Review Discipline](#2310-code-ownership--review-discipline)
+    - [23.11 When to Extract a New Service](#2311-when-to-extract-a-new-service)
+    - [23.12 Large Codebase Checklist](#2312-large-codebase-checklist)
   - [Makefile](#makefile)
 
 ---
@@ -170,6 +182,236 @@ func Load() (*Config, error) {
 - `env-required:"true"` causes a startup crash with a clear message — good.
 - Keep a `.env.example` file committed; never commit `.env`.
 - In Kubernetes, inject secrets via `envFrom: secretRef`, not config maps.
+
+---
+
+### 2.1 When Configuration Becomes Large
+
+Past ~10 config structs the flat approach breaks down: env var names collide, validation logic scatters, and no one knows which fields are still used. Apply the following patterns progressively.
+
+#### Split into files by concern
+
+Stop putting everything in one `config.go`. Mirror the bounded context layout:
+
+```
+internal/config/
+├── config.go        # top-level Config struct + Load()
+├── app.go           # AppConfig
+├── http.go          # HTTPConfig
+├── database.go      # DatabaseConfig + validation logic
+├── redis.go         # RedisConfig
+├── auth.go          # AuthConfig + key loading helpers
+├── otel.go          # OTELConfig
+└── validate.go      # cross-field validation rules
+```
+
+Each file owns one struct and its validation. `config.go` composes them:
+
+```go
+// internal/config/config.go
+type Config struct {
+    App      AppConfig
+    HTTP     HTTPConfig
+    GRPC     GRPCConfig
+    Database DatabaseConfig
+    Redis    RedisConfig
+    OTEL     OTELConfig
+    Auth     AuthConfig
+    // new concerns just add a line here
+}
+
+func Load() (*Config, error) {
+    cfg := &Config{}
+    if err := cleanenv.ReadEnv(cfg); err != nil {
+        return nil, err
+    }
+    return cfg, cfg.validate()
+}
+```
+
+#### Add a cross-field validate() method
+
+`cleanenv` checks field-level constraints (`env-required`). Cross-field rules go in one place:
+
+```go
+// internal/config/validate.go
+func (c *Config) validate() error {
+    var errs []string
+
+    if c.App.Env == "production" {
+        if c.Auth.JWTSecret == "dev-secret" {
+            errs = append(errs, "JWT_SECRET must not be the dev default in production")
+        }
+        if c.OTEL.Endpoint == "" {
+            errs = append(errs, "OTEL_EXPORTER_OTLP_ENDPOINT is required in production")
+        }
+        if c.Database.MaxOpenConns < 10 {
+            errs = append(errs, "DB_MAX_OPEN_CONNS should be >= 10 in production")
+        }
+    }
+
+    if c.HTTP.ReadTimeout > c.HTTP.WriteTimeout {
+        errs = append(errs, "HTTP_READ_TIMEOUT must be <= HTTP_WRITE_TIMEOUT")
+    }
+
+    if len(errs) > 0 {
+        return fmt.Errorf("config validation failed:\n  - %s", strings.Join(errs, "\n  - "))
+    }
+    return nil
+}
+```
+
+#### Layer sources: file → env → secrets manager
+
+Pure env vars stop scaling when you have 50+ values across teams. Layer sources so local dev uses a YAML file, CI uses env vars, and production pulls secrets from Vault or AWS Secrets Manager:
+
+```go
+// internal/config/load.go
+func Load() (*Config, error) {
+    cfg := &Config{}
+
+    // 1. Load YAML baseline if present (local dev only)
+    if path := os.Getenv("CONFIG_FILE"); path != "" {
+        if err := cleanenv.ReadConfig(path, cfg); err != nil {
+            return nil, fmt.Errorf("read config file: %w", err)
+        }
+    }
+
+    // 2. Env vars override the file
+    if err := cleanenv.ReadEnv(cfg); err != nil {
+        return nil, fmt.Errorf("read env: %w", err)
+    }
+
+    // 3. Secrets manager overrides everything (production only)
+    if cfg.App.Env == "production" {
+        if err := loadSecretsManager(cfg); err != nil {
+            return nil, fmt.Errorf("load secrets: %w", err)
+        }
+    }
+
+    return cfg, cfg.validate()
+}
+```
+
+```go
+// internal/config/secrets.go
+func loadSecretsManager(cfg *Config) error {
+    client := secretsmanager.NewFromConfig(awsCfg)
+
+    // fetch a single JSON blob — one API call, not one per secret
+    out, err := client.GetSecretValue(context.Background(), &secretsmanager.GetSecretValueInput{
+        SecretId: aws.String(fmt.Sprintf("%s/myservice", cfg.App.Env)),
+    })
+    if err != nil {
+        return err
+    }
+
+    var secrets struct {
+        DBPassword  string `json:"db_password"`
+        JWTSecret   string `json:"jwt_secret"`
+        RedisPass   string `json:"redis_password"`
+    }
+    if err := json.Unmarshal([]byte(*out.SecretString), &secrets); err != nil {
+        return err
+    }
+
+    // Patch only the secret fields; non-secret config already loaded from env
+    cfg.Auth.JWTSecret = secrets.JWTSecret
+    cfg.Redis.Password = secrets.RedisPass
+    // Rebuild DSN with the fetched password
+    cfg.Database.DSN = buildDSN(cfg.Database, secrets.DBPassword)
+    return nil
+}
+```
+
+**Why one JSON blob, not one secret per field:** Secrets Manager charges per API call. Fetching 20 individual secrets at every pod startup adds latency and cost.
+
+#### Expose config as read-only slices to components
+
+Pass only what each component needs — not the whole `*Config`. This makes dependencies explicit and tests simpler:
+
+```go
+// BAD — every component gets everything
+func NewUserHandler(cfg *config.Config) *UserHandler
+
+// GOOD — component declares exactly what it needs
+func NewUserHandler(cfg config.AuthConfig) *UserHandler
+func NewPostgresDB(cfg config.DatabaseConfig) (*pgxpool.Pool, error)
+func NewRedis(cfg config.RedisConfig) *redis.Client
+```
+
+In `main.go` the wiring becomes:
+
+```go
+db, err := repository.NewPostgresDB(cfg.Database)
+rdb := repository.NewRedis(cfg.Redis)
+userHandler := handler.NewUserHandler(cfg.Auth)
+```
+
+#### Print a redacted config summary at startup
+
+Large configs have a nasty failure mode: the service starts, but silently uses a wrong value because an env var typo was silently ignored. Print a redacted summary:
+
+```go
+// internal/config/config.go
+func (c *Config) LogSummary() {
+    slog.Info("config loaded",
+        "env",            c.App.Env,
+        "version",        c.App.Version,
+        "http_port",      c.HTTP.Port,
+        "grpc_port",      c.GRPC.Port,
+        "db_max_conns",   c.Database.MaxOpenConns,
+        "redis_addr",     c.Redis.Addr,
+        "otel_endpoint",  c.OTEL.Endpoint,
+        "jwt_secret",     "[redacted]",
+        "log_level",      c.App.LogLevel,
+    )
+}
+```
+
+Call it immediately after `Load()` in `main.go`. Ops teams can verify values from logs without exposing secrets.
+
+#### YAML config file layout for local dev
+
+```yaml
+# config/local.yaml
+app:
+  name: myservice
+  env: development
+  log_level: debug
+
+http:
+  port: 8080
+  read_timeout: 10s
+  write_timeout: 10s
+
+database:
+  dsn: postgres://postgres:postgres@localhost:5432/myservice?sslmode=disable
+  max_open_conns: 5
+  max_idle_conns: 2
+
+redis:
+  addr: localhost:6379
+
+auth:
+  jwt_secret: dev-secret-do-not-use-in-prod
+  token_ttl: 24h
+```
+
+Load it with: `CONFIG_FILE=config/local.yaml go run ./cmd/server`
+
+#### Large configuration checklist
+
+```
+[ ] Config split into per-concern files — not one monolithic struct file
+[ ] Cross-field validation in a single validate() method called at startup
+[ ] Startup prints a redacted summary — typos visible immediately in logs
+[ ] Secrets fetched from Vault / AWS SM as a single JSON blob, not per-field calls
+[ ] Components receive only the sub-config they need, not *Config
+[ ] .env.example kept up to date — every field documented with a comment
+[ ] Production validation rules enforce stricter constraints than dev
+[ ] CONFIG_FILE env var allows local YAML override without changing code
+```
 
 ---
 
@@ -1327,7 +1569,464 @@ spec:
 
 ---
 
-## Key Dependencies Reference
+## 23. Scaling a Large & Complex Codebase
+
+> This section applies once a single service grows past ~20k LOC, a team grows past ~5 engineers, or complexity starts causing merge conflicts, slow builds, and unclear ownership.
+
+---
+
+### 23.1 Warning Signs You've Outgrown the Bootstrap Layout
+
+| Symptom                                                | Root cause               | Action                                     |
+| ------------------------------------------------------ | ------------------------ | ------------------------------------------ |
+| `internal/domain/` has 30+ files with circular imports | Domain is one big ball   | Split into bounded contexts                |
+| `main.go` wiring is 300+ lines                         | Too many dependencies    | Go Workspace + sub-modules, or `wire`      |
+| One team's PR breaks another team's code               | Shared mutable packages  | Enforce package ownership via `CODEOWNERS` |
+| Build takes > 2 minutes                                | Too many transitive deps | Module boundaries, build caching           |
+| You can't test one feature without starting everything | Tight coupling           | Hexagonal ports, contract tests            |
+
+---
+
+### 23.2 Bounded Context Decomposition
+
+Split `internal/` by **business domain**, not by layer. Each bounded context is self-contained.
+
+**Before (layer-first — breaks at scale):**
+
+```
+internal/
+├── domain/      ← everything mixed here
+├── usecase/     ← 40 files, unclear ownership
+├── repository/
+└── handler/
+```
+
+**After (domain-first — scales with teams):**
+
+```
+internal/
+├── user/
+│   ├── domain.go        # User entity, UserRepository interface
+│   ├── usecase.go       # business logic
+│   ├── repository.go    # postgres implementation
+│   ├── handler.go       # HTTP/gRPC handler
+│   └── user_test.go
+├── order/
+│   ├── domain.go
+│   ├── usecase.go
+│   └── ...
+├── payment/
+│   └── ...
+└── shared/              # only truly shared primitives
+    ├── pagination.go
+    └── money.go
+```
+
+**Rules:**
+
+- A package in `user/` must never import from `order/` — communicate through interfaces or events.
+- `shared/` must stay tiny. If something keeps getting added there, it's a smell.
+- If two bounded contexts need the same entity, they each get their own copy. Shared state is the problem you're solving.
+
+---
+
+### 23.3 Go Workspace for Multi-Module Monorepos
+
+When a single repo holds multiple services that share internal libraries, use **`go work`** (Go 1.18+) instead of `replace` directives.
+
+```
+platform/
+├── go.work
+├── services/
+│   ├── user-service/
+│   │   ├── go.mod        # module platform/user-service
+│   │   └── ...
+│   ├── order-service/
+│   │   ├── go.mod        # module platform/order-service
+│   │   └── ...
+├── libs/
+│   ├── auth/
+│   │   ├── go.mod        # module platform/lib/auth
+│   │   └── ...
+│   └── telemetry/
+│       ├── go.mod        # module platform/lib/telemetry
+│       └── ...
+```
+
+```
+# go.work
+go 1.23
+
+use (
+    ./services/user-service
+    ./services/order-service
+    ./libs/auth
+    ./libs/telemetry
+)
+```
+
+Each service has its own `go.mod` and can be built/tested/deployed independently. The workspace resolves local libs without published module versions during development.
+
+**CI strategy:**
+
+- Detect which modules changed (`git diff --name-only`) and only build/test those.
+- Publish libs to a private Go module proxy (Athens, Artifactory) for inter-service pinning.
+
+```yaml
+# .github/workflows/ci.yml — affected-only build
+- name: Detect changed modules
+  id: changed
+  run: |
+    CHANGED=$(git diff --name-only origin/main... | grep go.mod | xargs -I{} dirname {})
+    echo "modules=$CHANGED" >> $GITHUB_OUTPUT
+
+- name: Test changed modules
+  run: |
+    for mod in ${{ steps.changed.outputs.modules }}; do
+      (cd $mod && go test -race ./...)
+    done
+```
+
+---
+
+### 23.4 Dependency Injection at Scale — `wire`
+
+When `main.go` wiring exceeds ~100 lines, switch to **`google/wire`**. It generates the wiring code at compile time — no reflection, no runtime cost.
+
+```go
+// internal/user/wire.go
+//go:build wireinject
+
+package user
+
+import "github.com/google/wire"
+
+var ProviderSet = wire.NewSet(
+    NewUserRepository,
+    NewUserUsecase,
+    NewUserHandler,
+)
+```
+
+```go
+// cmd/server/wire.go
+//go:build wireinject
+
+func InitializeServer(cfg *config.Config, db *pgxpool.Pool) (*server.Server, error) {
+    wire.Build(
+        user.ProviderSet,
+        order.ProviderSet,
+        payment.ProviderSet,
+        server.New,
+    )
+    return nil, nil
+}
+```
+
+Run `wire gen ./cmd/server/` — it produces `wire_gen.go` with the real constructor chain. Commit the generated file.
+
+**What wire gives you:** compile-time errors for missing providers, clear dependency graph, zero runtime magic.
+
+---
+
+### 23.5 API Contracts & Versioning at Scale
+
+Once multiple services or teams consume your API, **breaking changes become incidents**.
+
+**gRPC / Protobuf — use `buf` for breaking change detection:**
+
+```yaml
+# buf.yaml
+version: v2
+breaking:
+  use:
+    - FILE # field removal, type change = CI failure
+lint:
+  use:
+    - DEFAULT
+```
+
+```yaml
+# .github/workflows/proto.yml
+- name: Buf breaking change check
+  uses: bufbuild/buf-action@v1
+  with:
+    against: "https://buf.build/myorg/myapi.git#branch=main"
+```
+
+**HTTP — version in the URL, never deprecate silently:**
+
+```
+/api/v1/users    ← stable, supported
+/api/v2/users    ← new contract, rolled out alongside v1
+```
+
+Keep v1 alive until all consumers have migrated. Track adoption via access logs before removing.
+
+**Schema registry for events:** If you publish events to Kafka, register schemas in **Confluent Schema Registry** or **Buf Schema Registry**. Consumers pin to a schema version; producers validate before publishing.
+
+---
+
+### 23.6 Feature Flags
+
+Don't ship long-lived feature branches. Merge to main behind a flag, release to production off, enable gradually.
+
+Use **OpenFeature** (vendor-neutral SDK) backed by **Flagsmith**, **Unleash**, or **LaunchDarkly**:
+
+```go
+// internal/feature/flags.go
+package feature
+
+import (
+    "context"
+    "github.com/open-feature/go-sdk/openfeature"
+)
+
+const (
+    NewPaymentFlow = "new-payment-flow"
+    V2UserSearch   = "v2-user-search"
+)
+
+func Bool(ctx context.Context, flag string, defaultVal bool) bool {
+    return openfeature.GetApiInstance().GetClient().BooleanValue(ctx, flag, defaultVal, openfeature.EvaluationContext{})
+}
+```
+
+```go
+// in usecase
+if feature.Bool(ctx, feature.NewPaymentFlow, false) {
+    return uc.processPaymentV2(ctx, order)
+}
+return uc.processPaymentV1(ctx, order)
+```
+
+**Rules:**
+
+- Every flag has an owner and a removal date in a comment or ticket.
+- Flags are removed within one sprint of full rollout — they are technical debt.
+- Never nest feature flags — it creates combinatorial explosion.
+
+---
+
+### 23.7 Managing Shared Internal Libraries
+
+When multiple services need the same code (auth parsing, telemetry setup, pagination helpers), create a **shared library module** — not a copy.
+
+```
+libs/
+├── auth/         go.mod: module platform/lib/auth
+├── telemetry/    go.mod: module platform/lib/telemetry
+└── testutil/     go.mod: module platform/lib/testutil
+```
+
+**What belongs in a shared lib:**
+
+- Auth token parsing/validation
+- OTEL setup helpers
+- `testutil`: container helpers, fixtures, assertion shortcuts
+- Pagination structs, money/currency types
+
+**What does NOT belong:**
+
+- Business domain entities — they differ per service
+- Database connection setup — config varies per service
+- Any package that would need to import from a service's `internal/`
+
+**Versioning libs:** Tag releases (`lib/auth/v1.2.3`) and let each service pin independently. Never force synchronized upgrades across all services.
+
+---
+
+### 23.8 Database at Scale
+
+| Growth stage       | Strategy                                                       |
+| ------------------ | -------------------------------------------------------------- |
+| < 5k req/s         | Single Postgres primary, pool via `pgxpool`                    |
+| 5k–50k req/s       | Read replica for read-heavy endpoints                          |
+| 50k+ req/s         | PgBouncer for connection pooling, read replicas, caching layer |
+| Sharding territory | Reconsider data model first; most teams never get here         |
+
+**Read replica pattern:**
+
+```go
+type DatabaseConfig struct {
+    PrimaryDSN  string `env:"DB_PRIMARY_DSN"  env-required:"true"`
+    ReplicaDSN  string `env:"DB_REPLICA_DSN"  env-default:""`  // optional
+    // ...
+}
+
+type DB struct {
+    Write *pgxpool.Pool
+    Read  *pgxpool.Pool  // falls back to Write if replica not configured
+}
+
+func (r *userRepository) GetByID(ctx context.Context, id uuid.UUID) (*domain.User, error) {
+    // reads go to replica
+    return r.queryUser(ctx, r.db.Read, id)
+}
+
+func (r *userRepository) Create(ctx context.Context, u *domain.User) error {
+    // writes always go to primary
+    return r.insertUser(ctx, r.db.Write, u)
+}
+```
+
+**PgBouncer in transaction mode** lets thousands of Go goroutines share a small number of actual Postgres connections. Set `MaxConns` in pgxpool to match PgBouncer's pool size, not Postgres's `max_connections`.
+
+---
+
+### 23.9 Service Mesh & Inter-Service Communication
+
+At scale, direct service-to-service HTTP/gRPC calls need:
+
+- mTLS (zero-trust between pods)
+- Retries with backoff
+- Circuit breaking
+- Distributed tracing propagation
+
+Don't implement these in your service code. Use a **service mesh**:
+
+| Option      | Complexity | When to use                                           |
+| ----------- | ---------- | ----------------------------------------------------- |
+| **Linkerd** | Low        | Kubernetes-native, minimal config, fast               |
+| **Istio**   | High       | Full control: advanced traffic policies, WASM plugins |
+| **Cilium**  | Medium     | eBPF-based, excellent for network observability       |
+
+With a mesh in place, remove retry logic and circuit breakers from application code — the sidecar handles it. Keep only business-level retries (idempotent operations).
+
+If no mesh, use **`sony/gobreaker`** for circuit breaking and **`avast/retry-go`** for retries in gRPC clients:
+
+```go
+cb := gobreaker.NewCircuitBreaker(gobreaker.Settings{
+    Name:        "order-service",
+    MaxRequests: 3,
+    Interval:    10 * time.Second,
+    Timeout:     30 * time.Second,
+    ReadyToTrip: func(counts gobreaker.Counts) bool {
+        return counts.ConsecutiveFailures > 5
+    },
+})
+
+result, err := cb.Execute(func() (any, error) {
+    return orderClient.GetOrder(ctx, req)
+})
+```
+
+---
+
+### 23.10 Code Ownership & Review Discipline
+
+Large codebases drift without ownership structure.
+
+**`CODEOWNERS`** — enforces required reviewers by path:
+
+```
+# .github/CODEOWNERS
+/internal/user/         @team-user
+/internal/payment/      @team-payments
+/libs/auth/             @team-platform
+/deploy/k8s/            @team-infra
+/migrations/            @team-backend-leads
+```
+
+**`.golangci.yml`** — non-negotiable linting rules at scale:
+
+```yaml
+linters:
+  enable:
+    - goimports
+    - govet
+    - staticcheck
+    - errcheck
+    - exhaustive # all enum switch cases covered
+    - godot # comments end with a period
+    - noctx # no http.Get without context
+    - contextcheck # context passed correctly through call chain
+    - wrapcheck # errors from external packages must be wrapped
+    - cyclop # cyclomatic complexity limit
+    - funlen # function length limit
+    - maintidx # maintainability index
+
+linters-settings:
+  cyclop:
+    max-complexity: 10
+  funlen:
+    lines: 80
+    statements: 50
+```
+
+**Pre-commit hooks** — catch issues before they hit CI:
+
+```yaml
+# .pre-commit-config.yaml
+repos:
+  - repo: local
+    hooks:
+      - id: go-fmt
+        name: gofmt
+        entry: gofmt -l -w
+        language: system
+        types: [go]
+      - id: go-vet
+        name: go vet
+        entry: go vet ./...
+        language: system
+        pass_filenames: false
+      - id: golangci-lint
+        name: golangci-lint
+        entry: golangci-lint run --fix
+        language: system
+        pass_filenames: false
+```
+
+---
+
+### 23.11 When to Extract a New Service
+
+**Do not extract prematurely.** A well-structured monolith beats a poorly-structured set of microservices every time.
+
+Extract a bounded context into its own service **only when** at least two of these are true:
+
+```
+[ ] Deployment frequency: this context needs to deploy independently of others
+[ ] Scale: this context needs different resource scaling than the rest
+[ ] Technology: this context genuinely benefits from a different runtime or DB engine
+[ ] Team: a dedicated team owns it end-to-end and the API boundary is stable
+[ ] Failure isolation: a crash here must not take down the rest of the system
+```
+
+**Migration path — strangler fig pattern:**
+
+1. Define the interface (gRPC contract or REST contract) for the context being extracted.
+2. Add an adapter in the existing service that calls the new service.
+3. Run both implementations behind a feature flag; validate parity in production.
+4. Remove the old in-process implementation once the new service is stable.
+5. Delete the feature flag and adapter.
+
+Never do a "big bang" extraction — it's always a risk and rarely necessary.
+
+---
+
+### 23.12 Large Codebase Checklist
+
+```
+[ ] Bounded contexts are domain-first packages, not layer-first
+[ ] No cross-context direct struct sharing — communicate via interfaces or events
+[ ] go.work configured for multi-module monorepo
+[ ] wire used for DI if main.go wiring exceeds ~100 lines
+[ ] buf breaking change check runs in CI on every proto change
+[ ] HTTP API versioned in URL; deprecated versions have a removal date
+[ ] Feature flags used for all risky rollouts; removed within a sprint of full rollout
+[ ] Shared code lives in versioned lib modules, not copy-pasted
+[ ] CODEOWNERS enforces team ownership on critical paths
+[ ] golangci-lint includes complexity and function length limits
+[ ] Read replica configured for read-heavy bounded contexts
+[ ] PgBouncer or equivalent in front of Postgres beyond 200 app instances
+[ ] Service mesh handles mTLS, retries, circuit breaking — not application code
+[ ] Extraction decision uses strangler-fig, not big-bang rewrite
+[ ] Build time < 3 minutes for any single service — enforce with CI timeout
+```
+
+---
 
 | Concern         | Library                                       |
 | --------------- | --------------------------------------------- |
