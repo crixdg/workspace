@@ -39,23 +39,139 @@ myservice/
 │       └── main.go           # composition root — thin
 ├── internal/
 │   ├── config/
-│   ├── domain/               # entities + repository interfaces
+│   ├── domain/               # pure entities + repository interfaces
 │   ├── usecase/              # application logic
-│   ├── repository/           # DB/cache implementations
-│   ├── handler/              # HTTP/gRPC — thin, calls usecases
-│   ├── middleware/
-│   ├── server/               # server wiring (HTTP + gRPC)
-│   └── telemetry/
+│   ├── db/                   # sqlc generated (PostgreSQL) — never edit manually
+│   ├── repository/
+│   │   ├── pgstore/          # PostgreSQL implementations
+│   │   ├── mgstore/          # MongoDB implementations (if used)
+│   │   └── rdstore/          # Redis implementations (if used)
+│   ├── handler/              # HTTP handlers — thin, calls usecases
+│   ├── rpc/                  # gRPC service implementations
+│   ├── middleware/           # auth and other scoped middleware
+│   ├── server/               # chi + gRPC server wiring
+│   ├── telemetry/            # logger, tracer setup
+│   ├── postgres/             # pgxpool.Pool constructor (package postgres)
+│   ├── mongodb/              # mongo.Client constructor (package mongodb)
+│   └── redis/                # goredis.Client constructor (package redis)
 ├── api/proto/
-├── migrations/
-└── deploy/
+├── migrations/               # SQL migration files (goose or golang-migrate)
+└── deploy/                   # Kubernetes manifests, Dockerfile
 ```
 
-### I.2 Monorepo (multiple services, same repo)
+### I.2 Multiple data stores (PostgreSQL + MongoDB + Redis)
+
+When a service uses more than one store, split `internal/repository/` by store using a suffix convention. Avoid subpackage names `postgres`, `mongo`, `redis` — they shadow the driver imports.
+
+```
+internal/
+├── domain/                   # pure entities — no store tags
+├── db/                       # sqlc generated (PostgreSQL only)
+├── repository/
+│   ├── pgstore/              # PostgreSQL implementations (package pgstore)
+│   │   ├── user.go
+│   │   ├── order.go
+│   │   └── tx.go             # TxManager
+│   ├── mgstore/              # MongoDB implementations (package mgstore)
+│   │   └── event.go
+│   └── rdstore/              # Redis implementations (package rdstore)
+│       ├── session.go
+│       └── cache.go
+├── usecase/
+├── handler/
+├── rpc/
+├── server/
+├── config/
+├── telemetry/
+├── postgres/             # pgxpool.Pool constructor (package postgres)
+├── mongodb/              # mongo.Client constructor (package mongodb)
+└── redis/                # goredis.Client constructor (package redis)
+```
+
+**Why subpackages instead of a flat `repository/` with file naming:**
+- A flat `repository/` package compiles all three store dependencies together — a binary that only uses PostgreSQL still imports the MongoDB driver
+- Subpackages let each store be an independent compilation unit and make boundaries explicit
+- Each subpackage has one import concern: `pgstore` imports `pgx`, `mgstore` imports `mongo-driver`, `rdstore` imports `go-redis`
+
+**Config:**
+```go
+type DatabaseConfig struct {
+    Postgres PostgresConfig
+    Mongo    MongoConfig
+    Redis    RedisConfig
+}
+
+type PostgresConfig struct {
+    DSN         string        `koanf:"dsn"          validate:"required,url"`
+    MaxConns    int32         `koanf:"max_conns"     validate:"min=1,max=1000"`
+    MinConns    int32         `koanf:"min_conns"     validate:"min=0"`
+    MaxLifetime time.Duration `koanf:"max_lifetime"  validate:"required"`
+    MaxIdleTime time.Duration `koanf:"max_idle_time" validate:"required"`
+}
+
+type MongoConfig struct {
+    URI      string `koanf:"uri"      validate:"required"`
+    Database string `koanf:"database" validate:"required"`
+}
+
+type RedisConfig struct {
+    Addr     string `koanf:"addr"     validate:"required"`
+    Password string `koanf:"password"`
+    DB       int    `koanf:"db"`
+}
+```
+
+**main.go — init each store in order, wire repositories separately:**
+```go
+// PostgreSQL
+pool, err := pgxpool.New(ctx, cfg.Database.Postgres.DSN)
+if err != nil { slog.Error("postgres connect", "err", err); os.Exit(1) }
+
+queries := db.New(pool)
+txm     := pgstore.NewTxManager(pool, queries)
+
+// MongoDB
+mongoClient, err := mongo.Connect(ctx, options.Client().ApplyURI(cfg.Database.Mongo.URI))
+if err != nil { slog.Error("mongo connect", "err", err); os.Exit(1) }
+
+mongoDB := mongoClient.Database(cfg.Database.Mongo.Database)
+
+// Redis
+rdb := goredis.NewClient(&goredis.Options{
+    Addr:     cfg.Database.Redis.Addr,
+    Password: cfg.Database.Redis.Password,
+    DB:       cfg.Database.Redis.DB,
+})
+if err := rdb.Ping(ctx).Err(); err != nil {
+    slog.Error("redis connect", "err", err); os.Exit(1)
+}
+
+// Repositories — each gets its own store
+userRepo    := pgstore.NewUserRepository(queries)
+orderRepo   := pgstore.NewOrderRepository(queries)
+eventRepo   := mgstore.NewEventRepository(mongoDB)
+sessionRepo := rdstore.NewSessionRepository(rdb)
+cacheRepo   := rdstore.NewCacheRepository(rdb)
+
+// Usecases + handlers as usual
+userUC  := usecase.NewUserUsecase(userRepo, cacheRepo)
+orderUC := usecase.NewOrderUsecase(orderRepo, eventRepo, txm)
+```
+
+**Shutdown order — reverse of init:**
+```go
+// after srv.Start(ctx) returns:
+rdb.Close()
+mongoClient.Disconnect(ctx)
+pool.Close()
+shutdownTracer(context.Background())
+```
+
+### I.3 Monorepo (multiple services, same repo)
 
 Two valid options depending on scale:
 
-#### I.2.1 Option A — Single `go.mod` (small team, ≤ 5 services)
+#### I.3.1 Option A — Single `go.mod` (small team, ≤ 5 services)
 
 All services share one module. Service-private code lives under `internal/<service>/`; shared infrastructure lives under `internal/shared/`.
 
@@ -97,7 +213,7 @@ myrepo/
 - `internal/account/` may NOT import `internal/notification/` ✗
 - `cmd/account/main.go` is the only file that wires `internal/account/` ✓
 
-#### I.2.2 Option B — Multi-module with `go.work` (larger team, independent deploy cycles)
+#### I.3.2 Option B — Multi-module with `go.work` (larger team, independent deploy cycles)
 
 Each service is its own Go module with its own `go.mod` and `internal/`. Shared libraries are separate modules. `go.work` glues them together locally without `replace` directives.
 
@@ -209,27 +325,39 @@ Receivers — 1-2 letter abbreviation of the type
 | Layer | Lives in | Does | Does NOT do |
 |---|---|---|---|
 | **Domain** | `internal/domain/` | Define entities and repository interfaces | Import from any other internal layer |
-| **Repository** | `internal/repository/` | Execute queries, map rows to domain types | Business decisions, HTTP, usecase logic |
+| **Repository** | `internal/repository/pgstore` `internal/repository/mgstore` `internal/repository/rdstore` | Execute queries, map store rows → domain types | Business decisions, HTTP, usecase logic |
 | **Usecase** | `internal/usecase/` | Orchestrate domain rules, call repositories/external services | HTTP concepts, DB queries, JSON |
-| **Handler** | `internal/handler/` | Decode request, validate input, call one usecase, encode response | Business logic, DB access, error wrapping |
-| **Server** | `internal/server/` | Mount routes, attach middleware, construct `http.Server` | Business logic, handler logic |
+| **HTTP Handler** | `internal/handler/` | Decode request, validate input, call one usecase, encode response | Business logic, DB access, error wrapping |
+| **gRPC Handler** | `internal/rpc/` | Decode proto request, call one usecase, encode proto response | Business logic, DB access, error wrapping |
+| **Server** | `internal/server/` | Wire chi router + gRPC server, attach middleware/interceptors | Business logic, handler logic |
 
 ---
 
 ## IV. Dependency Rules Between Layers
 
 ```
-handler → usecase → repository → (DB driver)
-                 ↘ domain ↙
+handler  ─┐
+           ├─→ usecase → pgstore/mgstore/rdstore → (drivers: pgx, mongo, redis)
+rpc      ─┘          ↘ domain ↙
 ```
 
 - `domain/` imports nothing from `internal/`
-- `repository/` imports `domain/` only
-- `usecase/` imports `domain/` + `repository/` interfaces only
+- `pgstore/` `mgstore/` `rdstore/` each import `domain/` and their own driver only — never each other
+- `usecase/` imports `domain/` + repository interfaces only — never a store package directly
 - `handler/` imports `usecase/` only
-- `main.go` imports everything (it's the glue)
+- `rpc/` imports `usecase/` only
+- `server/` imports `handler/` and `rpc/` only
+- `main.go` imports everything (composition root — the only file allowed to)
 
-**Violation detector:** if `domain/` imports `repository/`, or `usecase/` imports `handler/`, something is wrong.
+**Violation detector:**
+
+| Import | Verdict |
+|---|---|
+| `domain/` imports `pgstore/` | ✗ domain must have no store knowledge |
+| `usecase/` imports `pgstore/` | ✗ usecase talks to interfaces, not implementations |
+| `handler/` imports `pgstore/` | ✗ handlers never touch the DB |
+| `pgstore/` imports `mgstore/` | ✗ store packages are independent |
+| `rpc/` imports `handler/` | ✗ parallel layers, not sequential |
 
 ---
 
@@ -1322,11 +1450,11 @@ if err != nil {
 queries := db.New(pool)
 
 // 3. TxManager (for cross-repo transactions)
-txm := repository.NewTxManager(pool, queries)
+txm := pgstore.NewTxManager(pool, queries)
 
 // 4. Repositories — each gets the sqlc Querier
-userRepo  := repository.NewUserPostgres(queries)
-orderRepo := repository.NewOrderPostgres(queries)
+userRepo  := pgstore.NewUserRepository(queries)
+orderRepo := pgstore.NewOrderRepository(queries)
 
 // 5. Usecases
 userUC  := usecase.NewUserUsecase(userRepo)
@@ -1459,6 +1587,137 @@ pool.Config().MaxConnIdleTime = 30 * time.Minute
 - Migrations run at deploy time (not startup) — use `golang-migrate` or `goose`
 - Repository returns `domain.ErrNotFound` (not `pgx.ErrNoRows`) — translate at the boundary
 - Use `pgx` over `database/sql` for PostgreSQL — better performance and native type support
+
+### IX.5 Connection pool packages
+
+Each store's connection lifecycle lives in a dedicated package under `internal/`, parallel to `internal/telemetry/`. These packages have one job: accept a typed config struct, create and verify the client, return it. `main.go` calls them and owns cleanup.
+
+```
+internal/
+├── postgres/   # package postgres — pgxpool.Pool
+├── mongodb/    # package mongodb — mongo.Client
+└── redis/      # package redis   — goredis.Client
+```
+
+**internal/postgres/postgres.go**
+```go
+package postgres
+
+import (
+    "context"
+    "fmt"
+
+    "github.com/jackc/pgx/v5/pgxpool"
+
+    "github.com/org/myservice/internal/config"
+)
+
+func New(ctx context.Context, cfg config.PostgresConfig) (*pgxpool.Pool, error) {
+    poolCfg, err := pgxpool.ParseConfig(cfg.DSN)
+    if err != nil {
+        return nil, fmt.Errorf("parse dsn: %w", err)
+    }
+    poolCfg.MaxConns        = cfg.MaxConns
+    poolCfg.MinConns        = cfg.MinConns
+    poolCfg.MaxConnLifetime = cfg.MaxLifetime
+    poolCfg.MaxConnIdleTime = cfg.MaxIdleTime
+
+    pool, err := pgxpool.NewWithConfig(ctx, poolCfg)
+    if err != nil {
+        return nil, fmt.Errorf("create pool: %w", err)
+    }
+    if err := pool.Ping(ctx); err != nil {
+        pool.Close()
+        return nil, fmt.Errorf("ping: %w", err)
+    }
+    return pool, nil
+}
+```
+
+**internal/mongodb/mongodb.go**
+```go
+package mongodb
+
+import (
+    "context"
+    "fmt"
+
+    "go.mongodb.org/mongo-driver/mongo"
+    "go.mongodb.org/mongo-driver/mongo/options"
+
+    "github.com/org/myservice/internal/config"
+)
+
+func New(ctx context.Context, cfg config.MongoConfig) (*mongo.Client, error) {
+    client, err := mongo.Connect(ctx, options.Client().ApplyURI(cfg.URI))
+    if err != nil {
+        return nil, fmt.Errorf("connect: %w", err)
+    }
+    if err := client.Ping(ctx, nil); err != nil {
+        client.Disconnect(ctx)
+        return nil, fmt.Errorf("ping: %w", err)
+    }
+    return client, nil
+}
+```
+
+**internal/redis/redis.go**
+```go
+package redis
+
+import (
+    "context"
+    "fmt"
+
+    goredis "github.com/redis/go-redis/v9"
+
+    "github.com/org/myservice/internal/config"
+)
+
+// New creates a Redis client and verifies connectivity. Import go-redis as goredis
+// inside this file to avoid a name conflict with the package itself.
+func New(ctx context.Context, cfg config.RedisConfig) (*goredis.Client, error) {
+    rdb := goredis.NewClient(&goredis.Options{
+        Addr:     cfg.Addr,
+        Password: cfg.Password,
+        DB:       cfg.DB,
+    })
+    if err := rdb.Ping(ctx).Err(); err != nil {
+        rdb.Close()
+        return nil, fmt.Errorf("ping: %w", err)
+    }
+    return rdb, nil
+}
+```
+
+**main.go — each store init becomes a single call:**
+```go
+pool, err := postgres.New(ctx, cfg.Database.Postgres)
+if err != nil {
+    slog.Error("postgres", "err", err)
+    os.Exit(1)
+}
+
+mongoClient, err := mongodb.New(ctx, cfg.Database.Mongo)
+if err != nil {
+    slog.Error("mongo", "err", err)
+    os.Exit(1)
+}
+
+rdb, err := redis.New(ctx, cfg.Database.Redis)
+if err != nil {
+    slog.Error("redis", "err", err)
+    os.Exit(1)
+}
+```
+
+**Rules:**
+- One package per store, one exported `New()` function — no other exports needed
+- `New()` always pings before returning — fail fast at startup, not at first query
+- Return the driver's native type (`*pgxpool.Pool`, `*mongo.Client`, `*goredis.Client`) — no wrapper interface at this layer
+- Cleanup (`.Close()`, `.Disconnect()`) stays in `main.go` — these packages only handle construction
+- Pool tuning (MaxConns, MinConns, timeouts) comes from config — never hardcoded
+- `internal/redis/` is package `redis`; alias the go-redis import as `goredis` inside the file to avoid the name conflict
 
 ---
 
@@ -1988,52 +2247,100 @@ if err := g.Wait(); err != nil {
 
 **Responsibilities (in order):**
 1. Load and validate config — exit immediately on failure
-2. Initialize infrastructure — logger, tracer, DB pool, Redis client
+2. Initialize infrastructure — logger, tracer, DB pools — in dependency order
 3. Wire dependencies — construct repos → usecases → handlers bottom-up
-4. Start the server — delegate to `internal/server`, no inline `http.ListenAndServe`
-5. Block on `os.Signal` and drive graceful shutdown
+4. Start the server — `srv.Start(ctx)` blocks until shutdown
+5. Tear down infrastructure in reverse init order after `Start` returns
 
 **Hard rules:**
 - No business logic in `main.go`
 - No route definitions in `main.go`
-- No retries, migration runs, or complex startup sequences in `main.go` — those live in `internal/`
-- Target: ≤ 80 lines
+- No retries, migration runs, or complex startup sequences — those live in `internal/`
+- Target: ≤ 100 lines
 
 **Template:**
 ```go
 func main() {
-    cfg, err := config.Load()
+    // 1. Config
+    configPath := flag.String("config", "config.yaml", "path to config file")
+    flag.Parse()
+    cfg, err := config.Load(*configPath)
     if err != nil {
-        slog.Error("config", "err", err)
+        log.Fatalf("config: %v", err) // stdlib — slog not ready yet
+    }
+
+    // 2. Logger — before anything else that may log
+    logger := telemetry.NewLogger(cfg.Log, cfg.App)
+    slog.SetDefault(logger)
+
+    // 3. Tracer — before any instrumented client (pgx/mongo/redis bind at New() time)
+    shutdownTracer, err := telemetry.Setup(context.Background(), cfg.OTEL)
+    if err != nil {
+        slog.Error("tracer", "err", err)
         os.Exit(1)
     }
 
-    shutdown, err := telemetry.Setup(context.Background(), cfg.OTEL)
+    // 4. PostgreSQL
+    pool, err := postgres.New(ctx, cfg.Database.Postgres)
     if err != nil {
-        slog.Error("telemetry", "err", err)
+        slog.Error("postgres", "err", err)
+        os.Exit(1)
+    }
+    queries := db.New(pool)
+    txm     := pgstore.NewTxManager(pool, queries)
+
+    // 5. MongoDB
+    mongoClient, err := mongodb.New(ctx, cfg.Database.Mongo)
+    if err != nil {
+        slog.Error("mongo", "err", err)
+        os.Exit(1)
+    }
+    mongoDB := mongoClient.Database(cfg.Database.Mongo.Database)
+
+    // 6. Redis
+    rdb, err := redis.New(ctx, cfg.Database.Redis)
+    if err != nil {
+        slog.Error("redis", "err", err)
         os.Exit(1)
     }
 
-    db, err := postgres.New(cfg.Database)
+    // 7. Wire bottom-up: repos → usecases → handlers
+    userRepo    := pgstore.NewUserRepository(queries)
+    orderRepo   := pgstore.NewOrderRepository(queries)
+    eventRepo   := mgstore.NewEventRepository(mongoDB)
+    sessionRepo := rdstore.NewSessionRepository(rdb)
+
+    userUC  := usecase.NewUserUsecase(userRepo, sessionRepo)
+    orderUC := usecase.NewOrderUsecase(orderRepo, eventRepo, txm)
+
+    userH  := handler.NewUserHandler(userUC)
+    orderH := handler.NewOrderHandler(orderUC)
+
+    // 8. Server
+    srv, err := server.New(cfg.Server,
+        &server.Handlers{User: userH, Order: orderH},
+        &server.Services{User: rpc.NewUserService(userUC)},
+    )
     if err != nil {
-        slog.Error("db", "err", err)
+        slog.Error("server init", "err", err)
         os.Exit(1)
     }
-
-    userRepo := repository.NewUserPostgres(db)
-    userUC   := usecase.NewUserUsecase(userRepo)
-    userH    := handler.NewUserHandler(userUC)
-
-    srv := server.New(cfg, userH)
 
     ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
     defer stop()
 
-    go srv.Start()
-    <-ctx.Done()
-    srv.Shutdown(cfg.HTTP.ShutdownTimeout)
-    db.Close()
-    shutdown(context.Background())
+    handler.SetReady(true)
+
+    // 9. Start blocks until SIGTERM or a server failure — shutdown is handled internally
+    if err := srv.Start(ctx); err != nil {
+        slog.Error("server", "err", err)
+    }
+
+    // 10. Teardown in reverse init order
+    rdb.Close()
+    mongoClient.Disconnect(context.Background())
+    pool.Close()
+    shutdownTracer(context.Background())
 }
 ```
 
@@ -2047,12 +2354,13 @@ Init order is a dependency graph. Getting it wrong causes **silent** production 
 
 ```
 config
-  └── logger          needs: log level from config
-        └── tracer    needs: logger for SDK errors; must register global provider BEFORE any client
-              ├── db  needs: tracer already registered — pgx otel driver binds at New() time
-              └── redis  same — redis otel hooks bind at New() time
-                    └── repos → usecases → handlers
-                          └── server  nothing accepts traffic until fully wired
+  └── logger            needs: log level from config
+        └── tracer      needs: logger for SDK errors; global OTEL provider must be registered BEFORE any client
+              ├── postgres   pgx otel driver binds at pgxpool.New() — tracer must exist first
+              ├── mongo      mongo otel driver same
+              ├── redis      redis otel hooks same
+              └── repos → usecases → handlers → server
+                                                    └── SetReady(true) — only after full wiring
 ```
 
 ### XV.2 Why each step must come before the next
@@ -2060,87 +2368,49 @@ config
 | Step | Must come before | Failure if violated |
 |---|---|---|
 | `config.Load()` | everything | Nothing has valid values |
-| `logger` init | everything else | Startup errors go to unstructured stderr — not captured by log aggregator (Loki, Datadog). Silent in prod. |
-| `tracer` / OTEL global provider | `postgres.New()`, `redis.New()`, any gRPC client | pgx/redis/grpc otel drivers call `otel.GetTracerProvider()` **at construction time**. If not yet registered, they bind permanently to the no-op provider. DB and cache spans are **silently dropped for the entire process lifetime** — no crash, no warning. |
-| `db` connected | `server.Start()` | Cold-start requests hit an uninitialized pool → 500s. Kubernetes marks the pod `Ready` before it actually is. |
-| `server.Start()` | signal block | Process exits before serving anything. |
+| `logger` init | everything else | Startup errors go to unstructured stderr — not captured by log aggregator. Silent in prod. |
+| `tracer` / OTEL global provider | `pgxpool.New()`, `mongo.Connect()`, `redis.NewClient()`, any gRPC client | These drivers call `otel.GetTracerProvider()` at construction time. If not yet registered they permanently bind to the no-op provider — spans are silently dropped for the entire process lifetime. |
+| all stores connected | `server.New()` | Cold-start requests hit uninitialised pools → 500s before `SetReady` can even fire |
+| `SetReady(true)` | `srv.Start(ctx)` | Readiness probe returns 503 while the server is already serving; or worse, traffic arrives before wiring is complete |
 
-### XV.3 Correct order with annotated template
+### XV.3 Correct order
 
-```go
-func main() {
-    // 1. Config — everything else depends on values from here
-    cfg, err := config.Load()
-    if err != nil {
-        log.Fatalf("config: %v", err)  // stdlib log — slog not ready yet
-    }
+See §XIV for the full annotated template. Summary:
 
-    // 2. Logger — must exist before any error can be structured-logged
-    logger := telemetry.NewLogger(cfg.App)
-    slog.SetDefault(logger)
-
-    // 3. Tracer — register global OTEL provider before ANY instrumented client
-    //    pgx/redis/grpc call otel.GetTracerProvider() at New()
-    //    if called before this line they permanently bind to the no-op provider
-    shutdownTracer, err := telemetry.Setup(context.Background(), cfg.OTEL)
-    if err != nil {
-        slog.Error("tracer setup failed", "err", err)
-        os.Exit(1)
-    }
-
-    // 4. DB — after tracer so connection spans are captured
-    db, err := postgres.New(cfg.Database)
-    if err != nil {
-        slog.Error("db connect failed", "err", err)
-        os.Exit(1)
-    }
-
-    // 5. Redis — after tracer, same reason; less critical than DB
-    rdb, err := redis.New(cfg.Redis)
-    if err != nil {
-        slog.Error("redis connect failed", "err", err)
-        os.Exit(1)
-    }
-
-    // 6. Wire bottom-up: repos → usecases → handlers
-    userRepo := repository.NewUserPostgres(db, rdb)
-    userUC   := usecase.NewUserUsecase(userRepo)
-    userH    := handler.NewUserHandler(userUC)
-
-    // 7. Server last — no traffic until fully wired
-    srv := server.New(cfg, userH)
-
-    ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
-    defer stop()
-
-    // 8. Mark ready AFTER full init — readyz probe checks this flag
-    handler.SetReady(true)
-
-    go srv.Start()
-    <-ctx.Done()
-
-    // 9. Shutdown in REVERSE init order
-    srv.Shutdown(cfg.HTTP.ShutdownTimeout)
-    rdb.Close()
-    db.Close()
-    shutdownTracer(context.Background())
-}
+```
+1. config.Load()
+2. telemetry.NewLogger()  →  slog.SetDefault()
+3. telemetry.Setup()          (OTEL tracer)
+4. postgres.New()  →  db.New()  →  pgstore.NewTxManager()
+5. mongodb.New()
+6. redis.New()
+7. repos → usecases → handlers
+8. server.New()
+9. handler.SetReady(true)
+10. srv.Start(ctx)             ← blocks; shutdown handled internally via watcher goroutine
+11. [Start returns]
+12. rdb.Close()
+13. mongoClient.Disconnect()
+14. pool.Close()
+15. shutdownTracer()
 ```
 
 ### XV.4 Shutdown must be reverse init order
 
 | Wrong shutdown | Production failure |
 |---|---|
-| Close DB before server drains | In-flight requests get "conn closed" DB errors |
-| Flush traces before DB closes | Last DB spans dropped — latency spikes at shutdown invisible |
-| Close Redis before DB | Cache-backed queries fail on requests still processing |
+| Close PostgreSQL before server drains | In-flight requests get "conn closed" errors |
+| Close MongoDB before server drains | In-flight document writes fail mid-request |
+| Flush traces before stores close | Final DB/cache spans dropped — latency spikes at shutdown invisible |
+| Close Redis before PostgreSQL | Cache-backed queries fail on requests still processing |
 
 **Correct shutdown sequence:**
 ```
-1. srv.Shutdown(timeout)    — stop intake; wait for in-flight requests to finish
-2. rdb.Close()              — close cache
-3. db.Close()               — close DB (all queries done)
-4. shutdownTracer(ctx)      — flush spans/metrics last
+1. srv.Start(ctx) returns    — watcher goroutine already drained HTTP + gRPC
+2. rdb.Close()               — Redis
+3. mongoClient.Disconnect()  — MongoDB
+4. pool.Close()              — PostgreSQL (all queries done)
+5. shutdownTracer(ctx)       — flush spans/metrics last
 ```
 
 ### XV.5 Kubernetes readiness probe
