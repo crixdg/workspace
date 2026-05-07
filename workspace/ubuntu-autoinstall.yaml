@@ -1,0 +1,657 @@
+#cloud-config
+# ============================================================
+# Ubuntu Unattended Autoinstall
+# Compatible with: Ubuntu 22.04+ (Subiquity installer)
+#
+# Usage:
+#   Boot Ubuntu ISO → at GRUB menu, edit the linux line to add:
+#     autoinstall ds=nocloud;s=/cdrom/
+#   Place this file as user-data (no extension) alongside a
+#   zero-byte meta-data file on the ISO or a FAT32 USB volume.
+#
+#   Or use: ubuntu-autoinstall-generator / cloud-localds
+#
+# Before use:
+#   1. Set identity.password below (generate: openssl passwd -6 'yourpassword')
+#   2. Review storage layout and adjust disk target if needed
+#   3. Add SSH authorized keys if desired
+# ============================================================
+
+autoinstall:
+  version: 1
+
+  # ── Locale & keyboard ────────────────────────────────────────
+  locale: en_US.UTF-8
+  keyboard:
+    layout: us
+    variant: ''
+
+  # ── Identity ─────────────────────────────────────────────────
+  # Generate hashed password: openssl passwd -6 'yourpassword'
+  identity:
+    hostname: dev-machine
+    realname: Crix Dang
+    username: baod
+    password: '$6$CHANGEME$CHANGEME'  # REPLACE with real hash
+
+  # ── SSH ──────────────────────────────────────────────────────
+  ssh:
+    install-server: true
+    allow-pw: true
+    authorized-keys: []
+    # authorized-keys:
+    #   - 'ssh-ed25519 AAAA... you@machine'
+
+  # ── Network (DHCP on first ethernet) ─────────────────────────
+  network:
+    version: 2
+    ethernets:
+      any:
+        match:
+          name: 'en*'
+        dhcp4: true
+
+  # ── Storage: LVM on largest disk ─────────────────────────────
+  # ADJUST: replace 'largest' with a specific disk if needed,
+  # e.g.  match: {path: /dev/sda}
+  storage:
+    layout:
+      name: lvm
+      match:
+        size: largest
+
+  # ── APT packages ─────────────────────────────────────────────
+  packages:
+    # Core utilities
+    - git
+    - curl
+    - wget
+    - unzip
+    - xclip
+    - xsel
+    - mercurial
+    # Shell & terminal
+    - zsh
+    - tmux
+    # Build tools
+    - build-essential
+    - gcc-14
+    - g++-14
+    - make
+    - binutils
+    - bison
+    - clang-format
+    # Java LTS
+    - openjdk-17-jdk
+    # Fonts & GNOME utilities
+    - fonts-ubuntu
+    - dconf-cli
+    - gnome-terminal
+
+  # ── Late commands (run as root during install, inside target) ─
+  late-commands:
+    # Default shell → zsh
+    - curtin in-target -- chsh -s /usr/bin/zsh baod
+
+    # ~/.local/bin (needed early for kubectl, minikube, etc.)
+    - curtin in-target -- sudo -u baod mkdir -p /home/baod/.local/bin
+
+    # Oh My Zsh (unattended, no interactive prompt)
+    - curtin in-target -- sudo -u baod bash -c
+        'sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+         "" --unattended'
+
+    # zsh-autosuggestions & zsh-syntax-highlighting
+    - curtin in-target -- sudo -u baod git clone --depth=1
+        https://github.com/zsh-users/zsh-autosuggestions
+        /home/baod/.oh-my-zsh/custom/plugins/zsh-autosuggestions
+    - curtin in-target -- sudo -u baod git clone --depth=1
+        https://github.com/zsh-users/zsh-syntax-highlighting
+        /home/baod/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
+
+    # Neovim (latest release binary)
+    - curtin in-target -- sudo -u baod bash -c '
+        mkdir -p ~/.local/nvim &&
+        curl -Lo /tmp/nvim.tar.gz
+          https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz &&
+        tar -C ~/.local/nvim -xzf /tmp/nvim.tar.gz &&
+        rm /tmp/nvim.tar.gz'
+
+    # GVM (Go Version Manager)
+    - curtin in-target -- sudo -u baod bash -c
+        'bash < <(curl -s -S -L
+          https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer)'
+
+    # NVM (Node Version Manager) 0.40.1
+    - curtin in-target -- sudo -u baod bash -c
+        'curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash'
+
+    # Miniconda3 (Python)
+    - curtin in-target -- sudo -u baod bash -c '
+        mkdir -p ~/miniconda3 &&
+        wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+          -O ~/miniconda3/miniconda.sh &&
+        bash ~/miniconda3/miniconda.sh -b -u -p ~/miniconda3 &&
+        rm ~/miniconda3/miniconda.sh'
+
+    # Gradle 9.2.1
+    - curtin in-target -- sudo -u baod bash -c '
+        mkdir -p ~/.local/gradle &&
+        wget https://services.gradle.org/distributions/gradle-9.2.1-bin.zip
+          -O /tmp/gradle.zip &&
+        unzip -q /tmp/gradle.zip -d ~/.local/gradle &&
+        rm /tmp/gradle.zip'
+
+    # Minikube
+    - curtin in-target -- sudo -u baod bash -c '
+        wget https://github.com/kubernetes/minikube/releases/latest/download/minikube-linux-amd64
+          -O ~/.local/bin/minikube &&
+        chmod +x ~/.local/bin/minikube'
+
+    # kubectl (stable release)
+    - curtin in-target -- bash -c '
+        K8S_VER=$(curl -Ls https://dl.k8s.io/release/stable.txt) &&
+        curl -Lo /tmp/kubectl
+          "https://dl.k8s.io/release/${K8S_VER}/bin/linux/amd64/kubectl" &&
+        install -o baod -g baod -m 0755 /tmp/kubectl /home/baod/.local/bin/kubectl &&
+        rm /tmp/kubectl'
+
+    # Helm (via official get script → move to user bin)
+    - curtin in-target -- bash -c
+        'curl -fsSL https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash'
+    - curtin in-target -- bash -c
+        'install -o baod -g baod -m 0755 /usr/local/bin/helm /home/baod/.local/bin/helm'
+
+    # TPM (Tmux Plugin Manager)
+    - curtin in-target -- sudo -u baod git clone --depth=1
+        https://github.com/tmux-plugins/tpm /home/baod/.tmux/plugins/tpm
+
+    # C++ workspace scripts
+    - curtin in-target -- sudo -u baod mkdir -p /home/baod/.local/bin/cpp
+
+  # ── user-data: cloud-init runs on first boot ─────────────────
+  user-data:
+    write_files:
+
+      # ── .zshrc ───────────────────────────────────────────────
+      - path: /home/baod/.zshrc
+        owner: baod:baod
+        permissions: '0644'
+        content: |
+          # zmodload zsh/zprof  # uncomment + add zprof at bottom to profile startup
+
+          export ZSH="$HOME/.oh-my-zsh"
+          export ZSH_CACHE_DIR="$HOME/.cache/zsh"
+          export ZSH_CUSTOM="$ZSH/custom"
+
+          typeset -U path PATH
+          DISABLE_AUTO_UPDATE="true"
+          DISABLE_MAGIC_FUNCTIONS="true"
+          ZSH_DISABLE_COMPFIX=true
+          DISABLE_COMPFIX="true"
+          DISABLE_AUTO_TITLE="true"
+          skip_global_compinit=1
+
+          if command -v hostname &>/dev/null; then
+            hostname=$(hostname)
+            echo -ne "\033]0;$hostname\007"
+          fi
+
+          [ -d "$ZSH_CACHE_DIR" ] || mkdir -p "$ZSH_CACHE_DIR"
+
+          ZSH_THEME="keiron"
+
+          ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20
+          ZSH_AUTOSUGGEST_USE_ASYNC=1
+
+          plugins=(git docker z)
+          [ -d "$ZSH_CUSTOM/plugins/zsh-autosuggestions" ]    && plugins+=(zsh-autosuggestions)
+          [ -d "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting" ] && plugins+=(zsh-syntax-highlighting)
+
+          [ -f "$ZSH/oh-my-zsh.sh" ] && source "$ZSH/oh-my-zsh.sh"
+
+          ZSH_COMPDUMP="${ZDOTDIR:-$HOME}/.zcompdump"
+
+          # ── Aliases ──────────────────────────────────────────
+          alias reload="exec zsh"
+          alias ll='ls -hlF'
+          alias la='ls -A'
+          alias l='ls -CF'
+
+          if [ -x /usr/bin/dircolors ] && [ -s "$HOME/.dircolors" ]; then
+            eval "$(dircolors -b ~/.dircolors)"
+            alias ls='ls --color=auto'
+            alias grep='grep --color=auto'
+            alias fgrep='fgrep --color=auto'
+            alias egrep='egrep --color=auto'
+          fi
+
+          # ── Key bindings ─────────────────────────────────────
+          bindkey -r '\el'
+
+          # ── PATH base ────────────────────────────────────────
+          [ -d "$HOME/bin" ]        && path=("$HOME/bin" $path)
+          [ -d "$HOME/.local/bin" ] && path=("$HOME/.local/bin" $path)
+
+          # ── Neovim ───────────────────────────────────────────
+          path=("$HOME/.local/nvim/nvim-linux-x86_64/bin" $path)
+          alias vim="nvim"
+          alias vi="nvim"
+
+          # ── Go (GVM) ─────────────────────────────────────────
+          [[ -s "$HOME/.gvm/scripts/gvm" ]] && source "$HOME/.gvm/scripts/gvm"
+
+          # ── Node.js (NVM) ────────────────────────────────────
+          export NVM_DIR="$HOME/.nvm"
+          [ -s "$NVM_DIR/nvm.sh" ]            && \. "$NVM_DIR/nvm.sh"
+          [ -s "$NVM_DIR/bash_completion" ]   && \. "$NVM_DIR/bash_completion"
+
+          # ── Python (Miniconda) ───────────────────────────────
+          export MINICONDA_HOME="$HOME/miniconda3"
+          if [ -d "$MINICONDA_HOME" ]; then
+            path=("$MINICONDA_HOME/bin" $path)
+          fi
+          alias start_conda="source $MINICONDA_HOME/bin/activate"
+          alias stop_conda="conda deactivate"
+
+          # ── Java / Gradle ────────────────────────────────────
+          export GRADLE_HOME="$HOME/.local/gradle/gradle-9.2.1"
+          if [ -d "$GRADLE_HOME" ]; then
+            path=("$GRADLE_HOME/bin" $path)
+          fi
+
+          # ── C++ scripts ──────────────────────────────────────
+          path=("$HOME/.local/bin/cpp" $path)
+
+          # ── Tmux auto-attach (skip inside SSH / IDEs) ────────
+          if [[ -z "$SSH_CONNECTION" ]]; then
+            if command -v tmux >/dev/null 2>&1; then
+              if [ -z "$TMUX" ] \
+                && [ -n "$TERM" ] \
+                && [ "$TERM_PROGRAM" != "vscode" ] \
+                && [ "$TERMINAL_EMULATOR" != "JetBrains-JediTerm" ]; then
+                exec tmux new-session -AD
+              fi
+            fi
+          fi
+
+      # ── keiron zsh theme ─────────────────────────────────────
+      - path: /home/baod/.oh-my-zsh/custom/themes/keiron.zsh-theme
+        owner: baod:baod
+        permissions: '0644'
+        content: |
+          ssh_connection_prompt() {
+            if [[ -n $SSH_CONNECTION ]]; then
+              echo "%{$fg[magenta]%}[%n@$(hostname -f)]%{$reset_color%} "
+            fi
+          }
+
+          PROMPT='$(ssh_connection_prompt)'
+          PROMPT+='$(virtualenv_prompt_info)'
+          PROMPT+="%(?:%{$fg_bold[green]%}%1{➜%} :%{$fg_bold[red]%}%1{➜%} ) %{$reset_color%}%{$fg[cyan]%}%c%{$reset_color%}"
+          PROMPT+=' $(git_prompt_info)'
+
+          ZSH_THEME_VIRTUALENV_PREFIX="%{$fg_bold[yellow]%}(%{$reset_color%}"
+          ZSH_THEME_VIRTUALENV_SUFFIX="%{$fg_bold[yellow]%})%{$reset_color%}"
+
+          ZSH_THEME_GIT_PROMPT_PREFIX="%{$fg_bold[blue]%}git:(%{$fg[red]%}"
+          ZSH_THEME_GIT_PROMPT_SUFFIX="%{$reset_color%} "
+          ZSH_THEME_GIT_PROMPT_DIRTY="%{$fg[blue]%}) %{$fg[yellow]%}%1{✗%}"
+          ZSH_THEME_GIT_PROMPT_CLEAN="%{$fg[blue]%})"
+
+      # ── .tmux.conf ───────────────────────────────────────────
+      - path: /home/baod/.tmux.conf
+        owner: baod:baod
+        permissions: '0644'
+        content: |
+          # ── Plugins ──────────────────────────────────────────
+          set -g @plugin 'tmux-plugins/tpm'
+          set -g @plugin 'tmux-plugins/tmux-sidebar'
+          set -g @sidebar-width 100
+          set -g @sidebar-tree-command 'tree -L 2 -C --dirsfirst --noreport'
+          set -g @sidebar-tree-pager 'less -R -S -M'
+          run '~/.tmux/plugins/tpm/tpm'
+
+          # ── Colors (Gruvbox dark) ─────────────────────────────
+          bg0="#282828"
+          bg1="#3c3836"
+          bg2="#504945"
+          fg1="#ebdbb2"
+          yellow="#d79921"
+          blue="#458588"
+          purple="#b16286"
+          aqua="#689d6a"
+          orange="#d65d0e"
+          green="#98971a"
+          red="#cc241d"
+
+          # ── Server ───────────────────────────────────────────
+          set -sg default-terminal "tmux-256color"
+          set -sg escape-time 0
+          set -sg focus-events on
+          set -asg terminal-overrides ",*:Tc"
+
+          # ── Session ──────────────────────────────────────────
+          set -g base-index 1
+          set -g mouse on
+          set -g renumber-windows on
+          set -g repeat-time 600
+          set -g history-limit 10000
+
+          set -g status on
+          set -g status-bg "$bg1"
+          set -g status-fg "$fg1"
+          set -g status-interval 15
+          set -g status-justify left
+          set -g status-position top
+          set -g status-right-length 100
+          set -g status-style "bg=$bg1,fg=$fg1"
+          set -g status-left "#[bg=$yellow,fg=$bg0,bold] #S:#P #[bg=$bg1,fg=$fg1] "
+          set -g status-right "#(\
+              if [ \"\$(tmux display-message -p '#{pane_in_mode}')\" = 1 ]; then \
+                  echo '#[bg=$blue,fg=$bg0] COPY '; \
+              elif [ \"\$(tmux display-message -p '#{client_prefix}')\" = 1 ]; then \
+                  echo '#[bg=$purple,fg=$bg0] PREFIX '; \
+              elif [ \"\$(tmux display-message -p '#{window_zoomed_flag}')\" = 1 ]; then \
+                  echo '#[bg=$orange,fg=$bg0] ZOOM '; \
+              elif [ \"\$(tmux display-message -p '#{?pane_synchronized,1,0}')\" = 1 ]; then \
+                  echo '#[bg=$red,fg=$fg1] SYNC '; \
+              else \
+                  echo '#[bg=$green,fg=$bg0] NORMAL '; \
+              fi \
+          )#[bg=$bg1,fg=$fg1] %Y-%m-%d %H:%M #[bold]#(whoami)@#(hostname -f)#[nobold] "
+          set -g status-keys vi
+
+          set -g visual-activity off
+          set -g visual-bell off
+          set -g visual-silence off
+
+          # ── Window & Pane ────────────────────────────────────
+          setw -g cursor-style blinking-bar
+          setw -g clock-mode-colour "$blue"
+          setw -g clock-mode-style 24
+          setw -g mode-keys vi
+          setw -g mode-style "bg=$bg2,fg=$fg1"
+          setw -g monitor-activity on
+          setw -g monitor-bell on
+          setw -g monitor-silence 30
+          setw -g pane-active-border-style "fg=$yellow"
+          setw -g pane-base-index 1
+          setw -g pane-border-style "fg=$bg2"
+          setw -g window-status-style "bg=$bg1,fg=#bdae93"
+          setw -g window-status-current-style "bg=$bg0,fg=$orange,bold"
+          setw -g window-status-activity-style "bg=$bg1,fg=$aqua"
+          setw -g window-status-format " #I:#W#F "
+          setw -g window-status-current-format " #I:#W#F "
+          setw -g window-status-separator ""
+
+          # ── Key bindings ─────────────────────────────────────
+          bind r source-file ~/.tmux.conf \; display-message "Config reloaded"
+
+          bind-key -T prefix \\ split-window -h -c "#{pane_current_path}"
+          bind | split-window -h -b -c "#{pane_current_path}"
+          bind - split-window -v -c "#{pane_current_path}"
+          bind _ split-window -v -b -c "#{pane_current_path}"
+          unbind '"'
+          unbind %
+
+          bind-key -n C-w kill-pane
+          bind-key -n M-w kill-window
+
+          bind -n M-h select-pane -L
+          bind -n M-l select-pane -R
+          bind -n M-k select-pane -U
+          bind -n M-j select-pane -D
+
+          bind -r H resize-pane -L 5
+          bind -r L resize-pane -R 5
+          bind -r K resize-pane -U 5
+          bind -r J resize-pane -D 5
+
+          bind -n M-1 select-window -t 1
+          bind -n M-2 select-window -t 2
+          bind -n M-3 select-window -t 3
+          bind -n M-4 select-window -t 4
+          bind -n M-5 select-window -t 5
+          bind -n M-6 select-window -t 6
+          bind -n M-7 select-window -t 7
+          bind -n M-8 select-window -t 8
+          bind -n M-9 select-window -t 9
+
+          bind -T copy-mode-vi v send-keys -X begin-selection
+          bind -T copy-mode-vi y send -X copy-pipe-and-cancel "xclip -in -selection clipboard"
+
+      # ── .gitconfig ───────────────────────────────────────────
+      - path: /home/baod/.gitconfig
+        owner: baod:baod
+        permissions: '0644'
+        content: |
+          [core]
+            editor = vim
+            autocrlf = input
+            fileMode = false
+          [init]
+            defaultBranch = main
+          [credential]
+            helper = store
+          [push]
+            default = current
+          [pull]
+            default = current
+          [alias]
+            st = status
+            ci = commit
+            co = checkout
+            br = branch
+
+      # ── Neovim init.lua ──────────────────────────────────────
+      - path: /home/baod/.config/nvim/init.lua
+        owner: baod:baod
+        permissions: '0644'
+        content: |
+          local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+          if not (vim.uv or vim.loop).fs_stat(lazypath) then
+            local lazyrepo = "https://github.com/folke/lazy.nvim.git"
+            local out = vim.fn.system({ "git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath })
+            if vim.v.shell_error ~= 0 then
+              vim.api.nvim_echo({
+                { "Failed to clone lazy.nvim:\n", "ErrorMsg" },
+                { out, "WarningMsg" },
+                { "\nPress any key to exit..." },
+              }, true, {})
+              vim.fn.getchar()
+              os.exit(1)
+            end
+          end
+          vim.opt.rtp:prepend(lazypath)
+
+          vim.g.mouse = "a"
+          vim.g.mapleader = " "
+          vim.g.maplocalleader = "\\"
+
+          vim.opt.number = true
+          vim.cmd([[highlight LineNr ctermfg=8]])
+          vim.opt.scrolloff = 7
+          vim.opt.signcolumn = "yes"
+          vim.opt.splitright = true
+          vim.opt.splitbelow = true
+
+          vim.api.nvim_create_autocmd("FileType", {
+            pattern = { "c", "cpp" },
+            callback = function()
+              vim.opt_local.foldmethod = "syntax"
+              vim.opt_local.foldlevel = 99
+            end,
+          })
+          vim.opt.foldenable = true
+
+          vim.opt.expandtab = true
+          vim.opt.tabstop = 2
+          vim.opt.shiftwidth = 2
+          vim.opt.softtabstop = 2
+          vim.opt.smartindent = true
+
+          vim.keymap.set('v', '<leader>y', '"+y',  { noremap = true, silent = true })
+          vim.keymap.set('n', '<leader>y', '"+yy', { noremap = true, silent = true })
+          vim.keymap.set("n", "<C-s>", ":w<CR>",          { noremap = true, silent = true })
+          vim.keymap.set("i", "<C-s>", "<Esc>:w<CR>a",    { noremap = true, silent = true })
+          vim.keymap.set("v", "<C-s>", "<Esc>:w<CR>gv",   { noremap = true, silent = true })
+          vim.keymap.set("n", "<C-_>", "gcc", { remap = true })
+          vim.keymap.set("v", "<C-_>", "gc",  { remap = true })
+          vim.keymap.set("n", "<A-S-j>", ":m .+1<CR>==",        { noremap = true, silent = true })
+          vim.keymap.set("n", "<A-S-k>", ":m .-2<CR>==",        { noremap = true, silent = true })
+          vim.keymap.set("v", "<A-S-j>", ":m '>+1<CR>gv=gv",   { noremap = true, silent = true })
+          vim.keymap.set("v", "<A-S-k>", ":m '<-2<CR>gv=gv",   { noremap = true, silent = true })
+
+          vim.opt.ignorecase = true
+          vim.opt.smartcase = true
+          vim.opt.hlsearch = true
+          vim.opt.incsearch = true
+          vim.keymap.set("n", "<Esc>", ":noh<CR>", { silent = true })
+
+          vim.opt.guicursor =
+            "n-v-c:block-Cursor/lCursor," ..
+            "ve:ver35-Cursor," ..
+            "o:hor50-Cursor," ..
+            "i-ci:ver25-Cursor/lCursor," ..
+            "r-cr:hor20-Cursor/lCursor," ..
+            "sm:block-Cursor," ..
+            "a:blinkwait175-blinkoff150-blinkon175"
+
+          vim.api.nvim_create_autocmd("VimLeave", {
+            callback = function()
+              vim.opt.guicursor = "a:ver25-Cursor-blinkwait700-blinkon400-blinkoff250"
+            end,
+          })
+
+          -- Built-in LSP: clangd for C/C++
+          vim.api.nvim_create_autocmd("FileType", {
+            pattern = { "c", "cpp", "cc" },
+            callback = function(ev)
+              local clients = vim.lsp.get_clients({ bufnr = ev.buf, name = "clangd" })
+              if #clients > 0 then return end
+              vim.lsp.start({
+                name = "clangd",
+                cmd = { "clangd" },
+                root_dir = vim.fn.getcwd(),
+                on_attach = function(_, bufnr)
+                  local opts = { noremap = true, silent = true, buffer = bufnr }
+                  vim.keymap.set("n", "<F2>", vim.lsp.buf.rename, opts)
+                end,
+              })
+            end,
+          })
+
+          vim.api.nvim_create_autocmd("CursorHold", {
+            callback = function()
+              local opts = {
+                focusable = false,
+                close_events = { "BufLeave", "CursorMoved", "InsertEnter", "FocusLost" },
+                border = 'rounded',
+                source = 'always',
+                prefix = ' ',
+              }
+              vim.diagnostic.open_float(nil, opts)
+            end
+          })
+          vim.opt.updatetime = 250
+
+          -- Auto-save C/C++ on focus loss
+          vim.api.nvim_create_autocmd({ "FocusLost", "BufLeave" }, {
+            pattern = { "*.c", "*.cpp", "*.cc", "*.h", "*.hpp" },
+            callback = function()
+              if vim.bo.modified and not vim.bo.readonly and vim.fn.expand("%") ~= "" then
+                vim.cmd("silent! write")
+              end
+            end,
+          })
+
+          -- Format C/C++ on save via clangd LSP
+          vim.api.nvim_create_autocmd("BufWritePre", {
+            pattern = { "*.c", "*.cpp", "*.cc", "*.h", "*.hpp" },
+            callback = function()
+              vim.lsp.buf.format({ async = false })
+            end,
+          })
+
+          require("lazy").setup({
+            {
+              "ellisonleao/gruvbox.nvim",
+              priority = 1000,
+              config = function()
+                require("gruvbox").setup({
+                  transparent_mode = true,
+                  contrast = "hard",
+                })
+                vim.cmd.colorscheme("gruvbox")
+              end,
+            },
+          })
+
+      # ── GNOME Terminal Gruvbox profile restore script ─────────
+      # Run once inside a GNOME session: ~/.local/bin/restore-terminal-profile
+      - path: /home/baod/.local/bin/restore-terminal-profile
+        owner: baod:baod
+        permissions: '0755'
+        content: |
+          #!/usr/bin/env bash
+          # Restores the Gruvbox "keiron" GNOME Terminal profile.
+          # Must be run inside an active GNOME session (not from SSH).
+          dconf load /org/gnome/terminal/legacy/profiles:/ << 'DCONF'
+          [/]
+          default='44af1d1a-1598-4973-bbec-be553c7082b4'
+          list=['b1dcc9dd-5262-4d8d-a863-c897e6d979b9', '44af1d1a-1598-4973-bbec-be553c7082b4']
+
+          [:44af1d1a-1598-4973-bbec-be553c7082b4]
+          audible-bell=true
+          background-color='#282828282828'
+          background-transparency-percent=9
+          bold-color='#EBEBDBDBB2B2'
+          bold-color-same-as-fg=true
+          bold-is-bright=true
+          cursor-background-color='#EBEBDBDBB2B2'
+          cursor-blink-mode='on'
+          cursor-colors-set=true
+          cursor-foreground-color='#282828282828'
+          cursor-shape='ibeam'
+          default-size-columns=120
+          default-size-rows=30
+          font='Ubuntu Mono 11'
+          foreground-color='#EBEBDBDBB2B2'
+          highlight-colors-set=false
+          palette=['#282828282828', '#CCCC24241D1D', '#989897971A1A', '#D7D799992121', '#454585858888', '#B1B162628686', '#68689D9D6A6A', '#A8A899998484', '#929283837474', '#FBFB49493434', '#B8B8BBBB2626', '#FAFABDBD2F2F', '#8383A5A59898', '#D3D386869B9B', '#8E8EC0C07C7C', '#EBEBDBDBB2B2']
+          text-blink-mode='always'
+          use-system-font=false
+          use-theme-colors=false
+          use-theme-transparency=false
+          use-transparent-background=true
+          visible-name='keiron'
+
+          [:b1dcc9dd-5262-4d8d-a863-c897e6d979b9]
+          audible-bell=true
+          bold-is-bright=true
+          cursor-blink-mode='on'
+          cursor-shape='ibeam'
+          default-size-columns=120
+          default-size-rows=30
+          font='Ubuntu Mono 11'
+          palette=['rgb(23,20,33)', 'rgb(192,28,40)', 'rgb(38,162,105)', 'rgb(162,115,76)', 'rgb(18,72,139)', 'rgb(163,71,186)', 'rgb(42,161,179)', 'rgb(208,207,204)', 'rgb(94,92,100)', 'rgb(246,97,81)', 'rgb(51,209,122)', 'rgb(233,173,12)', 'rgb(42,123,222)', 'rgb(192,97,203)', 'rgb(51,199,222)', 'rgb(255,255,255)']
+          text-blink-mode='always'
+          use-system-font=false
+          DCONF
+          echo "Terminal profile restored. Restart gnome-terminal to apply."
+
+    runcmd:
+      # Fix ownership for everything written above
+      - chown -R baod:baod /home/baod/.zshrc /home/baod/.tmux.conf /home/baod/.gitconfig
+      - chown -R baod:baod /home/baod/.oh-my-zsh/custom/themes
+      - chown -R baod:baod /home/baod/.config/nvim
+      - chown -R baod:baod /home/baod/.local
+
+      # Install TPM plugins headlessly
+      - sudo -u baod bash -c
+          'TMUX_PLUGIN_MANAGER_PATH=~/.tmux/plugins ~/.tmux/plugins/tpm/bin/install_plugins'
+
+      # Neovim: install lazy.nvim plugins headlessly (first-run bootstrap)
+      - sudo -u baod bash -c
+          '~/.local/nvim/nvim-linux-x86_64/bin/nvim --headless "+Lazy! sync" +qa 2>/dev/null || true'
