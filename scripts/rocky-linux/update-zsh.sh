@@ -18,11 +18,11 @@ if [ ! -d "$HOME/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting" ]; then
 fi
 
 mkdir -p "$HOME/.oh-my-zsh/custom/themes"
-cp -f "workspace/keiron.zsh-theme" "$HOME/.oh-my-zsh/custom/themes/keiron.zsh-theme"
+cp -f "workspace/custom.zsh-theme" "$HOME/.oh-my-zsh/custom/themes/custom.zsh-theme"
 
 touch "$HOME/.zshrc"
 
-CONFIG_NAME="keiron-zsh"
+CONFIG_NAME="zsh"
 CONFIG_CONTENT="$(cat "workspace/.zshrc")"
 source "$SCRIPT_DIR/add-auto-config.sh"
 
