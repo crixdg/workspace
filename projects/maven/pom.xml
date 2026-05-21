@@ -5,7 +5,7 @@
 	<modelVersion>4.0.0</modelVersion> <!-- Version of the POM model, not the Maven version -->
 
 	<!-- 1. BASIC COORDINATES -->
-	<groupId>vn.keiron.practices</groupId> <!-- Organization -->
+	<groupId>vn.crixdg.practices</groupId> <!-- Organization -->
 	<artifactId>templates</artifactId> <!-- Project name -->
 	<version>0.0.1</version> <!-- Current version -->
 	<packaging>jar</packaging> <!-- jar / pom -->

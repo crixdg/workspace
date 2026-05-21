@@ -199,7 +199,7 @@ autoinstall:
 
           [ -d "$ZSH_CACHE_DIR" ] || mkdir -p "$ZSH_CACHE_DIR"
 
-          ZSH_THEME="keiron"
+          ZSH_THEME="custom"
 
           ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20
           ZSH_AUTOSUGGEST_USE_ASYNC=1
@@ -275,8 +275,8 @@ autoinstall:
             fi
           fi
 
-      # ── keiron zsh theme ─────────────────────────────────────
-      - path: /home/baod/.oh-my-zsh/custom/themes/keiron.zsh-theme
+      # ── custom zsh theme ─────────────────────────────────────
+      - path: /home/baod/.oh-my-zsh/custom/themes/custom.zsh-theme
         owner: baod:baod
         permissions: '0644'
         content: |
@@ -595,7 +595,7 @@ autoinstall:
         permissions: '0755'
         content: |
           #!/usr/bin/env bash
-          # Restores the Gruvbox "keiron" GNOME Terminal profile.
+          # Restores the Gruvbox "custom" GNOME Terminal profile.
           # Must be run inside an active GNOME session (not from SSH).
           dconf load /org/gnome/terminal/legacy/profiles:/ << 'DCONF'
           [/]
@@ -625,7 +625,7 @@ autoinstall:
           use-theme-colors=false
           use-theme-transparency=false
           use-transparent-background=true
-          visible-name='keiron'
+          visible-name='custom'
 
           [:b1dcc9dd-5262-4d8d-a863-c897e6d979b9]
           audible-bell=true
