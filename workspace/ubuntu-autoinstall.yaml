@@ -4,7 +4,7 @@
 # Compatible with: Ubuntu 22.04+ (Subiquity installer)
 #
 # Usage:
-#   Boot Ubuntu ISO → at GRUB menu, edit the linux line to add:
+#   Boot Ubuntu ISO -> at GRUB menu, edit the linux line to add:
 #     autoinstall ds=nocloud;s=/cdrom/
 #   Place this file as user-data (no extension) alongside a
 #   zero-byte meta-data file on the ISO or a FAT32 USB volume.
@@ -20,13 +20,13 @@
 autoinstall:
   version: 1
 
-  # ── Locale & keyboard ────────────────────────────────────────
+  # -- Locale & keyboard ----------------------------------------
   locale: en_US.UTF-8
   keyboard:
     layout: us
     variant: ''
 
-  # ── Identity ─────────────────────────────────────────────────
+  # -- Identity -------------------------------------------------
   # Generate hashed password: openssl passwd -6 'yourpassword'
   identity:
     hostname: dev-machine
@@ -34,7 +34,7 @@ autoinstall:
     username: baod
     password: '$6$CHANGEME$CHANGEME'  # REPLACE with real hash
 
-  # ── SSH ──────────────────────────────────────────────────────
+  # -- SSH ------------------------------------------------------
   ssh:
     install-server: true
     allow-pw: true
@@ -42,7 +42,7 @@ autoinstall:
     # authorized-keys:
     #   - 'ssh-ed25519 AAAA... you@machine'
 
-  # ── Network (DHCP on first ethernet) ─────────────────────────
+  # -- Network (DHCP on first ethernet) -------------------------
   network:
     version: 2
     ethernets:
@@ -51,7 +51,7 @@ autoinstall:
           name: 'en*'
         dhcp4: true
 
-  # ── Storage: LVM on largest disk ─────────────────────────────
+  # -- Storage: LVM on largest disk -----------------------------
   # ADJUST: replace 'largest' with a specific disk if needed,
   # e.g.  match: {path: /dev/sda}
   storage:
@@ -60,7 +60,7 @@ autoinstall:
       match:
         size: largest
 
-  # ── APT packages ─────────────────────────────────────────────
+  # -- APT packages ---------------------------------------------
   packages:
     # Core utilities
     - git
@@ -88,9 +88,9 @@ autoinstall:
     - dconf-cli
     - gnome-terminal
 
-  # ── Late commands (run as root during install, inside target) ─
+  # -- Late commands (run as root during install, inside target) -
   late-commands:
-    # Default shell → zsh
+    # Default shell -> zsh
     - curtin in-target -- chsh -s /usr/bin/zsh baod
 
     # ~/.local/bin (needed early for kubectl, minikube, etc.)
@@ -156,7 +156,7 @@ autoinstall:
         install -o baod -g baod -m 0755 /tmp/kubectl /home/baod/.local/bin/kubectl &&
         rm /tmp/kubectl'
 
-    # Helm (via official get script → move to user bin)
+    # Helm (via official get script -> move to user bin)
     - curtin in-target -- bash -c
         'curl -fsSL https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash'
     - curtin in-target -- bash -c
@@ -169,11 +169,11 @@ autoinstall:
     # C++ workspace scripts
     - curtin in-target -- sudo -u baod mkdir -p /home/baod/.local/bin/cpp
 
-  # ── user-data: cloud-init runs on first boot ─────────────────
+  # -- user-data: cloud-init runs on first boot -----------------
   user-data:
     write_files:
 
-      # ── .zshrc ───────────────────────────────────────────────
+      # -- .zshrc -----------------------------------------------
       - path: /home/baod/.zshrc
         owner: baod:baod
         permissions: '0644'
@@ -212,41 +212,46 @@ autoinstall:
 
           ZSH_COMPDUMP="${ZDOTDIR:-$HOME}/.zcompdump"
 
-          # ── Aliases ──────────────────────────────────────────
+          # -- Aliases ------------------------------------------
           alias reload="exec zsh"
           alias ll='ls -hlF'
           alias la='ls -A'
           alias l='ls -CF'
 
           if [ -x /usr/bin/dircolors ] && [ -s "$HOME/.dircolors" ]; then
-            eval "$(dircolors -b ~/.dircolors)"
+            test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
             alias ls='ls --color=auto'
+            alias dir='dir --color=auto'
+            alias vdir='vdir --color=auto'
             alias grep='grep --color=auto'
             alias fgrep='fgrep --color=auto'
             alias egrep='egrep --color=auto'
           fi
 
-          # ── Key bindings ─────────────────────────────────────
+          # -- Key bindings -------------------------------------
           bindkey -r '\el'
 
-          # ── PATH base ────────────────────────────────────────
+          # -- PATH base ----------------------------------------
           [ -d "$HOME/bin" ]        && path=("$HOME/bin" $path)
           [ -d "$HOME/.local/bin" ] && path=("$HOME/.local/bin" $path)
 
-          # ── Neovim ───────────────────────────────────────────
+          # -- C++ scripts --------------------------------------
+          path=("$HOME/.local/bin/cpp" $path)
+
+          # -- Neovim -------------------------------------------
           path=("$HOME/.local/nvim/nvim-linux-x86_64/bin" $path)
           alias vim="nvim"
           alias vi="nvim"
 
-          # ── Go (GVM) ─────────────────────────────────────────
+          # -- Go (GVM) -----------------------------------------
           [[ -s "$HOME/.gvm/scripts/gvm" ]] && source "$HOME/.gvm/scripts/gvm"
 
-          # ── Node.js (NVM) ────────────────────────────────────
+          # -- Node.js (NVM) ------------------------------------
           export NVM_DIR="$HOME/.nvm"
           [ -s "$NVM_DIR/nvm.sh" ]            && \. "$NVM_DIR/nvm.sh"
           [ -s "$NVM_DIR/bash_completion" ]   && \. "$NVM_DIR/bash_completion"
 
-          # ── Python (Miniconda) ───────────────────────────────
+          # -- Python (Miniconda) -------------------------------
           export MINICONDA_HOME="$HOME/miniconda3"
           if [ -d "$MINICONDA_HOME" ]; then
             path=("$MINICONDA_HOME/bin" $path)
@@ -254,16 +259,13 @@ autoinstall:
           alias start_conda="source $MINICONDA_HOME/bin/activate"
           alias stop_conda="conda deactivate"
 
-          # ── Java / Gradle ────────────────────────────────────
+          # -- Java / Gradle ------------------------------------
           export GRADLE_HOME="$HOME/.local/gradle/gradle-9.2.1"
           if [ -d "$GRADLE_HOME" ]; then
             path=("$GRADLE_HOME/bin" $path)
           fi
 
-          # ── C++ scripts ──────────────────────────────────────
-          path=("$HOME/.local/bin/cpp" $path)
-
-          # ── Tmux auto-attach (skip inside SSH / IDEs) ────────
+          # -- Tmux auto-attach (skip inside SSH / IDEs) --------
           if [[ -z "$SSH_CONNECTION" ]]; then
             if command -v tmux >/dev/null 2>&1; then
               if [ -z "$TMUX" ] \
@@ -275,7 +277,7 @@ autoinstall:
             fi
           fi
 
-      # ── custom zsh theme ─────────────────────────────────────
+      # -- custom zsh theme -------------------------------------
       - path: /home/baod/.oh-my-zsh/custom/themes/custom.zsh-theme
         owner: baod:baod
         permissions: '0644'
@@ -288,7 +290,7 @@ autoinstall:
 
           PROMPT='$(ssh_connection_prompt)'
           PROMPT+='$(virtualenv_prompt_info)'
-          PROMPT+="%(?:%{$fg_bold[green]%}%1{➜%} :%{$fg_bold[red]%}%1{➜%} ) %{$reset_color%}%{$fg[cyan]%}%c%{$reset_color%}"
+          PROMPT+="%(?:%{$fg_bold[green]%}%1{>%} :%{$fg_bold[red]%}%1{>%} ) %{$reset_color%}%{$fg[cyan]%}%c%{$reset_color%}"
           PROMPT+=' $(git_prompt_info)'
 
           ZSH_THEME_VIRTUALENV_PREFIX="%{$fg_bold[yellow]%}(%{$reset_color%}"
@@ -296,15 +298,15 @@ autoinstall:
 
           ZSH_THEME_GIT_PROMPT_PREFIX="%{$fg_bold[blue]%}git:(%{$fg[red]%}"
           ZSH_THEME_GIT_PROMPT_SUFFIX="%{$reset_color%} "
-          ZSH_THEME_GIT_PROMPT_DIRTY="%{$fg[blue]%}) %{$fg[yellow]%}%1{✗%}"
+          ZSH_THEME_GIT_PROMPT_DIRTY="%{$fg[blue]%}) %{$fg[yellow]%}%1{x%}"
           ZSH_THEME_GIT_PROMPT_CLEAN="%{$fg[blue]%})"
 
-      # ── .tmux.conf ───────────────────────────────────────────
+      # -- .tmux.conf -------------------------------------------
       - path: /home/baod/.tmux.conf
         owner: baod:baod
         permissions: '0644'
         content: |
-          # ── Plugins ──────────────────────────────────────────
+          # -- Plugins ------------------------------------------
           set -g @plugin 'tmux-plugins/tpm'
           set -g @plugin 'tmux-plugins/tmux-sidebar'
           set -g @sidebar-width 100
@@ -312,7 +314,7 @@ autoinstall:
           set -g @sidebar-tree-pager 'less -R -S -M'
           run '~/.tmux/plugins/tpm/tpm'
 
-          # ── Colors (Gruvbox dark) ─────────────────────────────
+          # -- Colors (Gruvbox dark) -----------------------------
           bg0="#282828"
           bg1="#3c3836"
           bg2="#504945"
@@ -325,13 +327,13 @@ autoinstall:
           green="#98971a"
           red="#cc241d"
 
-          # ── Server ───────────────────────────────────────────
+          # -- Server -------------------------------------------
           set -sg default-terminal "tmux-256color"
           set -sg escape-time 0
           set -sg focus-events on
           set -asg terminal-overrides ",*:Tc"
 
-          # ── Session ──────────────────────────────────────────
+          # -- Session ------------------------------------------
           set -g base-index 1
           set -g mouse on
           set -g renumber-windows on
@@ -366,7 +368,7 @@ autoinstall:
           set -g visual-bell off
           set -g visual-silence off
 
-          # ── Window & Pane ────────────────────────────────────
+          # -- Window & Pane ------------------------------------
           setw -g cursor-style blinking-bar
           setw -g clock-mode-colour "$blue"
           setw -g clock-mode-style 24
@@ -385,7 +387,7 @@ autoinstall:
           setw -g window-status-current-format " #I:#W#F "
           setw -g window-status-separator ""
 
-          # ── Key bindings ─────────────────────────────────────
+          # -- Key bindings -------------------------------------
           bind r source-file ~/.tmux.conf \; display-message "Config reloaded"
 
           bind-key -T prefix \\ split-window -h -c "#{pane_current_path}"
@@ -421,7 +423,7 @@ autoinstall:
           bind -T copy-mode-vi v send-keys -X begin-selection
           bind -T copy-mode-vi y send -X copy-pipe-and-cancel "xclip -in -selection clipboard"
 
-      # ── .gitconfig ───────────────────────────────────────────
+      # -- .gitconfig -------------------------------------------
       - path: /home/baod/.gitconfig
         owner: baod:baod
         permissions: '0644'
@@ -437,14 +439,14 @@ autoinstall:
           [push]
             default = current
           [pull]
-            default = current
+            rebase = false
           [alias]
             st = status
             ci = commit
             co = checkout
             br = branch
 
-      # ── Neovim init.lua ──────────────────────────────────────
+      # -- Neovim init.lua --------------------------------------
       - path: /home/baod/.config/nvim/init.lua
         owner: baod:baod
         permissions: '0644'
@@ -588,7 +590,7 @@ autoinstall:
             },
           })
 
-      # ── GNOME Terminal Gruvbox profile restore script ─────────
+      # -- GNOME Terminal Gruvbox profile restore script ---------
       # Run once inside a GNOME session: ~/.local/bin/restore-terminal-profile
       - path: /home/baod/.local/bin/restore-terminal-profile
         owner: baod:baod
