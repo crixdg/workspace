@@ -11,14 +11,14 @@ if ! wget --spider "$url" 2>/dev/null; then
 	exit 1
 fi
 
-rm -rf $HOME/miniconda3
-mkdir -p $HOME/miniconda3
-wget https://repo.anaconda.com/miniconda/$filename -O $HOME/miniconda3/miniconda.sh
-bash $HOME/miniconda3/miniconda.sh -b -u -p $HOME/miniconda3
-rm $HOME/miniconda3/miniconda.sh
+rm -rf $HOME/.miniconda
+mkdir -p $HOME/.miniconda
+wget https://repo.anaconda.com/miniconda/$filename -O $HOME/.miniconda/miniconda.sh
+bash $HOME/.miniconda/miniconda.sh -b -u -p $HOME/.miniconda
+rm $HOME/.miniconda/miniconda.sh
 
 CONFIG_NAME="miniconda"
-CONFIG_CONTENT='export MINICONDA_HOME="$HOME/miniconda3"
+CONFIG_CONTENT='export MINICONDA_HOME="$HOME/.miniconda"
 if [ -d "$MINICONDA_HOME" ]; then
 	path=("$MINICONDA_HOME/bin" $path)
 fi
