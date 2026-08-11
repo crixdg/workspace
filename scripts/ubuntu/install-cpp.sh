@@ -29,7 +29,7 @@ ask_version() {
 }
 
 LLVM_VERSION="${LLVM_VERSION:-$(ask_version "21" "LLVM")}"
-BAZELISK_VERSION="${BAZELISK_VERSION:-$(ask_version "1.28.1" "Bazelisk")}"
+BAZELISK_VERSION="${BAZELISK_VERSION:-$(ask_version "1.29.0" "Bazelisk")}"
 BAZEL_BUILDTOOLS_VERSION="${BAZEL_BUILDTOOLS_VERSION:-$(ask_version "8.5.1" "Bazel Buildtools")}"
 
 WORK_DIR="$(mktemp -d)"
