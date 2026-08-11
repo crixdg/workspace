@@ -39,6 +39,7 @@ sudo apt update
 sudo apt install -y build-essential curl wget gnupg lsb-release software-properties-common
 
 CODENAME="$(lsb_release -cs)"
+HOST_ARCH="$(dpkg --print-architecture)"
 
 # --- CMake + Ninja -------------------------------------------------------------
 # Ubuntu ships an old CMake (24.04 -> 3.28). Kitware's repo tracks upstream.
@@ -49,7 +50,7 @@ if [ ! -f /usr/share/keyrings/kitware-archive-keyring.gpg ]; then
 fi
 
 KITWARE_LIST="/etc/apt/sources.list.d/kitware.list"
-KITWARE_LINE="deb [signed-by=/usr/share/keyrings/kitware-archive-keyring.gpg] https://apt.kitware.com/ubuntu/ ${CODENAME} main"
+KITWARE_LINE="deb [arch=${HOST_ARCH} signed-by=/usr/share/keyrings/kitware-archive-keyring.gpg] https://apt.kitware.com/ubuntu/ ${CODENAME} main"
 
 if [ ! -f "$KITWARE_LIST" ] || ! grep -qxF "$KITWARE_LINE" "$KITWARE_LIST"; then
 	if [ -f "$KITWARE_LIST" ]; then
