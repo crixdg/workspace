@@ -94,19 +94,46 @@ if [ ${#TO_PURGE[@]} -gt 0 ]; then
 	sudo apt purge -y "${TO_PURGE[@]}"
 fi
 
+# Everything clang ships is registered as one group led by /usr/bin/clang, so a
+# single --set switches the whole toolchain at once and the pieces can never
+# drift to different versions.
+#
+# All of these follow the same naming pattern (/usr/bin/<name> ->
+# /usr/bin/<name>-<version>), so the --slave arguments are generated rather than
+# spelled out.
+CLANG_SLAVES=(
+	clang++
+	clang-cpp
+	clang-format
+	clang-format-diff
+	clang-tidy
+	run-clang-tidy
+	clang-apply-replacements
+	clang-query
+	clang-include-cleaner
+	scan-build
+	lld
+	ld.lld
+)
+
+# update-alternatives refuses to demote a name that is already a master
+# alternative of its own, which is the state an earlier version of this script
+# (one --install per tool) left behind. Drop those groups so the clang group
+# below can own them.
+for name in "${CLANG_SLAVES[@]}"; do
+	if update-alternatives --query "$name" >/dev/null 2>&1; then
+		echo "Removing standalone '${name}' alternative so it can become a slave of clang"
+		sudo update-alternatives --remove-all "$name"
+	fi
+done
+
+SLAVE_ARGS=()
+for name in "${CLANG_SLAVES[@]}"; do
+	SLAVE_ARGS+=(--slave "/usr/bin/${name}" "$name" "/usr/bin/${name}-${LLVM_VERSION}")
+done
+
 sudo update-alternatives --install /usr/bin/clang clang "/usr/bin/clang-${LLVM_VERSION}" 100 \
-	--slave /usr/bin/clang++ clang++ "/usr/bin/clang++-${LLVM_VERSION}" \
-	--slave /usr/bin/clang-cpp clang-cpp "/usr/bin/clang-cpp-${LLVM_VERSION}" \
-	--slave /usr/bin/clang-format clang-format "/usr/bin/clang-format-${LLVM_VERSION}" \
-	--slave /usr/bin/clang-format-diff clang-format-diff "/usr/bin/clang-format-diff-${LLVM_VERSION}" \
-	--slave /usr/bin/clang-tidy clang-tidy "/usr/bin/clang-tidy-${LLVM_VERSION}" \
-	--slave /usr/bin/run-clang-tidy run-clang-tidy "/usr/bin/run-clang-tidy-${LLVM_VERSION}" \
-	--slave /usr/bin/clang-apply-replacements clang-apply-replacements "/usr/bin/clang-apply-replacements-${LLVM_VERSION}" \
-	--slave /usr/bin/clang-query clang-query "/usr/bin/clang-query-${LLVM_VERSION}" \
-	--slave /usr/bin/clang-include-cleaner clang-include-cleaner "/usr/bin/clang-include-cleaner-${LLVM_VERSION}" \
-	--slave /usr/bin/scan-build scan-build "/usr/bin/scan-build-${LLVM_VERSION}" \
-	--slave /usr/bin/lld lld "/usr/bin/lld-${LLVM_VERSION}" \
-	--slave /usr/bin/ld.lld ld.lld "/usr/bin/ld.lld-${LLVM_VERSION}"
+	"${SLAVE_ARGS[@]}"
 
 sudo update-alternatives --set clang "/usr/bin/clang-${LLVM_VERSION}"
 
