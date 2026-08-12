@@ -22,3 +22,4 @@
 
 [pull]
   default = current
+  ff = only
