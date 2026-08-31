@@ -160,15 +160,15 @@ mv -f "$WORK_DIR/buildifier" "$HOME/.local/bin/buildifier"
 
 # --- C++ helper scripts --------------------------------------------------------
 
-mkdir -p "$HOME/.local/bin/cpp"
-cp -rf "$REPO_ROOT/workspace/cpp/"* "$HOME/.local/bin/cpp/"
+mkdir -p "$HOME/.local/cpp"
+cp -rf "$REPO_ROOT/workspace/cpp/"* "$HOME/.local/cpp/"
 
 # --- Global clang-format -------------------------------------------------------
 
 ln -sfn "$REPO_ROOT/workspace/.clang-format" "$HOME/.clang-format"
 
 CONFIG_NAME="c++"
-CONFIG_CONTENT='path=("$HOME/.local/bin/cpp" $path)'
+CONFIG_CONTENT='path=("$HOME/.local/cpp" $path)'
 source "$SCRIPT_DIR/add-auto-config.sh"
 
 # Report what is actually on disk, not what was requested.
