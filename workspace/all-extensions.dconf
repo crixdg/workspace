@@ -1,0 +1,192 @@
+[blur-my-shell]
+pipelines={'pipeline_default': {'name': <'Default'>, 'effects': <[<{'type': <'native_static_gaussian_blur'>, 'id': <'effect_000000000000'>, 'params': <{'radius': <30>, 'brightness': <0.59999999999999998>}>}>]>}}
+settings-version=2
+
+[blur-my-shell/coverflow-alt-tab]
+pipeline='pipeline_default'
+
+[blur-my-shell/dash-to-dock]
+blur=false
+pipeline='pipeline_default'
+static-blur=true
+
+[blur-my-shell/lockscreen]
+pipeline='pipeline_default'
+
+[blur-my-shell/overview]
+pipeline='pipeline_default'
+
+[blur-my-shell/panel]
+pipeline='pipeline_default'
+static-blur=true
+
+[blur-my-shell/screenshot]
+pipeline='pipeline_default'
+
+[caffeine]
+cli-toggle=false
+countdown-timer=0
+enable-fullscreen=true
+indicator-position-max=4
+show-notifications=false
+user-enabled=false
+
+[claude-code-usage]
+display-mode='bar'
+icon-style='color'
+
+[clipboard-indicator]
+enable-keybindings=false
+history-size=40
+
+[dash-to-dock]
+always-center-icons=true
+apply-custom-theme=false
+background-opacity=0.80000000000000004
+custom-background-color=false
+custom-theme-shrink=true
+dash-max-icon-size=24
+dock-fixed=true
+dock-position='LEFT'
+extend-height=true
+height-fraction=0.90000000000000002
+icon-size-fixed=false
+preferred-monitor=-2
+preferred-monitor-by-connector='eDP-1'
+preview-size-scale=0.20000000000000001
+running-indicator-style='DOTS'
+show-trash=false
+
+[dash-to-panel]
+animate-appicon-hover=true
+animate-appicon-hover-animation-extent={'RIPPLE': 4, 'PLANK': 4, 'SIMPLE': 1}
+appicon-margin=2
+appicon-padding=6
+appicon-style='NORMAL'
+dot-color-dominant=true
+dot-color-override=false
+dot-color-unfocused-different=false
+dot-position='BOTTOM'
+dot-size=2
+dot-style-focused='DOTS'
+dot-style-unfocused='DOTS'
+extension-version=73
+focus-highlight-color='#5e5c64'
+focus-highlight-dominant=true
+global-border-radius=5
+highlight-appicon-hover=false
+hot-keys=true
+hotkeys-overlay-combo='TEMPORARILY'
+isolate-workspaces=false
+leftbox-padding=-1
+leftbox-size=13
+multi-monitors=false
+panel-anchors='{"GSM-0x00023bbb":"MIDDLE","AUO-0x00000000":"MIDDLE"}'
+panel-element-positions='{"GSM-0x00023bbb":[{"element":"showAppsButton","visible":false,"position":"stackedTL"},{"element":"activitiesButton","visible":true,"position":"stackedTL"},{"element":"taskbar","visible":true,"position":"stackedTL"},{"element":"centerBox","visible":false,"position":"stackedTL"},{"element":"dateMenu","visible":true,"position":"centerMonitor"},{"element":"leftBox","visible":true,"position":"stackedBR"},{"element":"rightBox","visible":true,"position":"stackedBR"},{"element":"systemMenu","visible":true,"position":"stackedBR"},{"element":"desktopButton","visible":false,"position":"stackedBR"}],"AUO-0x00000000":[{"element":"showAppsButton","visible":false,"position":"stackedTL"},{"element":"activitiesButton","visible":true,"position":"stackedTL"},{"element":"taskbar","visible":true,"position":"stackedTL"},{"element":"centerBox","visible":false,"position":"stackedTL"},{"element":"dateMenu","visible":true,"position":"stackedBR"},{"element":"leftBox","visible":true,"position":"stackedBR"},{"element":"rightBox","visible":true,"position":"stackedBR"},{"element":"systemMenu","visible":true,"position":"stackedBR"},{"element":"desktopButton","visible":false,"position":"stackedBR"}]}'
+panel-element-positions-monitors-sync=true
+panel-lengths='{"GSM-0x00023bbb":100,"AUO-0x00000000":100}'
+panel-positions='{"GSM-0x00023bbb":"TOP","AUO-0x00000000":"TOP"}'
+panel-side-margins=0
+panel-side-padding=0
+panel-sizes='{"GSM-0x00023bbb":32,"AUO-0x00000000":32}'
+panel-top-bottom-margins=0
+panel-top-bottom-padding=2
+prefs-opened=false
+progress-show-count=true
+show-apps-icon-file=''
+show-apps-icon-side-padding=5
+show-favorites=true
+show-favorites-all-monitors=true
+show-running-apps=true
+show-window-previews=true
+status-icon-padding=-1
+stockgs-force-hotcorner=false
+stockgs-keep-dash=false
+stockgs-keep-top-panel=false
+stockgs-panelbtn-click-only=false
+taskbar-locked=false
+trans-use-border=false
+trans-use-custom-bg=false
+trans-use-custom-gradient=false
+trans-use-custom-opacity=false
+tray-padding=-1
+tray-size=0
+window-preview-title-position='TOP'
+
+[ding]
+check-x11wayland=true
+icon-size='standard'
+show-home=false
+
+[system-monitor]
+show-swap=false
+
+[tiling-assistant]
+activate-layout0=@as []
+activate-layout1=@as []
+activate-layout2=@as []
+activate-layout3=@as []
+active-window-hint=1
+active-window-hint-color='rgb(211,70,21)'
+auto-tile=@as []
+center-window=@as []
+debugging-free-rects=@as []
+debugging-show-tiled-rects=@as []
+default-move-mode=0
+dynamic-keybinding-behavior=0
+import-layout-examples=false
+last-version-installed=48
+restore-window=['<Super>Down']
+search-popup-layout=@as []
+tile-bottom-half=['<Super>KP_2']
+tile-bottom-half-ignore-ta=@as []
+tile-bottomleft-quarter=['<Super>KP_1']
+tile-bottomleft-quarter-ignore-ta=@as []
+tile-bottomright-quarter=['<Super>KP_3']
+tile-bottomright-quarter-ignore-ta=@as []
+tile-edit-mode=@as []
+tile-left-half=['<Super>Left', '<Super>KP_4']
+tile-left-half-ignore-ta=@as []
+tile-maximize=['<Super>Up', '<Super>KP_5']
+tile-maximize-horizontally=@as []
+tile-maximize-vertically=@as []
+tile-right-half=['<Super>Right', '<Super>KP_6']
+tile-right-half-ignore-ta=@as []
+tile-top-half=['<Super>KP_8']
+tile-top-half-ignore-ta=@as []
+tile-topleft-quarter=['<Super>KP_7']
+tile-topleft-quarter-ignore-ta=@as []
+tile-topright-quarter=['<Super>KP_9']
+tile-topright-quarter-ignore-ta=@as []
+tiling-popup-all-workspace=true
+toggle-always-on-top=@as []
+toggle-tiling-popup=@as []
+
+[tilingshell]
+enable-autotiling=true
+enable-blur-snap-assistant=true
+enable-screen-edges-windows-suggestions=true
+enable-smart-window-border-radius=true
+enable-snap-assistant-windows-suggestions=true
+enable-tiling-system-windows-suggestions=true
+enable-window-border=false
+inner-gaps=uint32 0
+last-version-name-installed='16.4'
+layouts-json='[{"id":"4516402","tiles":[{"x":0,"y":0,"width":0.5,"height":1,"groups":[1]},{"x":0.5,"y":0,"width":0.49999999999999967,"height":1,"groups":[1]}]},{"id":"4662269","tiles":[{"x":0,"y":0,"width":0.5947816826411075,"height":1,"groups":[1]},{"x":0.5947816826411075,"y":0,"width":0.40521831735889247,"height":1,"groups":[1]}]}]'
+outer-gaps=uint32 0
+overridden-settings='{}'
+selected-layouts=[['4662269'], ['4662269']]
+show-indicator=true
+snap-assistant-threshold=50
+
+[vitals]
+alphabetize=true
+hide-icons=true
+hot-sensors=['_processor_usage_', '_memory_usage_', '__network-rx_max__', '__network-tx_max__', '_temperature_cpu_0 core 0_', '_fan_dell_smm_']
+icon-style=1
+menu-centered=false
+position-in-panel=0
+show-battery=false
+show-storage=false
+show-system=false
+show-voltage=false
