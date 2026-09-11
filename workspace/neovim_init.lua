@@ -89,10 +89,13 @@ vim.api.nvim_create_autocmd("FileType", {
       return
     end
 
+    local blink_ok, blink = pcall(require, "blink.cmp")
+
     vim.lsp.start({
       name = "clangd",
       cmd = { "clangd" },
       root_dir = vim.fn.getcwd(),
+      capabilities = blink_ok and blink.get_lsp_capabilities() or nil,
       on_attach = function(_, bufnr)
         local opts = { noremap = true, silent = true, buffer = bufnr }
         vim.keymap.set("n", "<F2>", vim.lsp.buf.rename, opts)
@@ -132,6 +135,30 @@ vim.api.nvim_create_autocmd("BufWritePre", {
   end,
 })
 
+local loaded_snippet_dirs = {}
+
+local function load_project_snippets()
+  local ok, from_vscode = pcall(require, "luasnip.loaders.from_vscode")
+  if not ok then
+    return
+  end
+
+  local found = vim.fs.find(".vscode", {
+    upward = true,
+    type = "directory",
+    path = vim.fn.getcwd(),
+  })
+  local dir = found[1]
+  if not dir or loaded_snippet_dirs[dir] then
+    return
+  end
+  loaded_snippet_dirs[dir] = true
+
+  for _, file in ipairs(vim.fn.glob(dir .. "/*.code-snippets", false, true)) do
+    from_vscode.load_standalone({ path = file })
+  end
+end
+
 require("lazy").setup({
   {
     "ellisonleao/gruvbox.nvim",
@@ -143,5 +170,65 @@ require("lazy").setup({
       })
       vim.cmd.colorscheme("gruvbox")
     end,
+  },
+  {
+    "L3MON4D3/LuaSnip",
+    version = "v2.*",
+    event = "InsertEnter",
+    config = function()
+      local ls = require("luasnip")
+      ls.setup({
+        history = true,
+        update_events = { "TextChanged", "TextChangedI" },
+        enable_autosnippets = false,
+      })
+
+      load_project_snippets()
+      vim.api.nvim_create_autocmd("DirChanged", { callback = load_project_snippets })
+
+      vim.keymap.set({ "i", "s" }, "<Tab>", function()
+        if ls.expandable() then
+          ls.expand()
+        elseif ls.locally_jumpable(1) then
+          ls.jump(1)
+        else
+          vim.api.nvim_feedkeys(vim.keycode("<Tab>"), "n", false)
+        end
+      end, { silent = true })
+
+      vim.keymap.set({ "i", "s" }, "<S-Tab>", function()
+        if ls.locally_jumpable(-1) then
+          ls.jump(-1)
+        end
+      end, { silent = true })
+
+      vim.keymap.set({ "i", "s" }, "<C-l>", function()
+        if ls.choice_active() then
+          ls.change_choice(1)
+        end
+      end, { silent = true })
+
+      vim.api.nvim_create_user_command("SnippetsReload", function()
+        loaded_snippet_dirs = {}
+        load_project_snippets()
+      end, {})
+    end,
+  },
+  {
+    "saghen/blink.cmp",
+    version = "1.*",
+    event = "InsertEnter",
+    dependencies = { "L3MON4D3/LuaSnip" },
+    opts = {
+      snippets = { preset = "luasnip" },
+      keymap = { preset = "default" },
+      completion = {
+        documentation = { auto_show = true, auto_show_delay_ms = 200 },
+      },
+      sources = {
+        default = { "lsp", "snippets", "path", "buffer" },
+      },
+      fuzzy = { implementation = "prefer_rust_with_warning" },
+    },
   },
 })
