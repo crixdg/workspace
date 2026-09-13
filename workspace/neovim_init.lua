@@ -14,16 +14,17 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
-vim.g.mouse = "a"
+vim.opt.mouse = "a"
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
 
 vim.opt.number = true
-vim.cmd([[highlight LineNr ctermfg=8]])
 
 vim.opt.scrolloff = 7
 
 vim.opt.signcolumn = "yes"
+
+vim.opt.undofile = true
 
 vim.opt.splitright = true
 vim.opt.splitbelow = true
@@ -81,28 +82,34 @@ vim.api.nvim_create_autocmd("VimLeave", {
   end,
 })
 
-vim.api.nvim_create_autocmd("FileType", {
-  pattern = { "c", "cpp", "cc" },
-  callback = function(ev)
-    local clients = vim.lsp.get_clients({ bufnr = ev.buf, name = "clangd" })
-    if #clients > 0 then
-      return
-    end
+local function lsp_capabilities()
+  local ok, blink = pcall(require, "blink.cmp")
+  return ok and blink.get_lsp_capabilities() or nil
+end
 
-    local blink_ok, blink = pcall(require, "blink.cmp")
-
-    vim.lsp.start({
-      name = "clangd",
-      cmd = { "clangd" },
-      root_dir = vim.fn.getcwd(),
-      capabilities = blink_ok and blink.get_lsp_capabilities() or nil,
-      on_attach = function(_, bufnr)
-        local opts = { noremap = true, silent = true, buffer = bufnr }
-        vim.keymap.set("n", "<F2>", vim.lsp.buf.rename, opts)
-      end,
-    })
+vim.lsp.config("clangd", {
+  cmd = {
+    "clangd",
+    "--background-index",
+    "--clang-tidy",
+    "--header-insertion=never",
+    "--completion-style=detailed",
+    "--function-arg-placeholders",
+    "-j=4",
+  },
+  filetypes = { "c", "cpp" },
+  root_markers = {
+    { "compile_commands.json", "compile_flags.txt", ".clangd" },
+    ".git",
+  },
+  capabilities = lsp_capabilities(),
+  on_attach = function(_, bufnr)
+    local opts = { noremap = true, silent = true, buffer = bufnr }
+    vim.keymap.set("n", "<F2>", vim.lsp.buf.rename, opts)
   end,
 })
+
+vim.lsp.enable("clangd")
 
 vim.api.nvim_create_autocmd("CursorHold", {
   callback = function()
@@ -230,5 +237,46 @@ require("lazy").setup({
       },
       fuzzy = { implementation = "prefer_rust_with_warning" },
     },
+  },
+  {
+    "nvim-telescope/telescope.nvim",
+    branch = "0.1.x",
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      { "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
+    },
+    cmd = "Telescope",
+    keys = {
+      { "<leader>ff", "<cmd>Telescope find_files<cr>", desc = "Find files" },
+      { "<leader>fg", "<cmd>Telescope live_grep<cr>", desc = "Live grep" },
+      { "<leader>fb", "<cmd>Telescope buffers<cr>", desc = "Buffers" },
+      { "<leader>fh", "<cmd>Telescope help_tags<cr>", desc = "Help tags" },
+      { "<leader>fd", "<cmd>Telescope diagnostics<cr>", desc = "Diagnostics" },
+      { "<leader>fq", "<cmd>Telescope quickfix<cr>", desc = "Quickfix" },
+      { "<leader>fu", "<cmd>Telescope resume<cr>", desc = "Resume last picker" },
+      { "<leader>ss", "<cmd>Telescope lsp_dynamic_workspace_symbols<cr>", desc = "Workspace symbols" },
+      { "<leader>so", "<cmd>Telescope lsp_document_symbols<cr>", desc = "Document symbols" },
+      { "<leader>sr", "<cmd>Telescope lsp_references<cr>", desc = "References" },
+      { "<leader>sd", "<cmd>Telescope lsp_definitions<cr>", desc = "Definitions" },
+      { "<leader>si", "<cmd>Telescope lsp_incoming_calls<cr>", desc = "Incoming calls" },
+    },
+    config = function()
+      local telescope = require("telescope")
+      telescope.setup({
+        defaults = {
+          path_display = { "truncate" },
+          layout_strategy = "flex",
+          layout_config = { width = 0.95, height = 0.9 },
+        },
+        extensions = {
+          fzf = {
+            fuzzy = true,
+            override_generic_sorter = true,
+            override_file_sorter = true,
+          },
+        },
+      })
+      pcall(telescope.load_extension, "fzf")
+    end,
   },
 })
