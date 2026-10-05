@@ -205,9 +205,9 @@ autoinstall:
           [ -d "$ZSH_CUSTOM/plugins/zsh-autosuggestions" ]    && plugins+=(zsh-autosuggestions)
           [ -d "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting" ] && plugins+=(zsh-syntax-highlighting)
 
-          [ -f "$ZSH/oh-my-zsh.sh" ] && source "$ZSH/oh-my-zsh.sh"
-
           ZSH_COMPDUMP="${ZDOTDIR:-$HOME}/.zcompdump"
+
+          [ -f "$ZSH/oh-my-zsh.sh" ] && source "$ZSH/oh-my-zsh.sh"
 
           # -- Aliases ------------------------------------------
           alias reload="exec zsh"
