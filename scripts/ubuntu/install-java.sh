@@ -35,7 +35,7 @@ rm $HOME/.local/gradle/${gradle_filename}.sha256
 CONFIG_NAME="java"
 CONFIG_CONTENT="export GRADLE_HOME=\"\$HOME/.local/gradle/gradle-${GRADLE_VERSION}\"
 if [ -d \"\$GRADLE_HOME\" ]; then
-	path=(\"$GRADLE_HOME/bin\" \$path)
+	path=(\"\$GRADLE_HOME/bin\" \$path)
 fi"
 source "$SCRIPT_DIR/add-auto-config.sh"
 

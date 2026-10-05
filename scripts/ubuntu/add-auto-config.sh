@@ -32,8 +32,8 @@ touch "$SHELL_RC"
 
 # Remove existing block if present, then append the new block
 if grep -qF "$START_MARK" "$SHELL_RC"; then
-	awk -v block="$CONFIG_BLOCK" -v start="$START_MARK" -v end="$END_MARK" '
-    BEGIN { inblock=0 }
+	BLOCK="$CONFIG_BLOCK" START="$START_MARK" END="$END_MARK" awk '
+    BEGIN { inblock=0; block=ENVIRON["BLOCK"]; start=ENVIRON["START"]; end=ENVIRON["END"] }
     index($0, start) {
       print block
       inblock=1

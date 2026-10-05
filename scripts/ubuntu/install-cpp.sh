@@ -42,7 +42,7 @@ CODENAME="$(lsb_release -cs)"
 HOST_ARCH="$(dpkg --print-architecture)"
 
 # --- CMake + Ninja -------------------------------------------------------------
-# Ubuntu ships an old CMake (24.04 -> 3.28). Kitware's repo tracks upstream.
+# Ubuntu's CMake lags upstream (26.04 -> 4.2). Kitware's repo tracks upstream.
 
 if [ ! -f /usr/share/keyrings/kitware-archive-keyring.gpg ]; then
 	wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null |

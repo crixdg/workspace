@@ -1,7 +1,7 @@
 #cloud-config
 # ============================================================
 # Ubuntu Unattended Autoinstall
-# Compatible with: Ubuntu 22.04+ (Subiquity installer)
+# Compatible with: Ubuntu 26.04+ (Subiquity installer)
 #
 # Usage:
 #   Boot Ubuntu ISO -> at GRUB menu, edit the linux line to add:
@@ -67,22 +67,19 @@ autoinstall:
     - curl
     - wget
     - unzip
-    - xclip
-    - xsel
+    - wl-clipboard
     - mercurial
     # Shell & terminal
     - zsh
     - tmux
     # Build tools
     - build-essential
-    - gcc-14
-    - g++-14
     - make
     - binutils
     - bison
     - clang-format
     # Java LTS
-    - openjdk-17-jdk
+    - openjdk-25-jdk
     # Fonts & GNOME utilities
     - fonts-ubuntu
     - dconf-cli
@@ -128,11 +125,11 @@ autoinstall:
 
     # Miniconda3 (Python)
     - curtin in-target -- sudo -u baod bash -c '
-        mkdir -p ~/miniconda3 &&
+        mkdir -p ~/.miniconda &&
         wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
-          -O ~/miniconda3/miniconda.sh &&
-        bash ~/miniconda3/miniconda.sh -b -u -p ~/miniconda3 &&
-        rm ~/miniconda3/miniconda.sh'
+          -O ~/.miniconda/miniconda.sh &&
+        bash ~/.miniconda/miniconda.sh -b -u -p ~/.miniconda &&
+        rm ~/.miniconda/miniconda.sh'
 
     # Gradle 9.2.1
     - curtin in-target -- sudo -u baod bash -c '
@@ -252,7 +249,7 @@ autoinstall:
           [ -s "$NVM_DIR/bash_completion" ]   && \. "$NVM_DIR/bash_completion"
 
           # -- Python (Miniconda) -------------------------------
-          export MINICONDA_HOME="$HOME/miniconda3"
+          export MINICONDA_HOME="$HOME/.miniconda"
           if [ -d "$MINICONDA_HOME" ]; then
             path=("$MINICONDA_HOME/bin" $path)
           fi
@@ -421,7 +418,9 @@ autoinstall:
           bind -n M-9 select-window -t 9
 
           bind -T copy-mode-vi v send-keys -X begin-selection
-          bind -T copy-mode-vi y send -X copy-pipe-and-cancel "xclip -in -selection clipboard"
+          set -s copy-command "wl-copy"
+          bind -T copy-mode-vi y send -X copy-pipe-and-cancel
+          bind -T copy-mode-vi MouseDragEnd1Pane send -X copy-pipe-and-cancel
 
       # -- .gitconfig -------------------------------------------
       - path: /home/baod/.gitconfig
