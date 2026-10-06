@@ -419,6 +419,7 @@ autoinstall:
 
           bind -T copy-mode-vi v send-keys -X begin-selection
           set -s copy-command "wl-copy"
+          set -s set-clipboard on
           bind -T copy-mode-vi y send -X copy-pipe-and-cancel
           bind -T copy-mode-vi MouseDragEnd1Pane send -X copy-pipe-and-cancel
 
