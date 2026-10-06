@@ -1,0 +1,11 @@
+[/]
+alphabetize=true
+hide-icons=true
+hot-sensors=['_processor_usage_', '_memory_usage_', '__network-rx_max__', '__network-tx_max__', '_fan_dell_smm_', '__temperature_avg__']
+icon-style=1
+menu-centered=false
+position-in-panel=0
+show-battery=false
+show-storage=false
+show-system=false
+show-voltage=false
