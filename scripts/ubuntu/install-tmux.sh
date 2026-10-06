@@ -11,7 +11,7 @@ if ! command -v tmux &>/dev/null; then
 	exit 1
 fi
 
-cp -f "workspace/.tmux.conf" "$HOME/.tmux.conf"
+cp -f "stuffs/.tmux.conf" "$HOME/.tmux.conf"
 
 if [ ! -d "$HOME/.tmux/plugins/tpm" ]; then
 	git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm

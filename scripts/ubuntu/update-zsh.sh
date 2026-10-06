@@ -18,12 +18,12 @@ if [ ! -d "$HOME/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting" ]; then
 fi
 
 mkdir -p "$HOME/.oh-my-zsh/custom/themes"
-cp -f "workspace/custom.zsh-theme" "$HOME/.oh-my-zsh/custom/themes/custom.zsh-theme"
+cp -f "stuffs/custom.zsh-theme" "$HOME/.oh-my-zsh/custom/themes/custom.zsh-theme"
 
 touch "$HOME/.zshrc"
 
 CONFIG_NAME="zsh"
-CONFIG_CONTENT="$(cat "workspace/.zshrc")"
+CONFIG_CONTENT="$(cat "stuffs/.zshrc")"
 source "$SCRIPT_DIR/add-auto-config.sh"
 
 echo "Zsh configuration updated. Please restart your terminal or run 'source ~/.zshrc' to apply the changes."

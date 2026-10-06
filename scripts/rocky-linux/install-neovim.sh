@@ -10,7 +10,7 @@ sudo tar -C ~/.local/nvim -xzf nvim-linux-x86_64.tar.gz
 sudo rm -rf nvim-linux-x86_64.tar.gz
 
 mkdir -p "$HOME/.config/nvim"
-cp -f "workspace/init.lua" "$HOME/.config/nvim/init.lua"
+cp -f "stuffs/init.lua" "$HOME/.config/nvim/init.lua"
 
 CONFIG_NAME="neovim"
 CONFIG_CONTENT='export PATH="$HOME/.local/nvim/nvim-linux-x86_64/bin:$PATH"

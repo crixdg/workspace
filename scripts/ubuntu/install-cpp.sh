@@ -161,11 +161,11 @@ mv -f "$WORK_DIR/buildifier" "$HOME/.local/bin/buildifier"
 # --- C++ helper scripts --------------------------------------------------------
 
 mkdir -p "$HOME/.local/cpp"
-cp -rf "$REPO_ROOT/workspace/cpp/"* "$HOME/.local/cpp/"
+cp -rf "$REPO_ROOT/stuffs/cpp/"* "$HOME/.local/cpp/"
 
 # --- Global clang-format -------------------------------------------------------
 
-ln -sfn "$REPO_ROOT/workspace/.clang-format" "$HOME/.clang-format"
+ln -sfn "$REPO_ROOT/stuffs/.clang-format" "$HOME/.clang-format"
 
 CONFIG_NAME="c++"
 CONFIG_CONTENT='path=("$HOME/.local/cpp" $path)'
