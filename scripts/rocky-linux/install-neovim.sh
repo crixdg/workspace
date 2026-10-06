@@ -2,6 +2,7 @@
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
 curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz
 sudo rm -rf ~/.local/nvim/nvim-linux-x86_64
@@ -10,7 +11,7 @@ sudo tar -C ~/.local/nvim -xzf nvim-linux-x86_64.tar.gz
 sudo rm -rf nvim-linux-x86_64.tar.gz
 
 mkdir -p "$HOME/.config/nvim"
-cp -f "stuffs/init.lua" "$HOME/.config/nvim/init.lua"
+cp -f "$REPO_ROOT/stuffs/neovim_init.lua" "$HOME/.config/nvim/init.lua"
 
 CONFIG_NAME="neovim"
 CONFIG_CONTENT='export PATH="$HOME/.local/nvim/nvim-linux-x86_64/bin:$PATH"

@@ -2,6 +2,7 @@
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${(%):-%N}")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 source "$SCRIPT_DIR/check-os.sh"
 
 rm -rf ~/.bash* || true
@@ -18,12 +19,12 @@ if [ ! -d "$HOME/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting" ]; then
 fi
 
 mkdir -p "$HOME/.oh-my-zsh/custom/themes"
-cp -f "stuffs/custom.zsh-theme" "$HOME/.oh-my-zsh/custom/themes/custom.zsh-theme"
+cp -f "$REPO_ROOT/stuffs/custom.zsh-theme" "$HOME/.oh-my-zsh/custom/themes/custom.zsh-theme"
 
 touch "$HOME/.zshrc"
 
 CONFIG_NAME="zsh"
-CONFIG_CONTENT="$(cat "stuffs/.zshrc")"
+CONFIG_CONTENT="$(cat "$REPO_ROOT/stuffs/.zshrc")"
 source "$SCRIPT_DIR/add-auto-config.sh"
 
 echo "Zsh configuration updated. Please restart your terminal or run 'source ~/.zshrc' to apply the changes."

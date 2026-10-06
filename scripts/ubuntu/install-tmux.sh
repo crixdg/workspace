@@ -2,6 +2,7 @@
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 source "$SCRIPT_DIR/check-os.sh"
 
 sudo apt install -y tmux
@@ -11,7 +12,7 @@ if ! command -v tmux &>/dev/null; then
 	exit 1
 fi
 
-cp -f "stuffs/.tmux.conf" "$HOME/.tmux.conf"
+cp -f "$REPO_ROOT/stuffs/.tmux.conf" "$HOME/.tmux.conf"
 
 if [ ! -d "$HOME/.tmux/plugins/tpm" ]; then
 	git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
