@@ -4,15 +4,19 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/check-os.sh"
 
-DEFAULT_JAVA_LTS_VERSION="25"
-read -p "Enter the Java LTS version you want to install [${DEFAULT_JAVA_LTS_VERSION}]: " LTS_VERSION
-LTS_VERSION=${LTS_VERSION:-$DEFAULT_JAVA_LTS_VERSION}
+ask_version() {
+	local default="$1" label="$2" answer=""
+	if [ -t 0 ]; then
+		read -r -p "Enter the ${label} version you want to install [${default}]: " answer || answer=""
+	fi
+	printf '%s' "${answer:-$default}"
+}
+
+LTS_VERSION="${JAVA_VERSION:-$(ask_version "25" "Java LTS")}"
 
 sudo apt install -y openjdk-${LTS_VERSION}-jdk
 
-DEFAULT_GRADLE_VERSION="9.2.1"
-read -p "Enter the Gradle version you want to install [${DEFAULT_GRADLE_VERSION}]: " GRADLE_VERSION
-GRADLE_VERSION=${GRADLE_VERSION:-$DEFAULT_GRADLE_VERSION}
+GRADLE_VERSION="${GRADLE_VERSION:-$(ask_version "9.2.1" "Gradle")}"
 gradle_filename="gradle-${GRADLE_VERSION}-bin.zip"
 if ! curl --silent --head "https://services.gradle.org/distributions/${gradle_filename}" | grep -q "HTTP/1.1 307"; then
 	echo "Gradle file ${gradle_filename} not found online. Aborted."

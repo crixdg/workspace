@@ -1,0 +1,3 @@
+[/]
+enabled-extensions=['clipboard-indicator@tudmotu.com', 'ding@rastersoft.com', 'caffeine@patapon.info', 'tiling-assistant@leleat-on-github', 'appindicatorsupport@rgcjonas.gmail.com', 'Vitals@CoreCoding.com', 'cronomix@zagortenay333', 'alt-tab-scroll-workaround@lucasresck.github.io', 'dash-to-panel@jderose9.github.com']
+favorite-apps=['com.microsoft.VSCode.desktop', 'google-chrome.desktop', 'org.gnome.Ptyxis.desktop', 'org.gnome.Nautilus.desktop', 'unityhub.desktop', 'blender.desktop', 'aseprite.desktop', 'pureref.desktop', 'jetbrains-goland-b180e387-b30f-453a-a205-ee01b929fea6.desktop', 'jetbrains-idea-12c6e9e9-1f2a-4cb3-b489-e688cdfcea79.desktop', 'jetbrains-clion-20c5031d-da09-4a4f-90ca-be1b103b5aa1.desktop', 'discord.desktop', 'md.obsidian.Obsidian.desktop']

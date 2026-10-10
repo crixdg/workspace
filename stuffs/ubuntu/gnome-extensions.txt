@@ -1,0 +1,8 @@
+Vitals@CoreCoding.com
+alt-tab-scroll-workaround@lucasresck.github.io
+appindicatorsupport@rgcjonas.gmail.com
+caffeine@patapon.info
+clipboard-indicator@tudmotu.com
+cronomix@zagortenay333
+dash-to-panel@jderose9.github.com
+tiling-assistant@leleat-on-github

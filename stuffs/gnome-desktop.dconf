@@ -1,0 +1,37 @@
+[interface]
+accent-color='teal'
+clock-show-seconds=false
+clock-show-weekday=true
+color-scheme='prefer-dark'
+cursor-theme='Yaru'
+font-name='Ubuntu Sans 11'
+gtk-enable-primary-paste=true
+gtk-theme='Yaru-prussiangreen-dark'
+icon-theme='Yaru-prussiangreen-dark'
+show-battery-percentage=true
+
+[input-sources]
+mru-sources=[('xkb', 'us'), ('ibus', 'Bamboo')]
+show-all-sources=false
+sources=[('xkb', 'us'), ('ibus', 'Bamboo')]
+xkb-options=@as []
+
+[peripherals/touchpad]
+speed=0.13127413127413123
+two-finger-scrolling-enabled=true
+
+[peripherals/keyboard]
+numlock-state=true
+
+[session]
+idle-delay=uint32 300
+
+[privacy]
+old-files-age=uint32 30
+recent-files-max-age=-1
+report-technical-problems=false
+
+[sound]
+allow-volume-above-100-percent=false
+event-sounds=true
+

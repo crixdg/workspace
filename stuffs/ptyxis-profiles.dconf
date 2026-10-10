@@ -3,7 +3,7 @@ audible-bell=false
 default-profile-uuid='f343c8ddd5f4731029eb6b5a6ac48235'
 profile-uuids=['f343c8ddd5f4731029eb6b5a6ac48235']
 use-system-font=true
-window-size=(uint32 108, uint32 24)
+window-size=(uint32 80, uint32 24)
 
 [Profiles/f343c8ddd5f4731029eb6b5a6ac48235]
 label='crixdg'

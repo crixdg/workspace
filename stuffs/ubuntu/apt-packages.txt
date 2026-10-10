@@ -1,0 +1,34 @@
+# CLI essentials
+bc
+curl
+gh
+git
+htop
+rsync
+shfmt
+tree
+unzip
+wget
+wl-clipboard
+zip
+
+# Build & debug
+build-essential
+gdb
+pkg-config
+
+# Python
+pipx
+python3-dev
+python3-pip
+python3-venv
+
+# Desktop
+dconf-cli
+fonts-firacode
+gir1.2-gtop-2.0
+ibus-bamboo
+ptyxis
+
+# System
+openssh-server

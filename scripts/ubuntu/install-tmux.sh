@@ -17,6 +17,7 @@ cp -f "$REPO_ROOT/stuffs/.tmux.conf" "$HOME/.tmux.conf"
 if [ ! -d "$HOME/.tmux/plugins/tpm" ]; then
 	git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 fi
+"$HOME/.tmux/plugins/tpm/bin/install_plugins"
 
 CONFIG_NAME="tmux"
 CONFIG_CONTENT='if [[ -z "$SSH_CONNECTION" ]]; then

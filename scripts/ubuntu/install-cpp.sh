@@ -166,6 +166,7 @@ cp -rf "$REPO_ROOT/stuffs/cpp/"* "$HOME/.local/cpp/"
 # --- Global clang-format -------------------------------------------------------
 
 ln -sfn "$REPO_ROOT/stuffs/.clang-format" "$HOME/.clang-format"
+cp -f "$REPO_ROOT/stuffs/.gdbinit" "$HOME/.gdbinit"
 
 CONFIG_NAME="c++"
 CONFIG_CONTENT='path=("$HOME/.local/cpp" $path)'

@@ -13,9 +13,12 @@ if ! command -v zsh &>/dev/null; then
 fi
 
 if [ ! -d "$HOME/.oh-my-zsh" ]; then
-    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+    RUNZSH=no CHSH=no sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+    rm -f "$HOME/.zshrc"
 else
     echo "Oh My Zsh is already installed."
 fi
 
-rm -f "$HOME/.zshrc"
+if [ "$(getent passwd "$USER" | cut -d: -f7)" != "$(command -v zsh)" ]; then
+    sudo chsh -s "$(command -v zsh)" "$USER"
+fi
