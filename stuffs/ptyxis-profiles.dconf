@@ -8,3 +8,15 @@ window-size=(uint32 80, uint32 24)
 [Profiles/f343c8ddd5f4731029eb6b5a6ac48235]
 label='crixdg'
 palette='Vs Code'
+
+[Shortcuts]
+focus-tab-1=''
+focus-tab-10=''
+focus-tab-2=''
+focus-tab-3=''
+focus-tab-4=''
+focus-tab-5=''
+focus-tab-6=''
+focus-tab-7=''
+focus-tab-8=''
+focus-tab-9=''
