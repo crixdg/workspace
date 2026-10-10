@@ -1,4 +1,9 @@
 [/]
+blink-icon-on-copy=false
+disable-down-arrow=true
+display-mode=0
 enable-keybindings=false
 history-size=40
 next-history-clear=-1
+preview-size=50
+show-tag-button=true

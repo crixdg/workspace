@@ -5,4 +5,5 @@ caffeine@patapon.info
 clipboard-indicator@tudmotu.com
 cronomix@zagortenay333
 dash-to-panel@jderose9.github.com
+notes-with-history@grizzlysmit.smit.id.au
 tiling-assistant@leleat-on-github

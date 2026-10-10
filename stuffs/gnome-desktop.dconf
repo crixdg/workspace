@@ -21,7 +21,9 @@ speed=0.13127413127413123
 two-finger-scrolling-enabled=true
 
 [peripherals/keyboard]
+delay=uint32 250
 numlock-state=true
+repeat-interval=uint32 30
 
 [session]
 idle-delay=uint32 300
