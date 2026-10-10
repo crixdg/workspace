@@ -19,10 +19,6 @@ rm $HOME/.miniconda/miniconda.sh
 
 CONFIG_NAME="miniconda"
 CONFIG_CONTENT='export MINICONDA_HOME="$HOME/.miniconda"
-if [ -d "$MINICONDA_HOME" ]; then
-	path=("$MINICONDA_HOME/bin" $path)
-fi
-
 alias start_conda="source $MINICONDA_HOME/bin/activate"
 alias stop_conda="conda deactivate"'
 source "$SCRIPT_DIR/add-auto-config.sh"

@@ -2,6 +2,7 @@
 set -euo pipefail
 
 ZSHRC="${ZDOTDIR:-$HOME}/.zshrc"
+SECRETS="$HOME/.secrets"
 VAR="CLAUDE_CODE_OAUTH_TOKEN"
 LOG="$(mktemp)"
 trap 'rm -f "$LOG"' EXIT
@@ -19,18 +20,26 @@ if [[ -z "$token" ]]; then
 fi
 
 if [[ ! "$token" =~ ^sk-ant-oat01-[A-Za-z0-9_-]+$ ]]; then
-  echo "Invalid token, $ZSHRC not changed." >&2
+  echo "Invalid token, $SECRETS not changed." >&2
   exit 1
 fi
 
-cp "$ZSHRC" "$ZSHRC.bak"
-chmod 600 "$ZSHRC.bak"
+(umask 077 && touch "$SECRETS")
+chmod 600 "$SECRETS"
 
-if grep -q "^export $VAR=" "$ZSHRC"; then
-  sed -i "s|^export $VAR=.*|export $VAR=\"$token\"|" "$ZSHRC"
+if grep -q "^export $VAR=" "$SECRETS"; then
+  sed -i "s|^export $VAR=.*|export $VAR=\"$token\"|" "$SECRETS"
 else
-  printf '\nexport %s="%s"\n' "$VAR" "$token" >> "$ZSHRC"
+  printf 'export %s="%s"\n' "$VAR" "$token" >> "$SECRETS"
 fi
 
-echo "Updated $VAR in $ZSHRC (backup: $ZSHRC.bak, expires $(date -d '+1 year' +%F))."
-echo "Run: source $ZSHRC"
+if grep -q "^export $VAR=" "$ZSHRC"; then
+  sed -i "/^export $VAR=/d" "$ZSHRC"
+fi
+
+if ! grep -qF '.secrets' "$ZSHRC"; then
+  printf '\n[ -f "$HOME/.secrets" ] && source "$HOME/.secrets"\n' >> "$ZSHRC"
+fi
+
+echo "Updated $VAR in $SECRETS (expires $(date -d '+1 year' +%F))."
+echo "Run: exec zsh"

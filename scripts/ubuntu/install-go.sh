@@ -11,7 +11,14 @@ if ! command -v gvm &>/dev/null; then
 fi
 
 CONFIG_NAME="golang"
-CONFIG_CONTENT='[[ -s "$HOME/.gvm/scripts/gvm" ]] && source "$HOME/.gvm/scripts/gvm"'
+CONFIG_CONTENT='export GVM_ROOT="$HOME/.gvm"
+[[ -s "$GVM_ROOT/environments/default" ]] && source "$GVM_ROOT/environments/default"
+
+gvm() {
+	unset -f gvm
+	source "$GVM_ROOT/scripts/gvm"
+	gvm "$@"
+}'
 source "$SCRIPT_DIR/add-auto-config.sh"
 
 echo "GVM installed. Please restart your terminal or run 'source $SHELL_RC' to apply the changes."

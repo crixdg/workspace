@@ -80,4 +80,8 @@ bindkey -r '\el'
 [ -d "$HOME/.local/bin" ] && path=("$HOME/.local/bin" $path)
 
 # ===============================================================================
+# SECRETS
+[ -f "$HOME/.secrets" ] && source "$HOME/.secrets"
+
+# ===============================================================================
 # zprof  # Uncomment with zmodload above to profile zsh startup time

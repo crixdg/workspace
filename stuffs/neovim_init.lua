@@ -14,7 +14,6 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
-vim.opt.mouse = "a"
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
 
@@ -47,9 +46,9 @@ vim.opt.smartindent = true
 vim.keymap.set('v', '<leader>y', '"+y', { noremap = true, silent = true })
 vim.keymap.set('n', '<leader>y', '"+yy', { noremap = true, silent = true })
 
-vim.keymap.set("n", "<C-s>", ":w<CR>", { noremap = true, silent = true })
-vim.keymap.set("i", "<C-s>", "<Esc>:w<CR>a", { noremap = true, silent = true })
-vim.keymap.set("v", "<C-s>", "<Esc>:w<CR>gv", { noremap = true, silent = true })
+vim.keymap.set("n", "<C-s>", "<cmd>w<CR>", { noremap = true, silent = true })
+vim.keymap.set("i", "<C-s>", "<cmd>w<CR>", { noremap = true, silent = true })
+vim.keymap.set("v", "<C-s>", "<cmd>w<CR>", { noremap = true, silent = true })
 
 vim.keymap.set("n", "<C-_>", "gcc", { remap = true })
 vim.keymap.set("v", "<C-_>", "gc", { remap = true })
@@ -61,10 +60,8 @@ vim.keymap.set("v", "<A-S-k>", ":m '<-2<CR>gv=gv", { noremap = true, silent = tr
 
 vim.opt.ignorecase = true
 vim.opt.smartcase = true
-vim.opt.hlsearch = true
-vim.opt.incsearch = true
 
-vim.keymap.set("n", "<Esc>", ":noh<CR>", { silent = true })
+vim.keymap.set("n", "<Esc>", "<cmd>noh<CR>", { silent = true })
 
 vim.opt.guicursor =
   "n-v-c:block-Cursor/lCursor," ..
@@ -82,42 +79,13 @@ vim.api.nvim_create_autocmd("VimLeave", {
   end,
 })
 
-local function lsp_capabilities()
-  local ok, blink = pcall(require, "blink.cmp")
-  return ok and blink.get_lsp_capabilities() or nil
-end
-
-vim.lsp.config("clangd", {
-  cmd = {
-    "clangd",
-    "--background-index",
-    "--clang-tidy",
-    "--header-insertion=never",
-    "--completion-style=detailed",
-    "--function-arg-placeholders",
-    "-j=4",
-  },
-  filetypes = { "c", "cpp" },
-  root_markers = {
-    { "compile_commands.json", "compile_flags.txt", ".clangd" },
-    ".git",
-  },
-  capabilities = lsp_capabilities(),
-  on_attach = function(_, bufnr)
-    local opts = { noremap = true, silent = true, buffer = bufnr }
-    vim.keymap.set("n", "<F2>", vim.lsp.buf.rename, opts)
-  end,
-})
-
-vim.lsp.enable("clangd")
-
 vim.api.nvim_create_autocmd("CursorHold", {
   callback = function()
     local opts = {
       focusable = false,
       close_events = { "BufLeave", "CursorMoved", "InsertEnter", "FocusLost" },
       border = 'rounded',
-      source = 'always',
+      source = true,
       prefix = ' ',
     }
     vim.diagnostic.open_float(nil, opts)
@@ -137,8 +105,10 @@ vim.api.nvim_create_autocmd({ "FocusLost", "BufLeave" }, {
 
 vim.api.nvim_create_autocmd("BufWritePre", {
   pattern = { "*.c", "*.cpp", "*.cc", "*.h", "*.hpp" },
-  callback = function()
-    vim.lsp.buf.format({ async = false })
+  callback = function(args)
+    if #vim.lsp.get_clients({ bufnr = args.buf, method = "textDocument/formatting" }) > 0 then
+      vim.lsp.buf.format({ bufnr = args.buf, async = false })
+    end
   end,
 })
 
@@ -224,7 +194,6 @@ require("lazy").setup({
   {
     "saghen/blink.cmp",
     version = "1.*",
-    event = "InsertEnter",
     dependencies = { "L3MON4D3/LuaSnip" },
     opts = {
       snippets = { preset = "luasnip" },
@@ -280,3 +249,33 @@ require("lazy").setup({
     end,
   },
 })
+
+local function lsp_capabilities()
+  local ok, blink = pcall(require, "blink.cmp")
+  return ok and blink.get_lsp_capabilities() or nil
+end
+
+vim.lsp.config("clangd", {
+  cmd = {
+    "clangd",
+    "--background-index",
+    "--clang-tidy",
+    "--header-insertion=never",
+    "--completion-style=detailed",
+    "--function-arg-placeholders",
+    "-j=4",
+    "--log=error",
+  },
+  filetypes = { "c", "cpp" },
+  root_markers = {
+    { "compile_commands.json", "compile_flags.txt", ".clangd" },
+    ".git",
+  },
+  capabilities = lsp_capabilities(),
+  on_attach = function(_, bufnr)
+    local opts = { noremap = true, silent = true, buffer = bufnr }
+    vim.keymap.set("n", "<F2>", vim.lsp.buf.rename, opts)
+  end,
+})
+
+vim.lsp.enable("clangd")
