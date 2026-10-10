@@ -5,8 +5,6 @@ SCRIPT_DIR="$(cd "$(dirname "${(%):-%N}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 source "$SCRIPT_DIR/check-os.sh"
 
-rm -rf ~/.bash* || true
-rm -rf ~/.profile || true
 rm -rf ~/.zcomp* || true
 rm -rf ~/.shell.pre-oh-my-zsh* || true
 rm -rf ~/.zshrc.pre-oh-my-zsh* || true

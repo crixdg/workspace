@@ -4,21 +4,11 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 STEPS=(
-	apt
+	base
+	docker
 	zsh
 	update-zsh
-	git
-	tmux
 	neovim
-	cpp
-	go
-	java
-	nodejs
-	python
-	minikube
-	tools
-	keyd
-	gnome
 )
 
 usage() {
@@ -30,6 +20,12 @@ Without arguments, runs every step in order:
 
   --from STEP   run STEP and every step after it
   --list        print the steps and exit
+
+Environment (base step):
+  OPEN_PORTS    firewall ports to open, e.g. "80/tcp 443/tcp 7777/udp"
+  TIMEZONE      default UTC
+  SWAP_SIZE     create a swapfile when none exists, e.g. 4G
+  NOFILE_LIMIT  default 1048576
 EOF
 	exit "${1:-0}"
 }
@@ -99,11 +95,5 @@ for step in "${selected[@]}"; do
 	run_step "$step"
 done
 
-cat <<'EOF'
-
-Setup finished. Manual steps that cannot live in a public repo:
-  - Copy ~/.ssh, ~/.git-credentials and ~/.netrc from a backup
-  - gh auth login
-  - Claude Code token: stuffs/claude-refresh-token.sh
-  - Log out and back in for zsh, GNOME extensions and keyd to take effect
-EOF
+echo
+echo "Server setup finished. Log out and back in for zsh and the docker group to take effect."
