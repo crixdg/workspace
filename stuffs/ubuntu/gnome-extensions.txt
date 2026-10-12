@@ -2,8 +2,8 @@ Vitals@CoreCoding.com
 alt-tab-scroll-workaround@lucasresck.github.io
 appindicatorsupport@rgcjonas.gmail.com
 caffeine@patapon.info
-clipboard-indicator@tudmotu.com
+copyous@boerdereinar.dev
 cronomix@zagortenay333
 dash-to-panel@jderose9.github.com
-notes-with-history@grizzlysmit.smit.id.au
+notedock@joquers.github.io
 tiling-assistant@leleat-on-github
