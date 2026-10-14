@@ -20,6 +20,18 @@ vim.opt.smartcase = true
 
 vim.cmd.colorscheme("habamax")
 
+if os.getenv("SSH_TTY") then
+  local osc52 = require("vim.ui.clipboard.osc52")
+  local function paste()
+    return { vim.fn.split(vim.fn.getreg(""), "\n"), vim.fn.getregtype("") }
+  end
+  vim.g.clipboard = {
+    name = "OSC 52",
+    copy = { ["+"] = osc52.copy("+"), ["*"] = osc52.copy("*") },
+    paste = { ["+"] = paste, ["*"] = paste },
+  }
+end
+
 vim.keymap.set({ "n", "v" }, "<leader>y", '"+y', { noremap = true, silent = true })
 vim.keymap.set("n", "<C-s>", "<cmd>w<CR>", { noremap = true, silent = true })
 vim.keymap.set("i", "<C-s>", "<cmd>w<CR>", { noremap = true, silent = true })
