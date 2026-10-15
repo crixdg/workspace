@@ -12,7 +12,7 @@ ask_version() {
 	printf '%s' "${answer:-$default}"
 }
 
-GO_VERSION="${GO_VERSION:-$(ask_version "1.26.3" "Go")}"
+GO_VERSION="${GO_VERSION:-$(ask_version "1.27.2" "Go")}"
 
 sudo apt install -y curl git mercurial make binutils bison gcc build-essential
 if [ ! -s "$HOME/.gvm/scripts/gvm" ]; then
