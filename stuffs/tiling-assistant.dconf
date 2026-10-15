@@ -15,6 +15,7 @@ focus-hint=0
 focus-hint-color='rgb(75,133,1)'
 import-layout-examples=false
 last-version-installed=56
+overridden-settings={'org.gnome.mutter.edge-tiling': <false>}
 restore-window=['<Super>Down']
 search-popup-layout=@as []
 tile-bottom-half=['<Super>KP_2']

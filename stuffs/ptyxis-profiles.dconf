@@ -5,7 +5,7 @@ profile-uuids=['f343c8ddd5f4731029eb6b5a6ac48235']
 prompt-on-close=false
 use-system-font=true
 visual-bell=false
-window-size=(uint32 238, uint32 55)
+window-size=(uint32 238, uint32 56)
 
 [Profiles/f343c8ddd5f4731029eb6b5a6ac48235]
 label='crixdg'

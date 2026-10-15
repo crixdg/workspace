@@ -27,7 +27,9 @@ python3-venv
 dconf-cli
 fonts-firacode
 gir1.2-gtop-2.0
-ibus-bamboo
+fcitx5
+fcitx5-bamboo
+fcitx5-config-qt
 ptyxis
 
 # System

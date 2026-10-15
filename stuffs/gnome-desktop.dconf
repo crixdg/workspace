@@ -11,9 +11,9 @@ icon-theme='Yaru-prussiangreen-dark'
 show-battery-percentage=true
 
 [input-sources]
-mru-sources=[('xkb', 'us'), ('ibus', 'Bamboo')]
+mru-sources=[('xkb', 'us')]
 show-all-sources=false
-sources=[('xkb', 'us'), ('ibus', 'Bamboo')]
+sources=[('xkb', 'us')]
 xkb-options=@as []
 
 [peripherals/touchpad]

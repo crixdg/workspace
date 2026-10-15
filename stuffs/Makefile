@@ -6,8 +6,7 @@ DCONF := \
 	caffeine:/org/gnome/shell/extensions/caffeine/ \
 	clipboard-indicator:/org/gnome/shell/extensions/clipboard-indicator/ \
 	ding:/org/gnome/shell/extensions/ding/ \
-	gnome-mutter:/org/gnome/mutter/ \
-	ibus:/desktop/ibus/
+	gnome-mutter:/org/gnome/mutter/
 
 DESKTOP_KEYS := interface input-sources peripherals/touchpad peripherals/keyboard session privacy sound
 
@@ -23,6 +22,8 @@ dotfiles-dump:
 	cp ~/.tmux.conf .tmux.conf
 	cp ~/.ideavimrc .ideavimrc
 	cp ~/.gdbinit .gdbinit
+	cp ~/.config/fcitx5/profile fcitx5-profile
+	cp ~/.config/fcitx5/config fcitx5-config
 	cp /etc/keyd/default.conf ubuntu/keyd.conf
 	ls ~/.local/share/gnome-shell/extensions/ > ubuntu/gnome-extensions.txt
 
@@ -33,6 +34,12 @@ dotfiles-load:
 	cp .tmux.conf ~/.tmux.conf
 	cp .ideavimrc ~/.ideavimrc
 	cp .gdbinit ~/.gdbinit
+	mkdir -p ~/.config/fcitx5 ~/.config/environment.d ~/.config/autostart ~/.local/share/fcitx5/inputmethod
+	cp fcitx5-profile ~/.config/fcitx5/profile
+	cp fcitx5-config ~/.config/fcitx5/config
+	cp fcitx5-bamboo.conf ~/.local/share/fcitx5/inputmethod/bamboo.conf
+	cp fcitx5-environment.conf ~/.config/environment.d/fcitx5.conf
+	cp /usr/share/applications/org.fcitx.Fcitx5.desktop ~/.config/autostart/
 
 dconf-dump:
 	@for e in $(DCONF); do dconf dump "$${e#*:}" > "$${e%%:*}.dconf"; done
