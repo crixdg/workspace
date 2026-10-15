@@ -23,6 +23,13 @@ while read -r uuid; do
 	fi
 done <"$REPO_ROOT/stuffs/ubuntu/gnome-extensions.txt"
 
+mkdir -p "$HOME/.config/fcitx5" "$HOME/.config/environment.d" "$HOME/.config/autostart" "$HOME/.local/share/fcitx5/inputmethod"
+cp -f "$REPO_ROOT/stuffs/fcitx5-profile" "$HOME/.config/fcitx5/profile"
+cp -f "$REPO_ROOT/stuffs/fcitx5-config" "$HOME/.config/fcitx5/config"
+cp -f "$REPO_ROOT/stuffs/fcitx5-bamboo.conf" "$HOME/.local/share/fcitx5/inputmethod/bamboo.conf"
+cp -f "$REPO_ROOT/stuffs/fcitx5-environment.conf" "$HOME/.config/environment.d/fcitx5.conf"
+cp -f /usr/share/applications/org.fcitx.Fcitx5.desktop "$HOME/.config/autostart/"
+
 make -C "$REPO_ROOT/stuffs" dconf-load
 
 echo "GNOME configured. Log out and back in so newly installed extensions are loaded and enabled."
