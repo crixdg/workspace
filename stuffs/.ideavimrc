@@ -2,3 +2,20 @@ set visualbell
 set noerrorbells
 set ideajoin
 
+let mapleader=" "
+
+set scrolloff=7
+set incsearch
+set hlsearch
+
+set highlightedyank
+
+nnoremap <Esc> :nohlsearch<CR>
+
+vnoremap <leader>y "+y
+nnoremap <leader>y "+yy
+
+nmap <A-S-j> <Action>(MoveLineDown)
+nmap <A-S-k> <Action>(MoveLineUp)
+vmap <A-S-j> <Action>(MoveLineDown)
+vmap <A-S-k> <Action>(MoveLineUp)

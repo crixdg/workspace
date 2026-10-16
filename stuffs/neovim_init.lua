@@ -70,9 +70,6 @@ vim.keymap.set("n", "<A-S-k>", ":m .-2<CR>==", { noremap = true, silent = true }
 vim.keymap.set("v", "<A-S-j>", ":m '>+1<CR>gv=gv", { noremap = true, silent = true })
 vim.keymap.set("v", "<A-S-k>", ":m '<-2<CR>gv=gv", { noremap = true, silent = true })
 
-vim.opt.ignorecase = true
-vim.opt.smartcase = true
-
 vim.keymap.set("n", "<Esc>", "<cmd>noh<CR>", { silent = true })
 
 vim.opt.guicursor =
@@ -227,20 +224,6 @@ require("lazy").setup({
       { "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
     },
     cmd = "Telescope",
-    keys = {
-      { "<leader>ff", "<cmd>Telescope find_files<cr>", desc = "Find files" },
-      { "<leader>fg", "<cmd>Telescope live_grep<cr>", desc = "Live grep" },
-      { "<leader>fb", "<cmd>Telescope buffers<cr>", desc = "Buffers" },
-      { "<leader>fh", "<cmd>Telescope help_tags<cr>", desc = "Help tags" },
-      { "<leader>fd", "<cmd>Telescope diagnostics<cr>", desc = "Diagnostics" },
-      { "<leader>fq", "<cmd>Telescope quickfix<cr>", desc = "Quickfix" },
-      { "<leader>fu", "<cmd>Telescope resume<cr>", desc = "Resume last picker" },
-      { "<leader>ss", "<cmd>Telescope lsp_dynamic_workspace_symbols<cr>", desc = "Workspace symbols" },
-      { "<leader>so", "<cmd>Telescope lsp_document_symbols<cr>", desc = "Document symbols" },
-      { "<leader>sr", "<cmd>Telescope lsp_references<cr>", desc = "References" },
-      { "<leader>sd", "<cmd>Telescope lsp_definitions<cr>", desc = "Definitions" },
-      { "<leader>si", "<cmd>Telescope lsp_incoming_calls<cr>", desc = "Incoming calls" },
-    },
     config = function()
       local telescope = require("telescope")
       telescope.setup({
